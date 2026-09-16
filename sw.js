@@ -1,9 +1,8 @@
-const CACHE = 'caspian-calc-v1';
+const CACHE = 'caspian-calc-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './data/prices.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
