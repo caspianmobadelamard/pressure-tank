@@ -1,12 +1,672 @@
 <!DOCTYPE html>
-<html dir="rtl">
-<head><meta charset="UTF-8"><title>تست</title></head>
-<body style="background:#000;color:#0f0;font-size:30px;text-align:center;padding:50px;font-family:Tahoma">
-<h1>سلام</h1>
-<p>اگر این متن سبز را می‌بینی، GitHub Pages کار می‌کند</p>
-<p id="result">در حال تست...</p>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0a0f0d">
+<title>محاسبه‌گر مخازن — کاسپین بویلر</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<style>
+:root{--bg:#0a0f0d;--bg-2:#0f1613;--card:#131a17;--card-2:#182220;--border:#1e2a24;--border-hi:#2a3a33;--text:#d8e5de;--text-dim:#94a89f;--muted:#64756c;--primary:#00d68f;--primary-2:#00b377;--primary-d:#008f5c;--primary-g:rgba(0,214,143,.22);--primary-g2:rgba(0,214,143,.08);--accent:#00ff9d;--warn:#f5a623;--danger:#ff4757}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;font-family:Tahoma,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+body{background:radial-gradient(ellipse 800px 600px at 0% 0%, rgba(0,214,143,.06), transparent 60%),radial-gradient(ellipse 600px 400px at 100% 100%, rgba(0,214,143,.04), transparent 60%),var(--bg);background-attachment:fixed;padding-bottom:80px;line-height:1.6}
+header{padding:20px 16px 18px;text-align:center;position:sticky;top:0;z-index:100;background:linear-gradient(180deg,rgba(10,15,13,.98) 0%,rgba(10,15,13,.85) 100%);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+header h1{margin:0;font-size:19px;font-weight:800;background:linear-gradient(135deg,#fff 0%,var(--primary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{margin:6px 0 0;font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+header::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:60px;height:2px;background:var(--primary);border-radius:0 0 4px 4px;box-shadow:0 0 12px var(--primary),0 0 24px var(--primary-g)}
+.tabs{display:flex;background:var(--bg-2);border-bottom:1px solid var(--border);position:sticky;top:74px;z-index:99;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;min-width:120px;padding:14px 12px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;transition:all .25s;white-space:nowrap;position:relative}
+.tab:hover{color:var(--text-dim)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:linear-gradient(180deg,transparent,var(--primary-g2))}
+.tab.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:30px;height:2px;background:var(--primary);border-radius:0 0 4px 4px;box-shadow:0 0 10px var(--primary)}
+main{padding:16px;max-width:780px;margin:0 auto}
+.panel{display:none;animation:fadeIn .3s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:linear-gradient(160deg,var(--card) 0%,var(--card-2) 100%);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.02);position:relative}
+.card::before{content:"";position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,var(--border-hi),transparent)}
+.card h2{margin:0 0 16px;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;font-weight:700}
+.card h2::before{content:"";display:inline-block;width:4px;height:18px;background:linear-gradient(180deg,var(--primary),var(--primary-d));border-radius:2px;box-shadow:0 0 8px var(--primary-g)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11.5px;margin-bottom:7px;color:var(--text-dim);font-weight:700}
+.field input,.field select{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:11px;font-size:15px;font-family:inherit;background:rgba(0,0,0,.25);color:var(--text);transition:all .2s;-webkit-appearance:none;appearance:none}
+.field select{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d68f' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 14px center;background-size:16px;padding-left:42px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--primary);background:rgba(0,214,143,.04);box-shadow:0 0 0 3px var(--primary-g2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+.btn{display:block;width:100%;padding:15px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-2) 100%);color:#002018;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;transition:all .2s;box-shadow:0 4px 16px var(--primary-g),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn:hover{transform:translateY(-1px)}
+.btn.sec{background:transparent;color:var(--primary);border:1.5px solid var(--primary);box-shadow:none}
+.btn.sec:hover{background:var(--primary-g2)}
+.result{background:linear-gradient(160deg,rgba(0,214,143,.05),rgba(0,214,143,.02));border:1.5px solid rgba(0,214,143,.25);border-radius:13px;padding:16px;margin-top:14px}
+.result .item{display:flex;justify-content:space-between;padding:9px 0;font-size:13.5px;border-bottom:1px dashed rgba(0,214,143,.12);gap:10px;align-items:center}
+.result .item:last-child{border-bottom:none}
+.result .item .lbl{color:var(--text-dim);flex:1}
+.result .item .val{font-weight:800;color:var(--primary);text-align:left;direction:ltr;font-family:'Segoe UI',Tahoma,sans-serif}
+.result .item.big{padding:13px 0;font-size:15px}
+.result .item.big .val{font-size:18px}
+.result.green{background:linear-gradient(160deg,rgba(0,214,143,.1),rgba(0,214,143,.03));border-color:rgba(0,214,143,.4)}
+.result.green .item .val{color:var(--accent)}
+.result.red{background:linear-gradient(160deg,rgba(255,71,87,.08),rgba(255,71,87,.02));border-color:rgba(255,71,87,.3)}
+.result.red .item .val{color:var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th,td{padding:9px 6px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+th{background:rgba(0,214,143,.05);color:var(--primary);font-weight:800;font-size:11px;position:sticky;top:0}
+td{color:var(--text-dim)}
+tr.best,tr.cat-match{background:rgba(0,214,143,.12)}
+tr.best td,tr.cat-match td{color:var(--accent);font-weight:700}
+.badge.best{background:var(--primary);color:#002018;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:800}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -18px;padding:0 18px}
+.notice{padding:12px 14px;border-radius:11px;font-size:12.5px;line-height:1.75;margin-top:12px;border:1px solid}
+.notice.warn{background:rgba(245,166,35,.08);color:#f5c76a;border-color:rgba(245,166,35,.25)}
+.notice.info{background:rgba(0,214,143,.06);color:#a0e8c5;border-color:rgba(0,214,143,.2)}
+.notice.success{background:rgba(0,214,143,.1);color:var(--primary);border-color:rgba(0,214,143,.35)}
+.footnote{font-size:11px;color:var(--muted);text-align:center;margin-top:24px;line-height:1.9;padding:0 12px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border-hi),transparent);margin:16px 0}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border);gap:12px}
+.price-row label{font-size:12.5px;color:var(--text-dim);flex:1;font-weight:600}
+.price-row input{width:140px;padding:9px 11px;border:1.5px solid var(--border);border-radius:9px;font-size:13.5px;text-align:left;direction:ltr;background:rgba(0,0,0,.25);color:var(--primary);font-weight:700}
+.cat-badge{display:inline-block;padding:3px 10px;border-radius:8px;background:rgba(0,214,143,.12);color:var(--primary);font-size:11px;font-weight:700;border:1px solid rgba(0,214,143,.25);margin-left:6px}
+.cat-use-btn{padding:5px 10px;border-radius:8px;background:var(--primary);color:#002018;border:none;font-family:inherit;font-weight:800;font-size:10.5px;cursor:pointer}
+.cat-use-btn:hover{background:var(--accent)}
+.empty-state{text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;line-height:1.8}
+.empty-state::before{content:"📭";display:block;font-size:36px;margin-bottom:10px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>محاسبه‌گر حرفه‌ای مخازن</h1>
+  <p>Caspian Mobadel Amard</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="t1">حجم از ابعاد</button>
+  <button class="tab" data-tab="t2">ابعاد از حجم</button>
+  <button class="tab" data-tab="t3">بهینه‌سازی ورق</button>
+  <button class="tab" data-tab="t4">وزن و ضخامت</button>
+  <button class="tab" data-tab="t5">قیمت‌گذاری</button>
+  <button class="tab" data-tab="t6">قیمت‌ها</button>
+  <button class="tab" data-tab="t7">📚 کاتالوگ</button>
+</div>
+
+<main>
+<div id="t1" class="panel active">
+  <div class="card">
+    <h2>محاسبه حجم از ابعاد</h2>
+    <div class="field"><label>نوع مخزن</label>
+      <select id="v-type">
+        <option value="cyl-dish">استوانه‌ای با دو عدسی</option>
+        <option value="cyl-flat">استوانه‌ای سر تخت</option>
+        <option value="box">مکعبی</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="field"><label>قطر/عرض (cm)</label><input type="number" id="v-d" step="0.1"></div>
+      <div class="field" id="f-v-h"><label>ارتفاع (cm)</label><input type="number" id="v-h" step="0.1"></div>
+      <div class="field" id="f-v-l" style="display:none"><label>طول (cm)</label><input type="number" id="v-l" step="0.1"></div>
+      <div class="field" id="f-v-w" style="display:none"><label>عرض (cm)</label><input type="number" id="v-w" step="0.1"></div>
+    </div>
+    <button class="btn" onclick="calcVol()">محاسبه</button>
+    <div id="v-res"></div>
+  </div>
+</div>
+
+<div id="t2" class="panel">
+  <div class="card">
+    <h2>ابعاد از حجم</h2>
+    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="d-v" step="1"></div>
+    <div class="field"><label>نوع</label>
+      <select id="d-type"><option value="cyl-dish">با عدسی</option><option value="cyl-flat">سر تخت</option></select>
+    </div>
+    <div class="row">
+      <div class="field"><label>قطر (cm) — اختیاری</label><input type="number" id="d-d" step="0.1"></div>
+      <div class="field"><label>ارتفاع (cm) — اختیاری</label><input type="number" id="d-h" step="0.1"></div>
+    </div>
+    <button class="btn" onclick="calcDim()">محاسبه</button>
+    <div id="d-res"></div>
+  </div>
+</div>
+
+<div id="t3" class="panel">
+  <div class="card">
+    <h2>بهینه‌سازی ورق</h2>
+    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="s-v" step="1"></div>
+    <div class="row">
+      <div class="field"><label>عرض ورق</label>
+        <select id="s-w"><option value="both">مقایسه ۱۵۰ و ۱۵۲</option><option value="150">۱۵۰</option><option value="152">۱۵۲</option></select>
+      </div>
+      <div class="field"><label>طول ورق (cm)</label><input type="number" id="s-l" value="600" step="1"></div>
+    </div>
+    <div class="field"><label>حداکثر کورس</label><input type="number" id="s-max" value="10" min="1" max="20" step="1"></div>
+    <button class="btn" onclick="optSheets()">محاسبه</button>
+    <div id="s-res"></div>
+  </div>
+</div>
+
+<div id="t4" class="panel">
+  <div class="card">
+    <h2>وزن و ضخامت</h2>
+    <div class="row">
+      <div class="field"><label>قطر (cm)</label><input type="number" id="w-d" step="0.1"></div>
+      <div class="field"><label>ارتفاع (cm)</label><input type="number" id="w-h" step="0.1"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>فشار (bar)</label><input type="number" id="w-p" value="6" step="0.5"></div>
+      <div class="field"><label>جنس</label>
+        <select id="w-mat"><option value="A516-70">A516 Gr70</option><option value="A283-C">A283 Gr C</option><option value="SS304">SS304</option><option value="SS316">SS316</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field"><label>ضخامت (mm) — اختیاری</label><input type="number" id="w-t" step="0.1"></div>
+      <div class="field"><label>عدسی</label>
+        <select id="w-head"><option value="torisph">تورسفریکال</option><option value="ellip">بیضوی</option><option value="flat">تخت</option></select>
+      </div>
+    </div>
+    <button class="btn" onclick="calcWeight()">محاسبه</button>
+    <div id="w-res"></div>
+  </div>
+</div>
+
+<div id="t5" class="panel">
+  <div class="card">
+    <h2>قیمت‌گذاری</h2>
+    <div class="row">
+      <div class="field"><label>قطر (cm)</label><input type="number" id="c-d" step="0.1"></div>
+      <div class="field"><label>ارتفاع (cm)</label><input type="number" id="c-h" step="0.1"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>فشار (bar)</label><input type="number" id="c-p" value="6" step="0.5"></div>
+      <div class="field"><label>جنس</label>
+        <select id="c-mat"><option value="A516-70">A516 Gr70</option><option value="SS304">SS304</option><option value="SS316">SS316</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field"><label>منهول</label>
+        <select id="c-man"><option value="0">بدون</option><option value="1" selected>۱ عدد</option><option value="2">۲ عدد</option></select>
+      </div>
+      <div class="field"><label>تعداد نازل</label><input type="number" id="c-noz" value="4" step="1"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>طول کویل (m)</label><input type="number" id="c-coil" value="0" step="0.1"></div>
+      <div class="field"><label>نوع کویل</label>
+        <select id="c-coil-type"><option value="copper_1_2">مسی ۱/۲</option><option value="copper_3_4">مسی ۳/۴</option><option value="copper_1">مسی ۱</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field"><label>عایق</label>
+        <select id="c-ins"><option value="none">بدون</option><option value="ceramic_50">۵۰mm</option><option value="ceramic_100">۱۰۰mm</option></select>
+      </div>
+      <div class="field"><label>سود (٪)</label><input type="number" id="c-profit" value="25" step="1"></div>
+    </div>
+    <button class="btn" onclick="calcCost()">محاسبه قیمت</button>
+    <div id="c-res"></div>
+  </div>
+</div>
+
+<div id="t6" class="panel">
+  <div class="card">
+    <h2>قیمت‌ها</h2>
+    <div id="price-editor"></div>
+    <button class="btn" onclick="savePrices()">💾 ذخیره</button>
+    <button class="btn sec" onclick="resetPrices()">↺ بازگشت</button>
+    <button class="btn sec" onclick="exportPrices()">⬇ دانلود JSON</button>
+    <div id="price-status"></div>
+  </div>
+</div>
+
+<div id="t7" class="panel">
+  <div class="card">
+    <h2>کاتالوگ</h2>
+    <div class="field"><label>دسته</label><select id="cat-category" onchange="renderCatalog()"></select></div>
+    <div class="field"><label>🔍 جستجو</label><input type="text" id="cat-search" placeholder="مثلاً 3000" oninput="renderCatalog()"></div>
+    <div id="cat-info"></div>
+    <div id="cat-table"></div>
+  </div>
+</div>
+
+<p class="footnote">ASME Sec VIII Div 1 — UG-27 / UG-32<br>محاسبات پیش‌طراحی است؛ نقشه مهندسی الزامی است.</p>
+</main>
+
+<script src="prices.js"></script>
+<script src="catalog.js"></script>
 <script>
-document.getElementById('result').textContent = '✅ JavaScript کار می‌کند — ساعت: ' + new Date().toLocaleTimeString('fa-IR');
+// ============ بررسی بارگذاری داده‌ها ============
+console.log('PRICES loaded:', typeof EMBEDDED_PRICES);
+console.log('CATALOG loaded:', typeof EMBEDDED_CATALOG);
+if(typeof EMBEDDED_CATALOG !== 'undefined'){
+  console.log('Categories:', Object.keys(EMBEDDED_CATALOG.categories).length);
+}
+
+// ============ فرمول‌ها ============
+const cylVol = (D,H) => Math.PI/4*D*D*H/1000;
+const dishVolTor = D => 0.0809*Math.pow(D,3)/1000;
+const dishVolEll = D => Math.PI/6*Math.pow(D,3)/1000/2;
+const dishAreaTor = D => 1.084*Math.PI/4*D*D;
+
+function totalVol(D,H,head){
+  let v = cylVol(D,H);
+  if(head==='torisph') v += 2*dishVolTor(D);
+  else if(head==='ellip') v += 2*dishVolEll(D);
+  return v;
+}
+function diameterFromVol(V,H,head){
+  const k = head==='torisph'?0.0809/1000 : head==='ellip'?(Math.PI/6/2/1000):0;
+  let lo=10, hi=1000;
+  for(let i=0;i<80;i++){
+    const mid=(lo+hi)/2;
+    const f = 2*k*Math.pow(mid,3) + (Math.PI*H/4)*mid*mid - V*1000;
+    if(f>0) hi=mid; else lo=mid;
+  }
+  return (lo+hi)/2;
+}
+function heightFromVol(V,D,head){
+  let vh=0;
+  if(head==='torisph') vh=2*dishVolTor(D);
+  else if(head==='ellip') vh=2*dishVolEll(D);
+  const vc = V-vh;
+  if(vc<=0) return 0;
+  return vc*1000/(Math.PI/4*D*D);
+}
+const MAT_S = {'A516-70':20000,'A283-C':15700,'SS304':16700,'SS316':16700};
+const MAT_RHO = {'A516-70':7850,'A283-C':7850,'SS304':8000,'SS316':8000};
+function shellThk(P,R,mat){ const p=P*14.5038; return (p*R)/(MAT_S[mat]-0.6*p)+1.5; }
+function headThk(P,D,mat){ const p=P*14.5038; return 0.885*p*D/(MAT_S[mat]-0.1*p)+1.5; }
+
+// ============ داده‌ها ============
+let PRICES = JSON.parse(JSON.stringify(window.EMBEDDED_PRICES || {}));
+let CATALOG = window.EMBEDDED_CATALOG || {categories:{}};
+
+function saveLocal(mod){
+  try{ localStorage.setItem('caspian_v3', JSON.stringify({version:PRICES.version, modified:!!mod, data:PRICES})); }catch(e){}
+}
+function readLocal(){
+  try{ const s=localStorage.getItem('caspian_v3'); return s?JSON.parse(s):null; }catch(e){ return null; }
+}
+function loadPricesLocal(){
+  const l = readLocal();
+  if(l){ PRICES = Object.assign({}, window.EMBEDDED_PRICES, l.data); }
+}
+
+// ============ کمک‌کننده ============
+function fmt(n,d=2){ if(!isFinite(n)||n==null) return '—'; return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:d}); }
+function fmtT(n){
+  if(!isFinite(n)) return '—';
+  if(n>=1e9) return fmt(n/1e9,3)+' میلیارد';
+  if(n>=1e6) return fmt(n/1e6,2)+' میلیون';
+  if(n>=1e3) return fmt(n/1e3,1)+' هزار';
+  return fmt(n,0);
+}
+function $(id){ return document.getElementById(id); }
+function val(id){ const e=$(id); return e?parseFloat(e.value):0; }
+
+// ============ Tabs ============
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    $(t.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+// ============ Tab 1 ============
+document.addEventListener('DOMContentLoaded',()=>{
+  const vt = $('v-type');
+  if(vt) vt.addEventListener('change',e=>{
+    const b = e.target.value==='box';
+    $('f-v-l').style.display = b?'block':'none';
+    $('f-v-w').style.display = b?'block':'none';
+    $('f-v-h').style.display = b?'none':'block';
+  });
+});
+
+function calcVol(){
+  const t = $('v-type').value, out = $('v-res');
+  if(t==='box'){
+    const W=val('v-d'), L=val('v-l'), H=val('v-w');
+    if(!(W>0&&L>0&&H>0)){ out.innerHTML='<div class="result red">همه ابعاد را پر کنید</div>'; return; }
+    const V=W*L*H/1000;
+    out.innerHTML = `<div class="result">
+      <div class="item"><span class="lbl">ابعاد:</span><span class="val">${fmt(W,1)}×${fmt(L,1)}×${fmt(H,1)}</span></div>
+      <div class="item big"><span class="lbl">حجم:</span><span class="val">${fmt(V)} لیتر</span></div>
+      <div class="item"><span class="lbl">سطح:</span><span class="val">${fmt(2*(W*L+W*H+L*H)/10000,2)} m²</span></div>
+    </div>`;
+    return;
+  }
+  const D=val('v-d'), H=val('v-h');
+  if(!(D>0&&H>0)){ out.innerHTML='<div class="result red">قطر و ارتفاع</div>'; return; }
+  const head = t==='cyl-dish'?'torisph':'flat';
+  const vB = cylVol(D,H), vH = head==='torisph'?2*dishVolTor(D):0;
+  const V = vB+vH;
+  const aB = Math.PI*D*H/10000;
+  const aH = head==='torisph'?2*dishAreaTor(D)/10000:2*(Math.PI/4*D*D)/10000;
+  out.innerHTML = `<div class="result">
+    <div class="item"><span class="lbl">حجم بدنه:</span><span class="val">${fmt(vB)} L</span></div>
+    <div class="item"><span class="lbl">حجم عدسی‌ها:</span><span class="val">${fmt(vH)} L</span></div>
+    <div class="item big"><span class="lbl">حجم کل:</span><span class="val">${fmt(V)} L</span></div>
+    <div class="item"><span class="lbl">سطح کل:</span><span class="val">${fmt(aB+aH,2)} m²</span></div>
+  </div>`;
+}
+
+// ============ Tab 2 ============
+function calcDim(){
+  const V=val('d-v'), D=val('d-d')||0, H=val('d-h')||0;
+  const head = $('d-type').value==='cyl-dish'?'torisph':'flat';
+  const out = $('d-res');
+  if(!(V>0)){ out.innerHTML='<div class="result red">ظرفیت</div>'; return; }
+  let html = '<div class="result">';
+  if(D>0&&H>0){
+    const Vc = totalVol(D,H,head);
+    html += `<div class="item big"><span class="lbl">حجم:</span><span class="val">${fmt(Vc)} L</span></div>`;
+    html += `<div class="item"><span class="lbl">اختلاف:</span><span class="val">${fmt(Vc-V,1)} L</span></div>`;
+  } else if(D>0){
+    const Hc = heightFromVol(V,D,head);
+    html += `<div class="item big"><span class="lbl">ارتفاع:</span><span class="val">${fmt(Hc,1)} cm</span></div>`;
+    const n=Math.max(1,Math.round(Hc/150)), Hf=n*150;
+    html += `<div class="item"><span class="lbl">با ورق ۱۵۰:</span><span class="val">${n} کورس = ${Hf} cm</span></div>`;
+  } else if(H>0){
+    const Dc = diameterFromVol(V,H,head);
+    html += `<div class="item big"><span class="lbl">قطر:</span><span class="val">${fmt(Dc,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">محیط:</span><span class="val">${fmt(Math.PI*Dc,1)} cm</span></div>`;
+  } else {
+    let best=null;
+    for(let n=1;n<=10;n++){
+      const Hf=n*150, Df=diameterFromVol(V,Hf,head);
+      const C=Math.PI*Df, m=Math.ceil(C/600), waste=n*(m*600-C);
+      const pct=waste/(n*m*600)*100;
+      if(!best||pct<best.pct) best={n,H:Hf,D:Df,C,m,waste,pct};
+    }
+    html += `<div class="item big"><span class="lbl">ارتفاع:</span><span class="val">${fmt(best.H,0)} cm</span></div>`;
+    html += `<div class="item big"><span class="lbl">قطر:</span><span class="val">${fmt(best.D,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">پرت:</span><span class="val">${fmt(best.pct,1)}٪</span></div>`;
+  }
+  out.innerHTML = html+'</div>';
+}
+
+// ============ Tab 3 ============
+function optSheets(){
+  const V=val('s-v'), wSel=$('s-w').value, L=val('s-l')||600, maxN=parseInt($('s-max').value)||10;
+  const out=$('s-res');
+  if(!(V>0)){ out.innerHTML='<div class="result red">ظرفیت</div>'; return; }
+  const widths = wSel==='both'?[150,152]:[parseFloat(wSel)];
+  const rows=[];
+  for(const w of widths) for(let n=1;n<=maxN;n++){
+    const H=n*w, D=diameterFromVol(V,H,'torisph'), C=Math.PI*D;
+    const m=Math.ceil(C/L), sheets=n*m, waste=n*(m*L-C), pct=waste/(sheets*L)*100;
+    rows.push({w,n,H,D,C,m,sheets,waste,pct});
+  }
+  rows.sort((a,b)=>Math.abs(a.pct-b.pct)>0.01?a.pct-b.pct:a.sheets-b.sheets);
+  const best={};
+  for(const w of widths){ const s=rows.filter(r=>r.w===w); if(s.length) best[w]=s[0]; }
+  let html = '<div class="table-wrap"><table><thead><tr><th>عرض</th><th>کورس</th><th>ارتفاع</th><th>قطر</th><th>ورق</th><th>کل</th><th>پرت٪</th></tr></thead><tbody>';
+  rows.slice(0,15).forEach(r=>{
+    const isB = best[r.w]&&best[r.w].n===r.n;
+    html += `<tr class="${isB?'best':''}"><td>${r.w}${isB?' <span class="badge best">✓</span>':''}</td><td>${r.n}</td><td>${fmt(r.H,0)}</td><td>${fmt(r.D,1)}</td><td>${r.m}</td><td>${r.sheets}</td><td>${fmt(r.pct,1)}</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  for(const w of widths){ const b=best[w]; if(!b) continue;
+    html += `<div class="result green" style="margin-top:12px">
+      <div class="item"><span class="lbl">🏆 عرض:</span><span class="val">${w} cm</span></div>
+      <div class="item big"><span class="lbl">ارتفاع:</span><span class="val">${fmt(b.H,0)} cm</span></div>
+      <div class="item big"><span class="lbl">قطر:</span><span class="val">${fmt(b.D,1)} cm</span></div>
+      <div class="item"><span class="lbl">کل ورق:</span><span class="val">${b.sheets}</span></div>
+      <div class="item"><span class="lbl">پرت:</span><span class="val">${fmt(b.pct,1)}٪</span></div>
+    </div>`;
+  }
+  out.innerHTML = html;
+}
+
+// ============ Tab 4 ============
+function calcWeight(){
+  const D=val('w-d'), H=val('w-h'), P=val('w-p'), mat=$('w-mat').value;
+  const head=$('w-head').value, tM=val('w-t')||0;
+  const out=$('w-res');
+  if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red">اطلاعات کامل</div>'; return; }
+  let tS=shellThk(P,D/2,mat), tH=headThk(P,D,mat);
+  const STD=[4,5,6,8,10,12,14,16,18,20,22,25];
+  const rU = x => STD.find(s=>s>=x)||Math.ceil(x);
+  const tSf=tM>0?tM:rU(tS), tHf=tM>0?tM:rU(tH);
+  const Dm=D/100, Hm=H/100;
+  const wShell = Math.PI*Dm*Hm*(tSf/1000)*MAT_RHO[mat];
+  let aH=0;
+  if(head==='torisph') aH=2*1.084*Math.PI/4*Dm*Dm;
+  else if(head==='ellip') aH=2*1.1*Math.PI/4*Dm*Dm;
+  else aH=2*Math.PI/4*Dm*Dm;
+  const wH = aH*(tHf/1000)*MAT_RHO[mat];
+  const wE = (wShell+wH)*0.08;
+  const Vw = totalVol(D,H,head);
+  const wT = wShell+wH+wE;
+  out.innerHTML = `<div class="result">
+    <div class="item"><span class="lbl">ضخامت پوسته ASME:</span><span class="val">${fmt(tS,2)} mm</span></div>
+    <div class="item"><span class="lbl">ضخامت عدسی:</span><span class="val">${fmt(tH,2)} mm</span></div>
+    <div class="item big"><span class="lbl">پوسته انتخابی:</span><span class="val">${tSf} mm</span></div>
+    <div class="item big"><span class="lbl">عدسی انتخابی:</span><span class="val">${tHf} mm</span></div>
+    <div class="divider"></div>
+    <div class="item"><span class="lbl">وزن پوسته:</span><span class="val">${fmt(wShell,0)} kg</span></div>
+    <div class="item"><span class="lbl">وزن عدسی‌ها:</span><span class="val">${fmt(wH,0)} kg</span></div>
+    <div class="item big"><span class="lbl">وزن خالی:</span><span class="val">${fmt(wT,0)} kg</span></div>
+    <div class="item big"><span class="lbl">وزن پر آب:</span><span class="val">${fmt(wT+Vw,0)} kg</span></div>
+    <div class="item"><span class="lbl">حجم آب:</span><span class="val">${fmt(Vw)} L</span></div>
+  </div>`;
+}
+
+// ============ Tab 5 ============
+function findSheetPrice(mat,t){
+  const keys = Object.keys(PRICES.sheets||{});
+  const cands = keys.filter(k=>k.startsWith(mat+'_'));
+  if(!cands.length){ const base=PRICES.sheets['A516-70_10']||43000; return mat.startsWith('SS')?base*4:base; }
+  let best=null;
+  for(const k of cands){ const tk=parseInt(k.split('_')[1]), d=Math.abs(tk-t); if(!best||d<best.d) best={d,price:PRICES.sheets[k]}; }
+  return best.price;
+}
+
+function calcCost(){
+  const D=val('c-d'), H=val('c-h'), P=val('c-p'), mat=$('c-mat').value;
+  const nMan=parseInt($('c-man').value), nNoz=parseInt($('c-noz').value);
+  const coilL=val('c-coil'), coilT=$('c-coil-type').value;
+  const ins=$('c-ins').value, profitPct=val('c-profit')||25;
+  const out=$('c-res');
+  if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red">اطلاعات کامل</div>'; return; }
+  let tS=shellThk(P,D/2,mat), tH=headThk(P,D,mat);
+  const STD=[4,5,6,8,10,12,14,16,18,20,22,25];
+  const rU = x => STD.find(s=>s>=x)||Math.ceil(x);
+  tS=rU(tS); tH=rU(tH);
+  const rho=MAT_RHO[mat];
+  const wS=Math.PI*(D/100)*(H/100)*(tS/1000)*rho;
+  const aH=2*1.084*Math.PI/4*Math.pow(D/100,2);
+  const wH=aH*(tH/1000)*rho;
+  const wSheet=(wS+wH)*1.15;
+  const pS=findSheetPrice(mat,tS);
+  const cSheet=wSheet*pS;
+  const cDish=(wH*pS)*((PRICES.dish_markup_pct||35)/100);
+  const cNoz=nNoz*(PRICES.flange_2inch||0);
+  const cMan=nMan*(PRICES.manhole_16||0);
+  const cCoil=coilL>0?coilL*((PRICES.pipe||{})[coilT]||0):0;
+  const Lw=H/100+Math.ceil(H/150)*Math.PI*D/100+nNoz*0.3;
+  const hW=Lw*2;
+  const cW=hW*(PRICES.welder_hr||0);
+  const cF=(hW*0.5)*(PRICES.fitter_hr||0);
+  const eKg=Lw*0.15;
+  const cE=eKg*(PRICES.electrode_kg||0);
+  const aB=Math.PI*(D/100)*(H/100);
+  const aT=aB+aH;
+  const cP=aT*((PRICES.paint_epoxy_m2||0)+(PRICES.paint_zinc_m2||0));
+  let cI=0;
+  if(ins==='ceramic_50') cI=aT*(PRICES.insul_ceramic_50_m2||0);
+  else if(ins==='ceramic_100') cI=aT*(PRICES.insul_ceramic_100_m2||0);
+  const s1=cSheet+cDish+cNoz+cMan+cCoil+cW+cF+cE+cP+cI;
+  const cC=s1*((PRICES.consumables_pct||8)/100);
+  const wT=wS+wH+nMan*50+50;
+  const cT=wT*(PRICES.transport_per_kg||0);
+  const total=s1+cC+cT;
+  const final=total*(1+profitPct/100);
+  out.innerHTML = `<div class="result">
+    <div class="item"><span class="lbl">ضخامت:</span><span class="val">${tS} mm</span></div>
+    <div class="item"><span class="lbl">قیمت ورق:</span><span class="val">${fmt(pS,0)}</span></div>
+    <div class="item"><span class="lbl">وزن ورق:</span><span class="val">${fmt(wSheet,0)} kg</span></div>
+    <div class="divider"></div>
+    <div class="item"><span class="lbl">ورق+عدسی:</span><span class="val">${fmtT(cSheet+cDish)}</span></div>
+    <div class="item"><span class="lbl">نازل:</span><span class="val">${fmtT(cNoz)}</span></div>
+    <div class="item"><span class="lbl">منهول:</span><span class="val">${fmtT(cMan)}</span></div>
+    <div class="item"><span class="lbl">کویل:</span><span class="val">${fmtT(cCoil)}</span></div>
+    <div class="item"><span class="lbl">جوشکاری:</span><span class="val">${fmtT(cW)}</span></div>
+    <div class="item"><span class="lbl">مونتاژ:</span><span class="val">${fmtT(cF)}</span></div>
+    <div class="item"><span class="lbl">الکترود:</span><span class="val">${fmtT(cE)}</span></div>
+    <div class="item"><span class="lbl">رنگ:</span><span class="val">${fmtT(cP)}</span></div>
+    <div class="item"><span class="lbl">عایق:</span><span class="val">${fmtT(cI)}</span></div>
+    <div class="item"><span class="lbl">مصرفی:</span><span class="val">${fmtT(cC)}</span></div>
+    <div class="item"><span class="lbl">حمل:</span><span class="val">${fmtT(cT)}</span></div>
+    <div class="divider"></div>
+    <div class="item big"><span class="lbl">جمع:</span><span class="val">${fmtT(total)}</span></div>
+    <div class="item big" style="border-top:2px solid var(--primary);padding-top:14px"><span class="lbl">💰 نهایی:</span><span class="val" style="font-size:22px">${fmtT(final)}</span></div>
+  </div>`;
+}
+
+// ============ Tab 6 ============
+const PRICE_LABELS = {
+  'sheets.A516-70_6':'ورق A516 6mm','sheets.A516-70_8':'ورق A516 8mm',
+  'sheets.A516-70_10':'ورق A516 10mm','sheets.A516-70_12':'ورق A516 12mm',
+  'sheets.SS304_6':'ورق SS304 6mm','sheets.SS316_6':'ورق SS316 6mm',
+  'dish_markup_pct':'کارمزد عدسی (٪)',
+  'pipe.copper_1_2':'لوله مسی ۱/۲','pipe.copper_3_4':'لوله مسی ۳/۴','pipe.copper_1':'لوله مسی ۱',
+  'flange_1inch':'فلنج ۱','flange_2inch':'فلنج ۲','flange_3inch':'فلنج ۳','flange_4inch':'فلنج ۴',
+  'manhole_16':'منهول ۱۶','electrode_kg':'الکترود',
+  'welder_hr':'جوشکار/ساعت','fitter_hr':'مونتاژکار/ساعت','painter_hr':'رنگ‌کار/ساعت',
+  'paint_epoxy_m2':'اپوکسی/m²','paint_zinc_m2':'زینک/m²',
+  'insul_ceramic_50_m2':'عایق ۵۰mm','insul_ceramic_100_m2':'عایق ۱۰۰mm',
+  'consumables_pct':'مصرفی (٪)','transport_per_kg':'حمل/kg'
+};
+
+function renderPriceEditor(){
+  const c = $('price-editor');
+  if(!c) return;
+  let html='';
+  for(const path in PRICE_LABELS){
+    const v = path.split('.').reduce((o,k)=>o&&o[k], PRICES);
+    html += `<div class="price-row"><label>${PRICE_LABELS[path]}</label><input type="number" data-path="${path}" value="${v!=null?v:0}" step="any"></div>`;
+  }
+  c.innerHTML = html;
+}
+
+function savePrices(){
+  document.querySelectorAll('#price-editor input').forEach(inp=>{
+    const path = inp.dataset.path.split('.');
+    let obj = PRICES;
+    for(let i=0;i<path.length-1;i++){ if(!obj[path[i]]) obj[path[i]]={}; obj=obj[path[i]]; }
+    obj[path[path.length-1]] = parseFloat(inp.value)||0;
+  });
+  saveLocal(true);
+  showPStatus('success','✅ ذخیره شد');
+}
+function resetPrices(){
+  if(!confirm('بازگشت به قیمت‌های اصلی؟')) return;
+  localStorage.removeItem('caspian_v3');
+  PRICES = JSON.parse(JSON.stringify(window.EMBEDDED_PRICES));
+  renderPriceEditor();
+  showPStatus('success','↺ بازگشت');
+}
+function exportPrices(){
+  const blob = new Blob([JSON.stringify(PRICES,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'prices.json';
+  a.click();
+}
+function showPStatus(t,m){
+  const s=$('price-status'); if(!s) return;
+  s.innerHTML = `<div class="notice ${t}">${m}</div>`;
+  setTimeout(()=>s.innerHTML='',3000);
+}
+
+// ============ Tab 7 ============
+function initCatalog(){
+  const sel = $('cat-category');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— انتخاب —</option>';
+  for(const k in CATALOG.categories){
+    const o = document.createElement('option');
+    o.value = k;
+    o.textContent = CATALOG.categories[k].name;
+    sel.appendChild(o);
+  }
+  $('cat-table').innerHTML = '<div class="empty-state">یک دسته انتخاب کنید</div>';
+}
+
+function renderCatalog(){
+  const k = $('cat-category').value;
+  const search = ($('cat-search').value||'').trim();
+  const info = $('cat-info'), tbl = $('cat-table');
+  if(!k){ info.innerHTML=''; tbl.innerHTML='<div class="empty-state">یک دسته انتخاب کنید</div>'; return; }
+  const cat = CATALOG.categories[k];
+  if(!cat){ tbl.innerHTML='<div class="empty-state">دسته پیدا نشد</div>'; return; }
+
+  let rows = cat.rows;
+  if(search){
+    const s = search.toLowerCase();
+    rows = rows.filter(r => r.some(v => String(v).toLowerCase().includes(s)));
+  }
+
+  let matchIdx = -1;
+  const n = parseFloat(search);
+  if(!isNaN(n) && /^\d+$/.test(search)){
+    let bd = Infinity;
+    rows.forEach((r,i)=>{
+      const cap = parseFloat(r[1])||0;
+      const d = Math.abs(cap-n);
+      if(cap>0 && d<bd){ bd=d; matchIdx=i; }
+    });
+  }
+
+  info.innerHTML = `<div class="notice info"><strong>${cat.name}</strong> <span class="cat-badge">${rows.length} مدل</span>${matchIdx>=0?'<br>🎯 نزدیک‌ترین سبز شده':''}</div>`;
+
+  let html = '<div class="table-wrap"><table><thead><tr>';
+  cat.columns.forEach(c => html += `<th>${c}</th>`);
+  html += '<th>عملیات</th></tr></thead><tbody>';
+
+  rows.forEach((r,i)=>{
+    const isM = i===matchIdx;
+    html += `<tr class="${isM?'cat-match':''}">`;
+    r.forEach(v => html += `<td>${v!=null?v:'—'}</td>`);
+    // پیدا کردن قطر و ارتفاع
+    const modelIdx = cat.keys.indexOf('model');
+    const dIdx = cat.keys.indexOf('D')>=0 ? cat.keys.indexOf('D') : cat.keys.indexOf('D1');
+    const hIdx = cat.keys.indexOf('H1')>=0 ? cat.keys.indexOf('H1') : cat.keys.indexOf('L1')>=0 ? cat.keys.indexOf('L1') : cat.keys.indexOf('H');
+    const model = modelIdx>=0 ? r[modelIdx] : '';
+    const D = dIdx>=0 ? r[dIdx] : '';
+    const H = hIdx>=0 ? r[hIdx] : '';
+    const dataJson = JSON.stringify({model,D,H}).replace(/"/g,'&quot;');
+    html += `<td><button class="cat-use-btn" onclick="useFromCat(this)" data-info="${dataJson}">استفاده</button></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  tbl.innerHTML = html;
+}
+
+function useFromCat(btn){
+  try{
+    const info = JSON.parse(btn.dataset.info);
+    const D = info.D ? (parseFloat(info.D)/10).toFixed(1) : '';
+    const H = info.H ? (parseFloat(info.H)/10).toFixed(1) : '';
+    ['v-d','d-d','w-d','c-d'].forEach(id => { if($(id)&&D) $(id).value = D; });
+    ['v-h','d-h','w-h','c-h'].forEach(id => { if($(id)&&H) $(id).value = H; });
+    showPStatus('success', `✓ ${info.model} منتقل شد`);
+    setTimeout(()=>document.querySelector('[data-tab="t1"]').click(), 300);
+  }catch(e){ console.warn(e); }
+}
+
+// ============ Bootstrap ============
+window.addEventListener('load', ()=>{
+  loadPricesLocal();
+  renderPriceEditor();
+  initCatalog();
+  console.log('✅ همه چیز بارگذاری شد');
+});
 </script>
 </body>
 </html>
