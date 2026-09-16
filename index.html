@@ -3,92 +3,371 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0a0f0d">
 <title>محاسبه‌گر حرفه‌ای مخازن — کاسپین بویلر</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c8102e">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 :root{
-  --primary:#c8102e;--primary-dark:#8b0b20;--bg:#eef2f7;--card:#fff;
-  --text:#1a1f2e;--muted:#64748b;--border:#d8e0ec;--accent:#0d4f8b;
-  --success:#059669;--warning:#d97706;--danger:#dc2626;
+  --bg:        #0a0f0d;
+  --bg-2:      #0f1613;
+  --card:      #131a17;
+  --card-2:    #182220;
+  --border:    #1e2a24;
+  --border-hi: #2a3a33;
+  --text:      #d8e5de;
+  --text-dim:  #94a89f;
+  --muted:     #64756c;
+  --primary:   #00d68f;
+  --primary-2: #00b377;
+  --primary-d: #008f5c;
+  --primary-g: rgba(0,214,143,.22);
+  --primary-g2: rgba(0,214,143,.08);
+  --accent:    #00ff9d;
+  --warn:      #f5a623;
+  --danger:    #ff4757;
+  --success:   #00d68f;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;font-family:Tahoma,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-body{padding-bottom:80px}
-header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
-header h1{margin:0;font-size:18px;font-weight:700}
-header p{margin:4px 0 0;font-size:11px;opacity:.85}
-.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);position:sticky;top:64px;z-index:99;overflow-x:auto;scrollbar-width:none}
+html,body{margin:0;padding:0;font-family:Tahoma,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+body{
+  background:
+    radial-gradient(ellipse 800px 600px at 0% 0%, rgba(0,214,143,.06), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 100% 100%, rgba(0,214,143,.04), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  padding-bottom:80px;
+  line-height:1.6;
+}
+
+/* ---------- Header ---------- */
+header{
+  padding:20px 16px 18px;
+  text-align:center;
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(180deg,rgba(10,15,13,.98) 0%,rgba(10,15,13,.85) 100%);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+header h1{
+  margin:0;font-size:19px;font-weight:800;letter-spacing:.3px;
+  background:linear-gradient(135deg,#fff 0%,var(--primary) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+header p{
+  margin:6px 0 0;font-size:11px;color:var(--muted);
+  letter-spacing:1.5px;text-transform:uppercase;font-weight:600;
+}
+header::after{
+  content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+  width:60px;height:2px;background:var(--primary);
+  border-radius:0 0 4px 4px;
+  box-shadow:0 0 12px var(--primary),0 0 24px var(--primary-g);
+}
+
+/* ---------- Tabs ---------- */
+.tabs{
+  display:flex;background:var(--bg-2);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:74px;z-index:99;
+  overflow-x:auto;scrollbar-width:none;
+}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;min-width:120px;padding:12px 10px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);border:none;background:none;font-family:inherit;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
-.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:#fff9fa}
-main{padding:14px;max-width:760px;margin:0 auto}
-.panel{display:none;animation:fadeIn .25s}
+.tab{
+  flex:0 0 auto;min-width:120px;padding:14px 12px;
+  text-align:center;cursor:pointer;font-size:12px;font-weight:700;
+  color:var(--muted);border:none;background:none;font-family:inherit;
+  border-bottom:2px solid transparent;transition:all .25s;white-space:nowrap;
+  position:relative;letter-spacing:.2px;
+}
+.tab:hover{color:var(--text-dim)}
+.tab.active{
+  color:var(--primary);
+  border-bottom-color:var(--primary);
+  background:linear-gradient(180deg,transparent,var(--primary-g2));
+}
+.tab.active::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:30px;height:2px;background:var(--primary);border-radius:0 0 4px 4px;
+  box-shadow:0 0 10px var(--primary);
+}
+
+/* ---------- Main ---------- */
+main{padding:16px;max-width:780px;margin:0 auto}
+.panel{display:none;animation:fadeIn .3s ease}
 .panel.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);border:1px solid #e5eaf2}
-.card h2{margin:0 0 14px;font-size:14px;color:var(--accent);display:flex;align-items:center;gap:8px;font-weight:700}
-.card h2::before{content:"";display:inline-block;width:4px;height:18px;background:var(--primary);border-radius:2px}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:12px;margin-bottom:6px;color:var(--text);font-weight:700}
-.field input,.field select{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:15px;font-family:inherit;background:#fff;transition:.2s;color:var(--text)}
-.field input:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
-.field input:disabled{background:#f4f6fa;color:var(--muted)}
-.hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.7}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Cards ---------- */
+.card{
+  background:linear-gradient(160deg,var(--card) 0%,var(--card-2) 100%);
+  border:1px solid var(--border);
+  border-radius:16px;padding:18px;margin-bottom:14px;
+  box-shadow:0 4px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.02);
+  position:relative;
+}
+.card::before{
+  content:"";position:absolute;top:0;left:20px;right:20px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-hi),transparent);
+}
+.card h2{
+  margin:0 0 16px;font-size:14px;color:var(--text);
+  display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.3px;
+}
+.card h2::before{
+  content:"";display:inline-block;width:4px;height:18px;
+  background:linear-gradient(180deg,var(--primary),var(--primary-d));
+  border-radius:2px;box-shadow:0 0 8px var(--primary-g);
+}
+
+/* ---------- Fields ---------- */
+.field{margin-bottom:14px}
+.field label{
+  display:block;font-size:11.5px;margin-bottom:7px;
+  color:var(--text-dim);font-weight:700;letter-spacing:.3px;
+  text-transform:uppercase;
+}
+.field input,.field select{
+  width:100%;padding:13px 14px;
+  border:1.5px solid var(--border);border-radius:11px;
+  font-size:15px;font-family:inherit;
+  background:rgba(0,0,0,.25);color:var(--text);
+  transition:all .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.field select{
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d68f' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 14px center;
+  background-size:16px;padding-left:42px;
+}
+.field input::placeholder{color:var(--muted);opacity:.7}
+.field input:focus,.field select:focus{
+  outline:none;border-color:var(--primary);
+  background:rgba(0,214,143,.04);
+  box-shadow:0 0 0 3px var(--primary-g2),0 0 20px var(--primary-g2);
+}
+.field input:disabled{background:rgba(0,0,0,.15);color:var(--muted)}
+.hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.75}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:520px){.row{grid-template-columns:1fr}}
-.btn{display:block;width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit;transition:.15s;letter-spacing:.3px}
-.btn:hover{background:var(--primary-dark)}
-.btn:active{transform:scale(.98)}
-.btn.sec{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
-.btn.sec:hover{background:#fff5f6}
-.result{background:linear-gradient(135deg,#f0f7ff,#e3eefb);border:1.5px solid #c9dcf0;border-radius:11px;padding:14px;margin-top:12px}
-.result .item{display:flex;justify-content:space-between;padding:8px 0;font-size:13.5px;border-bottom:1px dashed #c9dcf0;gap:8px;align-items:center}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:block;width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-2) 100%);
+  color:#002018;border:none;border-radius:12px;
+  font-size:15px;font-weight:800;cursor:pointer;
+  margin-top:8px;font-family:inherit;letter-spacing:.4px;
+  transition:all .2s;position:relative;overflow:hidden;
+  box-shadow:0 4px 16px var(--primary-g),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 24px var(--primary-g),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn:active{transform:translateY(0) scale(.99)}
+.btn.sec{
+  background:transparent;color:var(--primary);
+  border:1.5px solid var(--primary);
+  box-shadow:0 0 0 transparent;
+}
+.btn.sec:hover{
+  background:var(--primary-g2);
+  box-shadow:0 0 20px var(--primary-g2);
+}
+.btn.danger{
+  background:linear-gradient(135deg,var(--danger),#d63447);
+  color:#fff;box-shadow:0 4px 16px rgba(255,71,87,.25);
+}
+
+/* ---------- Results ---------- */
+.result{
+  background:linear-gradient(160deg,rgba(0,214,143,.05),rgba(0,214,143,.02));
+  border:1.5px solid rgba(0,214,143,.25);
+  border-radius:13px;padding:16px;margin-top:14px;
+  position:relative;
+  box-shadow:inset 0 1px 0 rgba(0,214,143,.08);
+}
+.result::before{
+  content:"";position:absolute;top:-1px;left:20px;right:20px;height:1.5px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+  border-radius:2px;
+}
+.result .item{
+  display:flex;justify-content:space-between;padding:9px 0;
+  font-size:13.5px;border-bottom:1px dashed rgba(0,214,143,.12);
+  gap:10px;align-items:center;
+}
 .result .item:last-child{border-bottom:none}
-.result .item .lbl{color:#334155;flex:1}
-.result .item .val{font-weight:700;color:var(--primary);text-align:left;direction:ltr;font-family:'Segoe UI',Tahoma,sans-serif}
-.result .item.big{padding:12px 0;font-size:16px}
+.result .item .lbl{color:var(--text-dim);flex:1}
+.result .item .val{
+  font-weight:800;color:var(--primary);
+  text-align:left;direction:ltr;
+  font-family:'Segoe UI',Tahoma,sans-serif;
+  letter-spacing:.2px;
+  text-shadow:0 0 12px var(--primary-g2);
+}
+.result .item.big{padding:13px 0;font-size:15px}
 .result .item.big .val{font-size:18px}
-.result.green{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac}
-.result.green .item .val{color:var(--success)}
-.result.orange{background:linear-gradient(135deg,#fff7ed,#fed7aa);border-color:#fdba74}
-.result.orange .item .val{color:var(--warning)}
-.result.red{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:#fca5a5}
+.result.green{
+  background:linear-gradient(160deg,rgba(0,214,143,.1),rgba(0,214,143,.03));
+  border-color:rgba(0,214,143,.4);
+}
+.result.green .item .val{color:var(--accent)}
+.result.orange{
+  background:linear-gradient(160deg,rgba(245,166,35,.08),rgba(245,166,35,.02));
+  border-color:rgba(245,166,35,.3);
+}
+.result.orange .item .val{color:var(--warn)}
+.result.red{
+  background:linear-gradient(160deg,rgba(255,71,87,.08),rgba(255,71,87,.02));
+  border-color:rgba(255,71,87,.3);
+}
 .result.red .item .val{color:var(--danger)}
+
+/* ---------- Table ---------- */
 table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-th,td{padding:8px 5px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
-th{background:#f0f4fa;color:var(--accent);font-weight:700;font-size:11px;position:sticky;top:0}
+th,td{padding:9px 6px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+th{
+  background:rgba(0,214,143,.05);color:var(--primary);
+  font-weight:800;font-size:11px;letter-spacing:.3px;
+  position:sticky;top:0;
+  text-transform:uppercase;
+}
+td{color:var(--text-dim)}
 td.ltr{direction:ltr;font-family:'Segoe UI',Tahoma,sans-serif}
-tr.best{background:#dcfce7}
-tr.best td{color:var(--success);font-weight:700}
-.badge{display:inline-block;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;margin-right:4px}
-.badge.best{background:var(--success);color:#fff}
-.badge.warn{background:var(--warning);color:#fff}
+tr.best{background:rgba(0,214,143,.08)}
+tr.best td{color:var(--accent);font-weight:700}
+.badge{
+  display:inline-block;padding:3px 8px;border-radius:8px;
+  font-size:10px;font-weight:800;margin-right:4px;letter-spacing:.3px;
+}
+.badge.best{
+  background:var(--primary);color:#002018;
+  box-shadow:0 0 10px var(--primary-g);
+}
+.badge.warn{background:var(--warn);color:#1a1200}
 .badge.danger{background:var(--danger);color:#fff}
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
-.footnote{font-size:11px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.8;padding:0 10px}
-.divider{height:1px;background:var(--border);margin:14px 0}
-.price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #e5eaf2;gap:10px}
+.table-wrap{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  margin:0 -18px;padding:0 18px;
+}
+
+/* ---------- Notices ---------- */
+.notice{
+  padding:12px 14px;border-radius:11px;font-size:12.5px;
+  line-height:1.75;margin-top:12px;
+  display:flex;align-items:flex-start;gap:8px;
+  border:1px solid;
+}
+.notice::before{flex:0 0 auto;font-size:14px;line-height:1.4}
+.notice.warn{
+  background:rgba(245,166,35,.08);
+  color:#f5c76a;border-color:rgba(245,166,35,.25);
+}
+.notice.warn::before{content:"⚠️"}
+.notice.info{
+  background:rgba(0,214,143,.06);
+  color:#a0e8c5;border-color:rgba(0,214,143,.2);
+}
+.notice.info::before{content:"ℹ️"}
+.notice.danger{
+  background:rgba(255,71,87,.08);
+  color:#ff8a94;border-color:rgba(255,71,87,.25);
+}
+.notice.danger::before{content:"✕"}
+.notice.success{
+  background:rgba(0,214,143,.1);
+  color:var(--primary);border-color:rgba(0,214,143,.35);
+}
+.notice.success::before{content:"✓"}
+.notice.update{
+  background:linear-gradient(135deg,rgba(0,214,143,.15),rgba(0,255,157,.06));
+  color:var(--accent);border-color:rgba(0,255,157,.4);
+  animation:glow 2s ease-in-out infinite;
+}
+.notice.update::before{content:"🔔"}
+@keyframes glow{
+  0%,100%{box-shadow:0 0 0 rgba(0,255,157,0)}
+  50%{box-shadow:0 0 20px var(--primary-g)}
+}
+
+/* ---------- Footnote ---------- */
+.footnote{
+  font-size:11px;color:var(--muted);text-align:center;
+  margin-top:24px;line-height:1.9;padding:0 12px;
+}
+.footnote br{margin-bottom:2px}
+
+/* ---------- Divider ---------- */
+.divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-hi),transparent);
+  margin:16px 0;
+}
+
+/* ---------- Price editor rows ---------- */
+.price-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px dashed var(--border);
+  gap:12px;
+}
 .price-row:last-child{border-bottom:none}
-.price-row label{font-size:12px;color:var(--text);flex:1;font-weight:600}
-.price-row input{width:130px;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:'Segoe UI',Tahoma,sans-serif;text-align:left;direction:ltr}
-.notice{padding:10px 12px;border-radius:9px;font-size:12px;line-height:1.7;margin-top:10px}
-.notice.warn{background:#fef3c7;color:#78350f;border:1px solid #fcd34d}
-.notice.info{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
-.notice.danger{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
-.notice.success{background:#dcfce7;color:#14532d;border:1px solid #86efac}
-.svg-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:10px;overflow:hidden}
-.loader{display:flex;align-items:center;justify-content:center;padding:12px;font-size:12px;color:var(--muted);gap:8px}
-.spin{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+.price-row label{
+  font-size:12.5px;color:var(--text-dim);flex:1;font-weight:600;
+  line-height:1.5;
+}
+.price-row input{
+  width:140px;padding:9px 11px;
+  border:1.5px solid var(--border);border-radius:9px;
+  font-size:13.5px;font-family:'Segoe UI',Tahoma,sans-serif;
+  text-align:left;direction:ltr;
+  background:rgba(0,0,0,.25);color:var(--primary);
+  font-weight:700;transition:all .2s;
+}
+.price-row input:focus{
+  outline:none;border-color:var(--primary);
+  box-shadow:0 0 0 3px var(--primary-g2),0 0 12px var(--primary-g2);
+}
+
+/* ---------- Loader ---------- */
+.loader{
+  display:flex;align-items:center;justify-content:center;
+  padding:14px;font-size:12px;color:var(--muted);gap:10px;
+}
+.spin{
+  width:16px;height:16px;
+  border:2px solid var(--border);
+  border-top-color:var(--primary);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  box-shadow:0 0 12px var(--primary-g2);
+}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Version tag ---------- */
+.version-tag{
+  display:inline-block;padding:2px 8px;border-radius:6px;
+  background:rgba(0,214,143,.1);color:var(--primary);
+  font-size:10px;font-weight:700;
+  font-family:'Segoe UI',monospace;letter-spacing:.4px;
+  border:1px solid rgba(0,214,143,.2);
+}
+
+/* ---------- Custom scrollbar ---------- */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary-d)}
 </style>
 </head>
 <body>
 
 <header>
   <h1>محاسبه‌گر حرفه‌ای مخازن</h1>
-  <p>کاسپین مبدل آمارد — فاز ۱</p>
+  <p>Caspian Mobadel Amard</p>
 </header>
 
 <div class="tabs">
@@ -117,19 +396,19 @@ tr.best td{color:var(--success);font-weight:700}
     <div class="row">
       <div class="field">
         <label>قطر / عرض (cm)</label>
-        <input type="number" id="v-d" placeholder="مثلاً 160" step="0.1" inputmode="decimal">
+        <input type="number" id="v-d" placeholder="160" step="0.1" inputmode="decimal">
       </div>
       <div class="field" id="f-v-h">
         <label>ارتفاع بدنه (cm)</label>
-        <input type="number" id="v-h" placeholder="مثلاً 300" step="0.1" inputmode="decimal">
+        <input type="number" id="v-h" placeholder="300" step="0.1" inputmode="decimal">
       </div>
       <div class="field" id="f-v-l" style="display:none">
         <label>طول (cm)</label>
-        <input type="number" id="v-l" placeholder="مثلاً 200" step="0.1" inputmode="decimal">
+        <input type="number" id="v-l" placeholder="200" step="0.1" inputmode="decimal">
       </div>
       <div class="field" id="f-v-w" style="display:none">
         <label>عرض (cm)</label>
-        <input type="number" id="v-w" placeholder="مثلاً 100" step="0.1" inputmode="decimal">
+        <input type="number" id="v-w" placeholder="100" step="0.1" inputmode="decimal">
       </div>
     </div>
     <button class="btn" onclick="calcVol()">محاسبه</button>
@@ -143,7 +422,7 @@ tr.best td{color:var(--success);font-weight:700}
     <h2>محاسبه ابعاد از حجم</h2>
     <div class="field">
       <label>ظرفیت مورد نیاز (لیتر)</label>
-      <input type="number" id="d-v" placeholder="مثلاً 7000" step="1" inputmode="decimal">
+      <input type="number" id="d-v" placeholder="7000" step="1" inputmode="decimal">
     </div>
     <div class="field">
       <label>نوع مخزن</label>
@@ -158,7 +437,7 @@ tr.best td{color:var(--success);font-weight:700}
         <input type="number" id="d-d" placeholder="خالی = پیشنهاد خودکار" step="0.1" inputmode="decimal">
       </div>
       <div class="field">
-        <label>ارتفاع بدنه (cm) — اختیاری</label>
+        <label>ارتفاع (cm) — اختیاری</label>
         <input type="number" id="d-h" placeholder="خالی = پیشنهاد خودکار" step="0.1" inputmode="decimal">
       </div>
     </div>
@@ -173,7 +452,7 @@ tr.best td{color:var(--success);font-weight:700}
     <h2>بهینه‌سازی برش ورق</h2>
     <div class="field">
       <label>ظرفیت (لیتر)</label>
-      <input type="number" id="s-v" placeholder="مثلاً 7000" step="1" inputmode="decimal">
+      <input type="number" id="s-v" placeholder="7000" step="1" inputmode="decimal">
     </div>
     <div class="row">
       <div class="field">
@@ -208,7 +487,7 @@ tr.best td{color:var(--success);font-weight:700}
         <input type="number" id="w-d" placeholder="160" step="0.1" inputmode="decimal">
       </div>
       <div class="field">
-        <label>ارتفاع بدنه (cm)</label>
+        <label>ارتفاع (cm)</label>
         <input type="number" id="w-h" placeholder="300" step="0.1" inputmode="decimal">
       </div>
     </div>
@@ -256,7 +535,7 @@ tr.best td{color:var(--success);font-weight:700}
         <input type="number" id="c-d" placeholder="160" step="0.1" inputmode="decimal">
       </div>
       <div class="field">
-        <label>ارتفاع بدنه (cm)</label>
+        <label>ارتفاع (cm)</label>
         <input type="number" id="c-h" placeholder="300" step="0.1" inputmode="decimal">
       </div>
     </div>
@@ -290,7 +569,7 @@ tr.best td{color:var(--success);font-weight:700}
     </div>
     <div class="row">
       <div class="field">
-        <label>طول لوله کویل (m) — صفر اگر ندارد</label>
+        <label>طول لوله کویل (m)</label>
         <input type="number" id="c-coil" value="0" step="0.1" inputmode="decimal">
       </div>
       <div class="field">
@@ -325,12 +604,12 @@ tr.best td{color:var(--success);font-weight:700}
 <div id="t6" class="panel">
   <div class="card">
     <h2>لیست قیمت‌ها (تومان)</h2>
-    <div class="hint" style="margin-bottom:12px">این قیمت‌ها از فایل <code>data/prices.json</code> بارگذاری می‌شوند و تغییرات شما در حافظه مرورگر ذخیره می‌شود.</div>
     <div id="price-status-initial"></div>
     <div id="price-editor"></div>
-    <button class="btn" onclick="savePrices()">ذخیره قیمت‌ها</button>
-    <button class="btn sec" onclick="resetPrices()">بازنشانی به پیش‌فرض فایل</button>
-    <button class="btn sec" onclick="exportPrices()">دانلود فایل JSON</button>
+    <button class="btn" onclick="savePrices()">💾 ذخیره در این دستگاه</button>
+    <button class="btn sec" onclick="checkUpdate(true)">🔄 بررسی بروزرسانی از سرور</button>
+    <button class="btn sec" onclick="resetPrices()">↺ بازگشت به قیمت‌های فایل</button>
+    <button class="btn sec" onclick="exportPrices()">⬇ دانلود فایل JSON</button>
     <div id="price-status"></div>
   </div>
 </div>
@@ -338,7 +617,7 @@ tr.best td{color:var(--success);font-weight:700}
 <p class="footnote">
   فرمول‌ها: ASME Sec VIII Div 1 — UG-27 (پوسته)، UG-32 (عدسی)<br>
   عدسی تورسفریکال F&D: R<sub>crown</sub>=D، r<sub>knuckle</sub>=0.06D<br>
-  محاسبات به‌صورت تقریبی برای پیش‌طراحی است؛ برای ساخت نهایی، نقشه مهندسی الزامی است.
+  محاسبات برای پیش‌طراحی است؛ برای ساخت نهایی، نقشه مهندسی الزامی است.
 </p>
 
 </main>
@@ -347,8 +626,6 @@ tr.best td{color:var(--success);font-weight:700}
 /* ========================================================
    فرمول‌های پایه
    ======================================================== */
-const RHO_STEEL = 7850;
-
 const cylVol = (D,H) => Math.PI/4 * D*D * H / 1000;
 const dishVolTorisph = D => 0.0809 * Math.pow(D,3) / 1000;
 const dishVolEllip = D => Math.PI/6 * Math.pow(D,3) / 1000 / 2;
@@ -386,16 +663,14 @@ function heightFromVol(V,D,head='torisph'){
 function shellThickness(P_bar, R_mm, mat='A516-70', E=1.0, CA=1.5){
   const P = P_bar * 14.5038;
   const S = MAT_S[mat] || 17500;
-  const t = (P * R_mm) / (S * E - 0.6 * P) + CA;
-  return t;
+  return (P * R_mm) / (S * E - 0.6 * P) + CA;
 }
 
 function headThickness(P_bar, D_mm, mat='A516-70', E=1.0, CA=1.5){
   const P = P_bar * 14.5038;
   const S = MAT_S[mat] || 17500;
   const L = D_mm;
-  const t = 0.885 * P * L / (S * E - 0.1 * P) + CA;
-  return t;
+  return 0.885 * P * L / (S * E - 0.1 * P) + CA;
 }
 
 const MAT_S = {
@@ -413,6 +688,7 @@ const MAT_RHO = {
    قیمت‌ها
    ======================================================== */
 const DEFAULT_PRICES = {
+  version: '2025-01-01-initial',
   currency: 'تومان',
   sheets: {
     'A516-70_6':  45000,
@@ -449,38 +725,136 @@ const DEFAULT_PRICES = {
 };
 
 let PRICES = JSON.parse(JSON.stringify(DEFAULT_PRICES));
+let USER_MODIFIED = false;
+let LOCAL_VERSION = null;
+let REMOTE_VERSION = null;
 
 /* ========================================================
-   🆕 بارگذاری قیمت‌ها — از localStorage یا فایل JSON
+   🆕 سیستم بارگذاری و بروزرسانی هوشمند
    ======================================================== */
-async function loadPrices(){
-  // ۱) اول localStorage (تنظیمات کاربر)
+function saveLocal(modified=false){
   try{
-    const s = localStorage.getItem('caspian_prices_v1');
-    if(s){
-      PRICES = Object.assign({}, DEFAULT_PRICES, JSON.parse(s));
-      return { source: 'localStorage' };
-    }
+    localStorage.setItem('caspian_prices_v2', JSON.stringify({
+      version: PRICES.version || 'unknown',
+      modified: modified,
+      data: PRICES,
+      savedAt: Date.now()
+    }));
   }catch(e){}
+}
 
-  // ۲) فایل data/prices.json
+function readLocal(){
   try{
-    const res = await fetch('data/prices.json', { cache: 'no-cache' });
-    if(res.ok){
-      const data = await res.json();
-      delete data._comment;
-      PRICES = Object.assign({}, DEFAULT_PRICES, data);
-      // در localStorage هم کپی کن که همیشه سریع باشد
-      try{ localStorage.setItem('caspian_prices_v1', JSON.stringify(PRICES)); }catch(e){}
-      return { source: 'file' };
-    }
+    const s = localStorage.getItem('caspian_prices_v2');
+    if(!s) return null;
+    return JSON.parse(s);
+  }catch(e){ return null; }
+}
+
+async function fetchRemote(){
+  try{
+    const res = await fetch('data/prices.json?t=' + Date.now(), {cache: 'no-store'});
+    if(!res.ok) return null;
+    const data = await res.json();
+    delete data._comment;
+    return data;
   }catch(e){
-    console.warn('بارگذاری فایل prices.json ناموفق:', e);
+    return null;
+  }
+}
+
+/**
+ * منطق بارگذاری:
+ * 1. اگر localStorage دارد و کاربر تغییر نداده → بررسی بروزرسانی
+ * 2. اگر کاربر تغییر داده → از local استفاده، ولی چک کن نسخه جدید هست یا نه
+ * 3. اگر local ندارد → از فایل بگیر
+ */
+async function loadPrices(){
+  const local = readLocal();
+  const remote = await fetchRemote();
+
+  // حالت ۱: کاربر قبلاً چیزی ذخیره کرده
+  if(local){
+    PRICES = Object.assign({}, DEFAULT_PRICES, local.data);
+    USER_MODIFIED = !!local.modified;
+    LOCAL_VERSION = local.version;
+
+    // اگر نسخه ریموت جدیدتر است
+    if(remote && remote.version && remote.version !== local.version){
+      REMOTE_VERSION = remote.version;
+      return {
+        source: 'local',
+        updateAvailable: true,
+        localVersion: local.version,
+        remoteVersion: remote.version,
+        userModified: USER_MODIFIED
+      };
+    }
+
+    return { source: 'local', updateAvailable: false };
   }
 
-  // ۳) پیش‌فرض داخل کد
+  // حالت ۲: هیچ چیز در local نیست → از فایل
+  if(remote){
+    PRICES = Object.assign({}, DEFAULT_PRICES, remote);
+    saveLocal(false);
+    return { source: 'file', updateAvailable: false };
+  }
+
+  // حالت ۳: هیچ چیز → پیش‌فرض
   PRICES = JSON.parse(JSON.stringify(DEFAULT_PRICES));
-  return { source: 'default' };
+  saveLocal(false);
+  return { source: 'default', updateAvailable: false };
+}
+
+/**
+ * بررسی دستی بروزرسانی از سرور
+ */
+async function checkUpdate(manual=false){
+  const remote = await fetchRemote();
+  if(!remote){
+    if(manual) showStatus('danger', 'اتصال به سرور برقرار نشد. اتصال اینترنت را بررسی کنید.');
+    return;
+  }
+
+  const currentVer = PRICES.version || 'unknown';
+
+  if(remote.version === currentVer){
+    if(manual) showStatus('success', `✅ شما از آخرین نسخه استفاده می‌کنید (${currentVer}).`);
+    return;
+  }
+
+  // نسخه جدید است
+  if(USER_MODIFIED){
+    // کاربر تغییرات داشته → بپرس
+    if(confirm(
+      `🔔 نسخه جدید قیمت‌ها موجود است:\n\n` +
+      `نسخه فعلی شما: ${currentVer}\n` +
+      `نسخه جدید: ${remote.version}\n\n` +
+      `توجه: شما تغییرات شخصی روی قیمت‌ها اعمال کرده‌اید.\n` +
+      `با تایید، تغییرات شما پاک شده و نسخه جدید اعمال می‌شود.\n\n` +
+      `آیا بروزرسانی شود؟`
+    )){
+      PRICES = Object.assign({}, DEFAULT_PRICES, remote);
+      USER_MODIFIED = false;
+      saveLocal(false);
+      renderPriceEditor();
+      showStatus('success', `✅ بروزرسانی به نسخه ${remote.version} انجام شد.`);
+    }
+  } else {
+    // کاربر تغییر نداده → خودکار بروزرسانی
+    PRICES = Object.assign({}, DEFAULT_PRICES, remote);
+    saveLocal(false);
+    renderPriceEditor();
+    showStatus('success', `✅ بروزرسانی خودکار به نسخه ${remote.version} انجام شد.`);
+  }
+}
+
+function showStatus(type, msg){
+  const s = $('price-status');
+  if(!s) return;
+  s.innerHTML = `<div class="notice ${type}">${msg}</div>`;
+  setTimeout(()=>{ if(s.innerHTML.includes(msg.substring(0,20))) s.innerHTML=''; }, 5000);
 }
 
 /* ========================================================
@@ -538,7 +912,7 @@ function calcVol(){
         <div class="item"><span class="lbl">ابعاد:</span><span class="val">${fmt(W,1)}×${fmt(L,1)}×${fmt(H,1)} cm</span></div>
         <div class="item big"><span class="lbl">حجم کل:</span><span class="val">${fmt(V)} لیتر</span></div>
         <div class="item"><span class="lbl">معادل:</span><span class="val">${fmt(V/1000,3)} m³</span></div>
-        <div class="item"><span class="lbl">سطح بدنه (رنگ):</span><span class="val">${fmt(2*(W*L+W*H+L*H)/10000,2)} m²</span></div>
+        <div class="item"><span class="lbl">سطح بدنه:</span><span class="val">${fmt(2*(W*L+W*H+L*H)/10000,2)} m²</span></div>
       </div>`;
     return;
   }
@@ -554,7 +928,7 @@ function calcVol(){
 
   out.innerHTML = `
     <div class="result">
-      <div class="item"><span class="lbl">نوع:</span><span class="val">${head==='torisph'?'عدسی تورسفریکال':'سر تخت'}</span></div>
+      <div class="item"><span class="lbl">نوع:</span><span class="val">${head==='torisph'?'تورسفریکال':'سر تخت'}</span></div>
       <div class="item"><span class="lbl">حجم بدنه:</span><span class="val">${fmt(vBody)} L</span></div>
       <div class="item"><span class="lbl">حجم دو عدسی:</span><span class="val">${fmt(vHead)} L</span></div>
       <div class="item big"><span class="lbl">حجم کل:</span><span class="val">${fmt(V)} لیتر</span></div>
@@ -587,7 +961,7 @@ function calcDim(){
     html += `<div class="item"><span class="lbl">اختلاف:</span><span class="val">${fmt(diff,1)} L (${fmt(diff/V*100,1)}٪)</span></div>`;
   } else if(D>0){
     const Hc = heightFromVol(V, D, head);
-    html += `<div class="item"><span class="lbl">قطر داده‌شده:</span><span class="val">${fmt(D,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">قطر:</span><span class="val">${fmt(D,1)} cm</span></div>`;
     html += `<div class="item big"><span class="lbl">ارتفاع بدنه:</span><span class="val">${fmt(Hc,1)} cm</span></div>`;
     html += `<div class="item"><span class="lbl">معادل:</span><span class="val">${fmt(Hc/100,3)} m</span></div>`;
     const w=150, n=Math.max(1,Math.round(Hc/w));
@@ -598,7 +972,7 @@ function calcDim(){
   } else if(H>0){
     const Dc = diameterFromVol(V, H, head);
     const C = Math.PI*Dc;
-    html += `<div class="item"><span class="lbl">ارتفاع داده‌شده:</span><span class="val">${fmt(H,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">ارتفاع:</span><span class="val">${fmt(H,1)} cm</span></div>`;
     html += `<div class="item big"><span class="lbl">قطر لازم:</span><span class="val">${fmt(Dc,1)} cm</span></div>`;
     html += `<div class="item"><span class="lbl">محیط:</span><span class="val">${fmt(C,1)} cm</span></div>`;
     const sheets = Math.ceil(C/600);
@@ -614,7 +988,7 @@ function calcDim(){
       const pct=waste/(n*m*600)*100;
       if(!best || pct<best.pct){ best={n,H:Hf,D:Df,C,m,waste,pct}; }
     }
-    html += `<div class="item"><span class="lbl">پیشنهاد بهینه (عرض ۱۵۰):</span></div>`;
+    html += `<div class="item"><span class="lbl">پیشنهاد بهینه (۱۵۰):</span></div>`;
     html += `<div class="item"><span class="lbl">کورس:</span><span class="val">${best.n}</span></div>`;
     html += `<div class="item big"><span class="lbl">ارتفاع نهایی:</span><span class="val">${fmt(best.H,0)} cm</span></div>`;
     html += `<div class="item big"><span class="lbl">قطر نهایی:</span><span class="val">${fmt(best.D,1)} cm</span></div>`;
@@ -672,12 +1046,12 @@ function optSheets(){
     <h2 style="font-size:13px">نتایج (۱۵ ردیف اول)</h2>
     <div class="table-wrap"><table><thead><tr>
       <th>عرض</th><th>کورس</th><th>ارتفاع</th><th>قطر</th><th>محیط</th>
-      <th>ورق/کورس</th><th>کل ورق</th><th>پرت cm</th><th>٪</th>
+      <th>ورق/کورس</th><th>کل</th><th>پرت</th><th>٪</th>
     </tr></thead><tbody>`;
   rows.slice(0,15).forEach(r=>{
     const isB = best[r.w] && best[r.w].n===r.n;
     html += `<tr class="${isB?'best':''}">`;
-    html += `<td>${r.w}${isB?' <span class="badge best">بهینه</span>':''}</td>`;
+    html += `<td>${r.w}${isB?' <span class="badge best">✓</span>':''}</td>`;
     html += `<td>${r.n}</td>`;
     html += `<td>${fmt(r.H,0)}</td>`;
     html += `<td>${fmt(r.D,1)}</td>`;
@@ -719,7 +1093,6 @@ function calcWeight(){
 
   if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red">قطر، ارتفاع و فشار را وارد کنید.</div>'; return; }
 
-  const S = MAT_S[mat];
   let tShell = shellThickness(P, D/2, mat);
   let tHead  = (head==='torisph') ? headThickness(P, D, mat)
               : (head==='ellip')   ? headThickness(P, D, mat)*0.9
@@ -732,7 +1105,6 @@ function calcWeight(){
   const tH_final = tManual>0 ? tManual : roundUp(tHead);
 
   const Dm = D/100, Hm = H/100, tSm = tS_final/1000, tHm = tH_final/1000;
-
   const vShell = Math.PI * Dm * Hm * tSm;
   const wShell = vShell * MAT_RHO[mat];
 
@@ -741,12 +1113,9 @@ function calcWeight(){
   else if(head==='ellip') aHead = 2 * (1.1 * Math.PI/4 * Dm*Dm);
   else aHead = 2 * (Math.PI/4 * Dm*Dm);
   const wHead = aHead * tHm * MAT_RHO[mat];
-
   const wExtra = (wShell + wHead) * 0.08;
-
   const aBody = Math.PI * Dm * Hm;
   const aTotal = aBody + aHead;
-
   const wTotal = wShell + wHead + wExtra;
   const Vwater = totalVol(D, H, head);
 
@@ -757,8 +1126,8 @@ function calcWeight(){
       <div class="divider"></div>
       <div class="item"><span class="lbl">ضخامت پوسته (ASME):</span><span class="val">${fmt(tShell,2)} mm</span></div>
       <div class="item"><span class="lbl">ضخامت عدسی (ASME):</span><span class="val">${fmt(tHead,2)} mm</span></div>
-      <div class="item big"><span class="lbl">ضخامت انتخابی پوسته:</span><span class="val">${tS_final} mm</span></div>
-      <div class="item big"><span class="lbl">ضخامت انتخابی عدسی:</span><span class="val">${tH_final} mm</span></div>
+      <div class="item big"><span class="lbl">ضخامت پوسته انتخابی:</span><span class="val">${tS_final} mm</span></div>
+      <div class="item big"><span class="lbl">ضخامت عدسی انتخابی:</span><span class="val">${tH_final} mm</span></div>
       <div class="divider"></div>
       <div class="item"><span class="lbl">وزن پوسته:</span><span class="val">${fmt(wShell,0)} kg</span></div>
       <div class="item"><span class="lbl">وزن دو عدسی:</span><span class="val">${fmt(wHead,0)} kg</span></div>
@@ -811,13 +1180,11 @@ function calcCost(){
   const tH = roundUp(tHead);
 
   const rho = MAT_RHO[mat];
-
   const vShell = Math.PI*(D/100)*(H/100)*(tS/1000);
   const wShell = vShell*rho;
   const aHead = 2*1.084*Math.PI/4*Math.pow(D/100,2);
   const wHead = aHead*(tH/1000)*rho;
-  const wasteFactor = 1.15;
-  const wSheet = (wShell + wHead) * wasteFactor;
+  const wSheet = (wShell + wHead) * 1.15;
 
   const priceSheet = findSheetPrice(mat, tS);
   const costSheet = wSheet * priceSheet;
@@ -854,8 +1221,8 @@ function calcCost(){
 
   out.innerHTML = `
     <div class="result">
-      <div class="item"><span class="lbl">ضخامت پوسته:</span><span class="val">${tS} mm — ${fmt(priceSheet,0)} تومان/kg</span></div>
-      <div class="item"><span class="lbl">ضخامت عدسی:</span><span class="val">${tH} mm</span></div>
+      <div class="item"><span class="lbl">ضخامت پوسته:</span><span class="val">${tS} mm</span></div>
+      <div class="item"><span class="lbl">قیمت ورق:</span><span class="val">${fmt(priceSheet,0)} تومان/kg</span></div>
       <div class="item"><span class="lbl">وزن ورق خام:</span><span class="val">${fmt(wSheet,0)} kg</span></div>
       <div class="divider"></div>
       <div class="item"><span class="lbl">۱. ورق + عدسی:</span><span class="val">${fmtT(costSheet + costDish)}</span></div>
@@ -874,9 +1241,9 @@ function calcCost(){
       <div class="item big"><span class="lbl">سود (${profitPct}٪):</span><span class="val">${fmtT(total*profitPct/100)} تومان</span></div>
       <div class="item big" style="padding-top:14px;border-top:2px solid var(--primary)">
         <span class="lbl">💰 قیمت نهایی:</span>
-        <span class="val" style="font-size:20px">${fmtT(finalPrice)} تومان</span>
+        <span class="val" style="font-size:22px">${fmtT(finalPrice)} تومان</span>
       </div>
-      <div class="item"><span class="lbl">قیمت/kg ساخته‌شده:</span><span class="val">${fmt(finalPrice/wTotal,0)} تومان/kg</span></div>
+      <div class="item"><span class="lbl">قیمت/kg ساخته:</span><span class="val">${fmt(finalPrice/wTotal,0)} تومان/kg</span></div>
     </div>
     <div class="notice warn">
       قیمت تقریبی است. قیمت نهایی پس از نقشه‌کشی و تأیید مهندسی اعلام می‌گردد.
@@ -887,31 +1254,36 @@ function calcCost(){
    Tab 6 — ویرایشگر
    ======================================================== */
 const PRICE_LABELS = {
-  'sheets.A516-70_6':  'ورق A516 6mm (تومان/kg)',
-  'sheets.A516-70_8':  'ورق A516 8mm (تومان/kg)',
-  'sheets.A516-70_10': 'ورق A516 10mm (تومان/kg)',
-  'sheets.A516-70_12': 'ورق A516 12mm (تومان/kg)',
-  'sheets.SS304_6':    'ورق SS304 6mm (تومان/kg)',
-  'sheets.SS316_6':    'ورق SS316 6mm (تومان/kg)',
-  'dish_markup_pct':   'کارمزد ساخت عدسی (٪)',
-  'pipe.copper_1_2':   'لوله مسی ۱/۲ (تومان/m)',
-  'pipe.copper_3_4':   'لوله مسی ۳/۴ (تومان/m)',
-  'pipe.copper_1':     'لوله مسی ۱ (تومان/m)',
+  'sheets.A516-70_6':  'ورق A516 6mm',
+  'sheets.A516-70_8':  'ورق A516 8mm',
+  'sheets.A516-70_10': 'ورق A516 10mm',
+  'sheets.A516-70_12': 'ورق A516 12mm',
+  'sheets.SS304_6':    'ورق SS304 6mm',
+  'sheets.SS316_6':    'ورق SS316 6mm',
+  'dish_markup_pct':   'کارمزد ساخت عدسی',
+  'pipe.copper_1_2':   'لوله مسی ۱/۲',
+  'pipe.copper_3_4':   'لوله مسی ۳/۴',
+  'pipe.copper_1':     'لوله مسی ۱',
   'flange_1inch':      'فلنج ۱ اینچ',
   'flange_2inch':      'فلنج ۲ اینچ',
   'flange_3inch':      'فلنج ۳ اینچ',
   'flange_4inch':      'فلنج ۴ اینچ',
   'manhole_16':        'منهول ۱۶ اینچ',
-  'electrode_kg':      'الکترود E7018 (تومان/kg)',
-  'welder_hr':         'دستمزد جوشکار (تومان/ساعت)',
-  'fitter_hr':         'دستمزد مونتاژکار (تومان/ساعت)',
-  'painter_hr':        'دستمزد رنگ‌کار (تومان/ساعت)',
-  'paint_epoxy_m2':    'رنگ اپوکسی (تومان/m²)',
-  'paint_zinc_m2':     'رنگ زینک‌ریچ (تومان/m²)',
-  'insul_ceramic_50_m2':'عایق سرامیکی ۵۰mm (تومان/m²)',
-  'insul_ceramic_100_m2':'عایق سرامیکی ۱۰۰mm (تومان/m²)',
+  'electrode_kg':      'الکترود E7018',
+  'welder_hr':         'دستمزد جوشکار/ساعت',
+  'fitter_hr':         'دستمزد مونتاژکار/ساعت',
+  'painter_hr':        'دستمزد رنگ‌کار/ساعت',
+  'paint_epoxy_m2':    'رنگ اپوکسی/m²',
+  'paint_zinc_m2':     'رنگ زینک‌ریچ/m²',
+  'insul_ceramic_50_m2':'عایق سرامیکی ۵۰mm/m²',
+  'insul_ceramic_100_m2':'عایق سرامیکی ۱۰۰mm/m²',
   'consumables_pct':   'مواد مصرفی جانبی (٪)',
-  'transport_per_kg':  'حمل (تومان/kg)',
+  'transport_per_kg':  'حمل/kg',
+};
+
+const PRICE_UNITS = {
+  'dish_markup_pct': '٪',
+  'consumables_pct': '٪',
 };
 
 function renderPriceEditor(){
@@ -919,8 +1291,9 @@ function renderPriceEditor(){
   let html = '';
   for(const path in PRICE_LABELS){
     const v = path.split('.').reduce((o,k)=>o&&o[k], PRICES);
+    const unit = PRICE_UNITS[path] || 'تومان';
     html += `<div class="price-row">
-      <label>${PRICE_LABELS[path]}</label>
+      <label>${PRICE_LABELS[path]} <span style="color:var(--muted);font-size:10px">(${unit})</span></label>
       <input type="number" data-path="${path}" value="${v!=null?v:0}" step="any" inputmode="decimal">
     </div>`;
   }
@@ -938,38 +1311,43 @@ function savePrices(){
     }
     obj[path[path.length-1]] = parseFloat(inp.value) || 0;
   });
-  try{
-    localStorage.setItem('caspian_prices_v1', JSON.stringify(PRICES));
-    $('price-status').innerHTML = '<div class="notice success">✅ قیمت‌ها در این دستگاه ذخیره شد.</div>';
-  }catch(e){
-    $('price-status').innerHTML = '<div class="notice danger">خطا در ذخیره‌سازی</div>';
-  }
-  setTimeout(()=>{ $('price-status').innerHTML=''; }, 2500);
+
+  // نسخه را با پسوند -user علامت بزن تا در بروزرسانی مشخص باشد
+  PRICES.version = (PRICES.version || 'unknown').split('-user')[0] + '-user';
+  USER_MODIFIED = true;
+  saveLocal(true);
+  showStatus('success', '✅ قیمت‌ها در این دستگاه ذخیره شد.');
 }
 
 async function resetPrices(){
-  if(!confirm('قیمت‌ها به مقدار فایل data/prices.json برگردند؟')) return;
-  localStorage.removeItem('caspian_prices_v1');
-  const r = await loadPrices();
+  if(!confirm('قیمت‌ها به مقادیر فایل اصلی برگردند؟\n\nتغییرات شخصی شما پاک می‌شود.')) return;
+  const remote = await fetchRemote();
+  if(!remote){
+    showStatus('danger', 'فایل prices.json در دسترس نیست.');
+    return;
+  }
+  PRICES = Object.assign({}, DEFAULT_PRICES, remote);
+  USER_MODIFIED = false;
+  saveLocal(false);
   renderPriceEditor();
-  $('price-status').innerHTML = r.source==='file'
-    ? '<div class="notice success">↺ قیمت‌ها از فایل بارگذاری شد.</div>'
-    : '<div class="notice warn">↺ فایل در دسترس نبود؛ مقادیر پیش‌فرض داخلی اعمال شد.</div>';
-  setTimeout(()=>{ $('price-status').innerHTML=''; }, 3000);
+  showStatus('success', `↺ بازگشت به نسخه ${remote.version || 'فایل'}.`);
 }
 
 function exportPrices(){
-  const blob = new Blob([JSON.stringify(PRICES,null,2)],{type:'application/json'});
+  const data = JSON.parse(JSON.stringify(PRICES));
+  // تاریخ بروزرسانی اضافه کن
+  data.version = new Date().toISOString().slice(0,10) + '-exported';
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'prices-' + new Date().toISOString().slice(0,10) + '.json';
+  a.download = 'prices-' + data.version + '.json';
   a.click();
   URL.revokeObjectURL(url);
 }
 
 /* ========================================================
-   🆕 initialization — همه چیز بعد از بارگذاری قیمت‌ها
+   🆕 initialization
    ======================================================== */
 window.addEventListener('load', async () => {
   const status = $('price-status-initial');
@@ -978,16 +1356,33 @@ window.addEventListener('load', async () => {
   const result = await loadPrices();
 
   if(status){
-    if(result.source==='file'){
-      status.innerHTML = '<div class="notice success">✅ قیمت‌ها از فایل <code>data/prices.json</code> بارگذاری شد.</div>';
-    } else if(result.source==='localStorage'){
-      status.innerHTML = '<div class="notice info">📱 قیمت‌های ذخیره‌شده در این دستگاه بارگذاری شد. برای بازگشت به فایل، دکمه «بازنشانی» را بزنید.</div>';
+    if(result.updateAvailable){
+      // نسخه جدید موجود است
+      const userMsg = result.userModified
+        ? 'شما تغییرات شخصی دارید.'
+        : 'با تایید، بروزرسانی خودکار انجام می‌شود.';
+      status.innerHTML = `
+        <div class="notice update">
+          <div>
+            <strong>🔔 نسخه جدید قیمت‌ها موجود است!</strong><br>
+            نسخه شما: <span class="version-tag">${result.localVersion}</span>
+            → نسخه جدید: <span class="version-tag">${result.remoteVersion}</span><br>
+            <span style="font-size:11px;opacity:.85">${userMsg}</span>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" style="margin:0;padding:10px;font-size:13px;flex:1;min-width:120px" onclick="checkUpdate(true)">بروزرسانی کن</button>
+              <button class="btn sec" style="margin:0;padding:10px;font-size:13px;flex:1;min-width:100px" onclick="this.closest('.notice').remove()">بعداً</button>
+            </div>
+          </div>
+        </div>`;
+    } else if(result.source==='file'){
+      status.innerHTML = `<div class="notice success">✅ قیمت‌ها از فایل سرور بارگذاری شد. <span class="version-tag">${PRICES.version}</span></div>`;
+    } else if(result.source==='local'){
+      status.innerHTML = `<div class="notice info">📱 قیمت‌های ذخیره‌شده در این دستگاه. <span class="version-tag">${PRICES.version}</span></div>`;
     } else {
-      status.innerHTML = '<div class="notice warn">⚠️ فایل <code>data/prices.json</code> پیدا نشد. از مقادیر پیش‌فرض استفاده می‌شود.</div>';
+      status.innerHTML = `<div class="notice warn">⚠️ فایل prices.json پیدا نشد. از مقادیر پیش‌فرض استفاده می‌شود.</div>`;
     }
   }
 
-  // ویرایشگر را با قیمت‌های بارگذاری‌شده بساز
   renderPriceEditor();
 
   // Service Worker
