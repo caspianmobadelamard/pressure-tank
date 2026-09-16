@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>محاسبه‌گر حرفه‌ای مخازن — کاسپین بویلر</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c8102e">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{
+  --primary:#c8102e;--primary-dark:#8b0b20;--bg:#eef2f7;--card:#fff;
+  --text:#1a1f2e;--muted:#64748b;--border:#d8e0ec;--accent:#0d4f8b;
+  --success:#059669;--warning:#d97706;--danger:#dc2626;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;font-family:Tahoma,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+body{padding-bottom:80px}
+header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+header h1{margin:0;font-size:18px;font-weight:700}
+header p{margin:4px 0 0;font-size:11px;opacity:.85}
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);position:sticky;top:64px;z-index:99;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;min-width:120px;padding:12px 10px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);border:none;background:none;font-family:inherit;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:#fff9fa}
+main{padding:14px;max-width:760px;margin:0 auto}
+.panel{display:none;animation:fadeIn .25s}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);border:1px solid #e5eaf2}
+.card h2{margin:0 0 14px;font-size:14px;color:var(--accent);display:flex;align-items:center;gap:8px;font-weight:700}
+.card h2::before{content:"";display:inline-block;width:4px;height:18px;background:var(--primary);border-radius:2px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;margin-bottom:6px;color:var(--text);font-weight:700}
+.field input,.field select{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:15px;font-family:inherit;background:#fff;transition:.2s;color:var(--text)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
+.field input:disabled{background:#f4f6fa;color:var(--muted)}
+.hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.7}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+.btn{display:block;width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit;transition:.15s;letter-spacing:.3px}
+.btn:hover{background:var(--primary-dark)}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+.btn.sec:hover{background:#fff5f6}
+.result{background:linear-gradient(135deg,#f0f7ff,#e3eefb);border:1.5px solid #c9dcf0;border-radius:11px;padding:14px;margin-top:12px}
+.result .item{display:flex;justify-content:space-between;padding:8px 0;font-size:13.5px;border-bottom:1px dashed #c9dcf0;gap:8px;align-items:center}
+.result .item:last-child{border-bottom:none}
+.result .item .lbl{color:#334155;flex:1}
+.result .item .val{font-weight:700;color:var(--primary);text-align:left;direction:ltr;font-family:'Segoe UI',Tahoma,sans-serif}
+.result .item.big{padding:12px 0;font-size:16px}
+.result .item.big .val{font-size:18px}
+.result.green{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac}
+.result.green .item .val{color:var(--success)}
+.result.orange{background:linear-gradient(135deg,#fff7ed,#fed7aa);border-color:#fdba74}
+.result.orange .item .val{color:var(--warning)}
+.result.red{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:#fca5a5}
+.result.red .item .val{color:var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th,td{padding:8px 5px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+th{background:#f0f4fa;color:var(--accent);font-weight:700;font-size:11px;position:sticky;top:0}
+td.ltr{direction:ltr;font-family:'Segoe UI',Tahoma,sans-serif}
+tr.best{background:#dcfce7}
+tr.best td{color:var(--success);font-weight:700}
+.badge{display:inline-block;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;margin-right:4px}
+.badge.best{background:var(--success);color:#fff}
+.badge.warn{background:var(--warning);color:#fff}
+.badge.danger{background:var(--danger);color:#fff}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
+.footnote{font-size:11px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.8;padding:0 10px}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #e5eaf2;gap:10px}
+.price-row:last-child{border-bottom:none}
+.price-row label{font-size:12px;color:var(--text);flex:1;font-weight:600}
+.price-row input{width:130px;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:'Segoe UI',Tahoma,sans-serif;text-align:left;direction:ltr}
+.notice{padding:10px 12px;border-radius:9px;font-size:12px;line-height:1.7;margin-top:10px}
+.notice.warn{background:#fef3c7;color:#78350f;border:1px solid #fcd34d}
+.notice.info{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
+.notice.danger{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
+.notice.success{background:#dcfce7;color:#14532d;border:1px solid #86efac}
+.svg-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:10px;overflow:hidden}
+.loader{display:flex;align-items:center;justify-content:center;padding:12px;font-size:12px;color:var(--muted);gap:8px}
+.spin{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>محاسبه‌گر حرفه‌ای مخازن</h1>
+  <p>کاسپین مبدل آمارد — فاز ۱</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="t1">حجم از ابعاد</button>
+  <button class="tab" data-tab="t2">ابعاد از حجم</button>
+  <button class="tab" data-tab="t3">بهینه‌سازی ورق</button>
+  <button class="tab" data-tab="t4">وزن و ضخامت</button>
+  <button class="tab" data-tab="t5">قیمت‌گذاری</button>
+  <button class="tab" data-tab="t6">قیمت‌ها</button>
+</div>
+
+<main>
+
+<!-- ============ تب ۱ ============ -->
+<div id="t1" class="panel active">
+  <div class="card">
+    <h2>محاسبه حجم از ابعاد</h2>
+    <div class="field">
+      <label>نوع مخزن</label>
+      <select id="v-type">
+        <option value="cyl-dish">استوانه‌ای با دو عدسی تورسفریکال</option>
+        <option value="cyl-flat">استوانه‌ای با دو سر تخت</option>
+        <option value="box">مکعبی (انبساط باز)</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>قطر / عرض (cm)</label>
+        <input type="number" id="v-d" placeholder="مثلاً 160" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field" id="f-v-h">
+        <label>ارتفاع بدنه (cm)</label>
+        <input type="number" id="v-h" placeholder="مثلاً 300" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field" id="f-v-l" style="display:none">
+        <label>طول (cm)</label>
+        <input type="number" id="v-l" placeholder="مثلاً 200" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field" id="f-v-w" style="display:none">
+        <label>عرض (cm)</label>
+        <input type="number" id="v-w" placeholder="مثلاً 100" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+    <button class="btn" onclick="calcVol()">محاسبه</button>
+    <div id="v-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۲ ============ -->
+<div id="t2" class="panel">
+  <div class="card">
+    <h2>محاسبه ابعاد از حجم</h2>
+    <div class="field">
+      <label>ظرفیت مورد نیاز (لیتر)</label>
+      <input type="number" id="d-v" placeholder="مثلاً 7000" step="1" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>نوع مخزن</label>
+      <select id="d-type">
+        <option value="cyl-dish">استوانه‌ای با دو عدسی تورسفریکال</option>
+        <option value="cyl-flat">استوانه‌ای با دو سر تخت</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>قطر (cm) — اختیاری</label>
+        <input type="number" id="d-d" placeholder="خالی = پیشنهاد خودکار" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>ارتفاع بدنه (cm) — اختیاری</label>
+        <input type="number" id="d-h" placeholder="خالی = پیشنهاد خودکار" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+    <button class="btn" onclick="calcDim()">محاسبه</button>
+    <div id="d-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۳ ============ -->
+<div id="t3" class="panel">
+  <div class="card">
+    <h2>بهینه‌سازی برش ورق</h2>
+    <div class="field">
+      <label>ظرفیت (لیتر)</label>
+      <input type="number" id="s-v" placeholder="مثلاً 7000" step="1" inputmode="decimal">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>عرض ورق (cm)</label>
+        <select id="s-w">
+          <option value="both">مقایسه ۱۵۰ و ۱۵۲</option>
+          <option value="150">۱۵۰</option>
+          <option value="152">۱۵۲</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>طول ورق (cm)</label>
+        <input type="number" id="s-l" value="600" step="1" inputmode="decimal">
+      </div>
+    </div>
+    <div class="field">
+      <label>حداکثر تعداد کورس</label>
+      <input type="number" id="s-max" value="10" min="1" max="20" step="1" inputmode="numeric">
+    </div>
+    <button class="btn" onclick="optSheets()">محاسبه</button>
+    <div id="s-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۴ ============ -->
+<div id="t4" class="panel">
+  <div class="card">
+    <h2>محاسبه وزن و ضخامت</h2>
+    <div class="row">
+      <div class="field">
+        <label>قطر (cm)</label>
+        <input type="number" id="w-d" placeholder="160" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>ارتفاع بدنه (cm)</label>
+        <input type="number" id="w-h" placeholder="300" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>فشار طراحی (bar)</label>
+        <input type="number" id="w-p" value="6" step="0.5" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>جنس</label>
+        <select id="w-mat">
+          <option value="A516-70">A516 Gr70</option>
+          <option value="A283-C">A283 Gr C</option>
+          <option value="SS304">Stainless 304</option>
+          <option value="SS316">Stainless 316</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>ضخامت ورق (mm) — اختیاری</label>
+        <input type="number" id="w-t" placeholder="خالی = ASME" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>نوع عدسی</label>
+        <select id="w-head">
+          <option value="torisph">تورسفریکال F&D</option>
+          <option value="ellip">بیضوی 2:1</option>
+          <option value="flat">تخت</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="calcWeight()">محاسبه</button>
+    <div id="w-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۵ ============ -->
+<div id="t5" class="panel">
+  <div class="card">
+    <h2>قیمت‌گذاری کامل</h2>
+    <div class="row">
+      <div class="field">
+        <label>قطر (cm)</label>
+        <input type="number" id="c-d" placeholder="160" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>ارتفاع بدنه (cm)</label>
+        <input type="number" id="c-h" placeholder="300" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>فشار (bar)</label>
+        <input type="number" id="c-p" value="6" step="0.5" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>جنس</label>
+        <select id="c-mat">
+          <option value="A516-70">A516 Gr70</option>
+          <option value="SS304">Stainless 304</option>
+          <option value="SS316">Stainless 316</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>تعداد منهول</label>
+        <select id="c-man">
+          <option value="0">بدون منهول</option>
+          <option value="1" selected>۱ عدد ۱۶ اینچ</option>
+          <option value="2">۲ عدد ۱۶ اینچ</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>تعداد نازل</label>
+        <input type="number" id="c-noz" value="4" min="0" max="20" step="1" inputmode="numeric">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>طول لوله کویل (m) — صفر اگر ندارد</label>
+        <input type="number" id="c-coil" value="0" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>نوع لوله کویل</label>
+        <select id="c-coil-type">
+          <option value="copper_1_2">مسی ۱/۲ اینچ</option>
+          <option value="copper_3_4">مسی ۳/۴ اینچ</option>
+          <option value="copper_1">مسی ۱ اینچ</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>عایق‌کاری</label>
+        <select id="c-ins">
+          <option value="none">بدون عایق</option>
+          <option value="ceramic_50">سرامیکی ۵۰ mm</option>
+          <option value="ceramic_100">سرامیکی ۱۰۰ mm</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>سود و مالیات (٪)</label>
+        <input type="number" id="c-profit" value="25" step="1" inputmode="decimal">
+      </div>
+    </div>
+    <button class="btn" onclick="calcCost()">محاسبه قیمت</button>
+    <div id="c-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۶ ============ -->
+<div id="t6" class="panel">
+  <div class="card">
+    <h2>لیست قیمت‌ها (تومان)</h2>
+    <div class="hint" style="margin-bottom:12px">این قیمت‌ها از فایل <code>data/prices.json</code> بارگذاری می‌شوند و تغییرات شما در حافظه مرورگر ذخیره می‌شود.</div>
+    <div id="price-status-initial"></div>
+    <div id="price-editor"></div>
+    <button class="btn" onclick="savePrices()">ذخیره قیمت‌ها</button>
+    <button class="btn sec" onclick="resetPrices()">بازنشانی به پیش‌فرض فایل</button>
+    <button class="btn sec" onclick="exportPrices()">دانلود فایل JSON</button>
+    <div id="price-status"></div>
+  </div>
+</div>
+
+<p class="footnote">
+  فرمول‌ها: ASME Sec VIII Div 1 — UG-27 (پوسته)، UG-32 (عدسی)<br>
+  عدسی تورسفریکال F&D: R<sub>crown</sub>=D، r<sub>knuckle</sub>=0.06D<br>
+  محاسبات به‌صورت تقریبی برای پیش‌طراحی است؛ برای ساخت نهایی، نقشه مهندسی الزامی است.
+</p>
+
+</main>
+
+<script>
+/* ========================================================
+   فرمول‌های پایه
+   ======================================================== */
+const RHO_STEEL = 7850;
+
+const cylVol = (D,H) => Math.PI/4 * D*D * H / 1000;
+const dishVolTorisph = D => 0.0809 * Math.pow(D,3) / 1000;
+const dishVolEllip = D => Math.PI/6 * Math.pow(D,3) / 1000 / 2;
+const dishAreaTorisph = D => 1.084 * Math.PI/4 * D*D;
+
+function totalVol(D,H,head='torisph'){
+  let v = cylVol(D,H);
+  if(head==='torisph') v += 2*dishVolTorisph(D);
+  else if(head==='ellip') v += 2*dishVolEllip(D);
+  return v;
+}
+
+function diameterFromVol(V,H,head='torisph'){
+  const k = head==='torisph' ? 0.0809/1000
+          : head==='ellip'   ? (Math.PI/6/2/1000)
+          : 0;
+  let lo=10, hi=1000;
+  for(let i=0;i<80;i++){
+    const mid=(lo+hi)/2;
+    const f = 2*k*Math.pow(mid,3) + (Math.PI*H/4)*mid*mid - V*1000;
+    if(f>0) hi=mid; else lo=mid;
+  }
+  return (lo+hi)/2;
+}
+
+function heightFromVol(V,D,head='torisph'){
+  let vHead = 0;
+  if(head==='torisph') vHead = 2*dishVolTorisph(D);
+  else if(head==='ellip') vHead = 2*dishVolEllip(D);
+  const vCyl = V - vHead;
+  if(vCyl <= 0) return 0;
+  return vCyl*1000 / (Math.PI/4 * D*D);
+}
+
+function shellThickness(P_bar, R_mm, mat='A516-70', E=1.0, CA=1.5){
+  const P = P_bar * 14.5038;
+  const S = MAT_S[mat] || 17500;
+  const t = (P * R_mm) / (S * E - 0.6 * P) + CA;
+  return t;
+}
+
+function headThickness(P_bar, D_mm, mat='A516-70', E=1.0, CA=1.5){
+  const P = P_bar * 14.5038;
+  const S = MAT_S[mat] || 17500;
+  const L = D_mm;
+  const t = 0.885 * P * L / (S * E - 0.1 * P) + CA;
+  return t;
+}
+
+const MAT_S = {
+  'A516-70': 20000,
+  'A283-C' : 15700,
+  'SS304'  : 16700,
+  'SS316'  : 16700,
+};
+
+const MAT_RHO = {
+  'A516-70': 7850, 'A283-C': 7850, 'SS304': 8000, 'SS316': 8000
+};
+
+/* ========================================================
+   قیمت‌ها
+   ======================================================== */
+const DEFAULT_PRICES = {
+  currency: 'تومان',
+  sheets: {
+    'A516-70_6':  45000,
+    'A516-70_8':  44000,
+    'A516-70_10': 43000,
+    'A516-70_12': 43500,
+    'A516-70_14': 44500,
+    'SS304_6':    185000,
+    'SS304_8':    180000,
+    'SS316_6':    220000,
+    'SS316_8':    215000,
+  },
+  dish_markup_pct: 35,
+  pipe: {
+    copper_1_2:  850000,
+    copper_3_4:  1250000,
+    copper_1:    1650000,
+  },
+  flange_1inch:   450000,
+  flange_2inch:   780000,
+  flange_3inch:   1350000,
+  flange_4inch:   1850000,
+  manhole_16:     4500000,
+  electrode_kg:   320000,
+  welder_hr:      280000,
+  fitter_hr:      200000,
+  painter_hr:     180000,
+  paint_epoxy_m2: 180000,
+  paint_zinc_m2:  220000,
+  insul_ceramic_50_m2:  850000,
+  insul_ceramic_100_m2: 1450000,
+  consumables_pct: 8,
+  transport_per_kg: 350,
+};
+
+let PRICES = JSON.parse(JSON.stringify(DEFAULT_PRICES));
+
+/* ========================================================
+   🆕 بارگذاری قیمت‌ها — از localStorage یا فایل JSON
+   ======================================================== */
+async function loadPrices(){
+  // ۱) اول localStorage (تنظیمات کاربر)
+  try{
+    const s = localStorage.getItem('caspian_prices_v1');
+    if(s){
+      PRICES = Object.assign({}, DEFAULT_PRICES, JSON.parse(s));
+      return { source: 'localStorage' };
+    }
+  }catch(e){}
+
+  // ۲) فایل data/prices.json
+  try{
+    const res = await fetch('data/prices.json', { cache: 'no-cache' });
+    if(res.ok){
+      const data = await res.json();
+      delete data._comment;
+      PRICES = Object.assign({}, DEFAULT_PRICES, data);
+      // در localStorage هم کپی کن که همیشه سریع باشد
+      try{ localStorage.setItem('caspian_prices_v1', JSON.stringify(PRICES)); }catch(e){}
+      return { source: 'file' };
+    }
+  }catch(e){
+    console.warn('بارگذاری فایل prices.json ناموفق:', e);
+  }
+
+  // ۳) پیش‌فرض داخل کد
+  PRICES = JSON.parse(JSON.stringify(DEFAULT_PRICES));
+  return { source: 'default' };
+}
+
+/* ========================================================
+   کمک‌کننده‌ها
+   ======================================================== */
+function fmt(n,d=2){
+  if(!isFinite(n)||n===null||n===undefined) return '—';
+  return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:d});
+}
+function fmtT(n){
+  if(!isFinite(n)) return '—';
+  if(n>=1e9) return fmt(n/1e9,3)+' میلیارد';
+  if(n>=1e6) return fmt(n/1e6,2)+' میلیون';
+  if(n>=1e3) return fmt(n/1e3,1)+' هزار';
+  return fmt(n,0);
+}
+function $(id){ return document.getElementById(id); }
+function val(id){ return parseFloat($(id).value); }
+
+/* ========================================================
+   Tabs
+   ======================================================== */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    $(t.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ========================================================
+   Tab 1
+   ======================================================== */
+$('v-type').addEventListener('change',e=>{
+  const t = e.target.value;
+  const isBox = t==='box';
+  $('f-v-l').style.display = isBox ? 'block' : 'none';
+  $('f-v-w').style.display = isBox ? 'block' : 'none';
+  $('f-v-h').style.display = isBox ? 'none' : 'block';
+});
+
+function calcVol(){
+  const t = $('v-type').value;
+  const out = $('v-res');
+
+  if(t==='box'){
+    const W = val('v-d'), L = val('v-l'), H = val('v-w');
+    if(!(W>0&&L>0&&H>0)){ out.innerHTML='<div class="result red">همه ابعاد را وارد کنید.</div>'; return; }
+    const V = W*L*H/1000;
+    out.innerHTML = `
+      <div class="result">
+        <div class="item"><span class="lbl">نوع:</span><span class="val">مکعبی</span></div>
+        <div class="item"><span class="lbl">ابعاد:</span><span class="val">${fmt(W,1)}×${fmt(L,1)}×${fmt(H,1)} cm</span></div>
+        <div class="item big"><span class="lbl">حجم کل:</span><span class="val">${fmt(V)} لیتر</span></div>
+        <div class="item"><span class="lbl">معادل:</span><span class="val">${fmt(V/1000,3)} m³</span></div>
+        <div class="item"><span class="lbl">سطح بدنه (رنگ):</span><span class="val">${fmt(2*(W*L+W*H+L*H)/10000,2)} m²</span></div>
+      </div>`;
+    return;
+  }
+
+  const D = val('v-d'), H = val('v-h');
+  if(!(D>0&&H>0)){ out.innerHTML='<div class="result red">قطر و ارتفاع را وارد کنید.</div>'; return; }
+  const head = t==='cyl-dish' ? 'torisph' : 'flat';
+  const vBody = cylVol(D,H);
+  const vHead = head==='torisph' ? 2*dishVolTorisph(D) : 0;
+  const V = vBody + vHead;
+  const areaBody = Math.PI*D*H/10000;
+  const areaHead = head==='torisph' ? 2*dishAreaTorisph(D)/10000 : 2*(Math.PI/4*D*D)/10000;
+
+  out.innerHTML = `
+    <div class="result">
+      <div class="item"><span class="lbl">نوع:</span><span class="val">${head==='torisph'?'عدسی تورسفریکال':'سر تخت'}</span></div>
+      <div class="item"><span class="lbl">حجم بدنه:</span><span class="val">${fmt(vBody)} L</span></div>
+      <div class="item"><span class="lbl">حجم دو عدسی:</span><span class="val">${fmt(vHead)} L</span></div>
+      <div class="item big"><span class="lbl">حجم کل:</span><span class="val">${fmt(V)} لیتر</span></div>
+      <div class="item"><span class="lbl">معادل:</span><span class="val">${fmt(V/1000,3)} m³</span></div>
+      <div class="divider"></div>
+      <div class="item"><span class="lbl">سطح بدنه:</span><span class="val">${fmt(areaBody,2)} m²</span></div>
+      <div class="item"><span class="lbl">سطح دو عدسی:</span><span class="val">${fmt(areaHead,2)} m²</span></div>
+      <div class="item"><span class="lbl">سطح کل:</span><span class="val">${fmt(areaBody+areaHead,2)} m²</span></div>
+    </div>`;
+}
+
+/* ========================================================
+   Tab 2
+   ======================================================== */
+function calcDim(){
+  const V = val('d-v');
+  const D = val('d-d') || 0;
+  const H = val('d-h') || 0;
+  const head = $('d-type').value==='cyl-dish' ? 'torisph' : 'flat';
+  const out = $('d-res');
+
+  if(!(V>0)){ out.innerHTML='<div class="result red">ظرفیت را وارد کنید.</div>'; return; }
+
+  let html = '<div class="result">';
+
+  if(D>0 && H>0){
+    const Vc = totalVol(D,H,head);
+    const diff = Vc - V;
+    html += `<div class="item"><span class="lbl">حجم محاسبه‌شده:</span><span class="val">${fmt(Vc)} L</span></div>`;
+    html += `<div class="item"><span class="lbl">اختلاف:</span><span class="val">${fmt(diff,1)} L (${fmt(diff/V*100,1)}٪)</span></div>`;
+  } else if(D>0){
+    const Hc = heightFromVol(V, D, head);
+    html += `<div class="item"><span class="lbl">قطر داده‌شده:</span><span class="val">${fmt(D,1)} cm</span></div>`;
+    html += `<div class="item big"><span class="lbl">ارتفاع بدنه:</span><span class="val">${fmt(Hc,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">معادل:</span><span class="val">${fmt(Hc/100,3)} m</span></div>`;
+    const w=150, n=Math.max(1,Math.round(Hc/w));
+    const Hf=n*w, Df=diameterFromVol(V,Hf,head);
+    html += `<div class="divider"></div>`;
+    html += `<div class="item"><span class="lbl">مضرب ورق ۱۵۰:</span><span class="val">${n} کورس = ${Hf} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">قطر متناظر:</span><span class="val">${fmt(Df,1)} cm</span></div>`;
+  } else if(H>0){
+    const Dc = diameterFromVol(V, H, head);
+    const C = Math.PI*Dc;
+    html += `<div class="item"><span class="lbl">ارتفاع داده‌شده:</span><span class="val">${fmt(H,1)} cm</span></div>`;
+    html += `<div class="item big"><span class="lbl">قطر لازم:</span><span class="val">${fmt(Dc,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">محیط:</span><span class="val">${fmt(C,1)} cm</span></div>`;
+    const sheets = Math.ceil(C/600);
+    html += `<div class="item"><span class="lbl">ورق ۶۰۰ در هر کورس:</span><span class="val">${sheets}</span></div>`;
+  } else {
+    let best = null;
+    for(let n=1;n<=10;n++){
+      const Hf=n*150;
+      const Df=diameterFromVol(V,Hf,head);
+      const C=Math.PI*Df;
+      const m=Math.ceil(C/600);
+      const waste=n*(m*600-C);
+      const pct=waste/(n*m*600)*100;
+      if(!best || pct<best.pct){ best={n,H:Hf,D:Df,C,m,waste,pct}; }
+    }
+    html += `<div class="item"><span class="lbl">پیشنهاد بهینه (عرض ۱۵۰):</span></div>`;
+    html += `<div class="item"><span class="lbl">کورس:</span><span class="val">${best.n}</span></div>`;
+    html += `<div class="item big"><span class="lbl">ارتفاع نهایی:</span><span class="val">${fmt(best.H,0)} cm</span></div>`;
+    html += `<div class="item big"><span class="lbl">قطر نهایی:</span><span class="val">${fmt(best.D,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">محیط:</span><span class="val">${fmt(best.C,1)} cm</span></div>`;
+    html += `<div class="item"><span class="lbl">تعداد کل ورق:</span><span class="val">${best.n*best.m}</span></div>`;
+    html += `<div class="item"><span class="lbl">پرت کل:</span><span class="val">${fmt(best.waste,0)} cm (${fmt(best.pct,1)}٪)</span></div>`;
+  }
+
+  html += '</div>';
+  out.innerHTML = html;
+}
+
+/* ========================================================
+   Tab 3
+   ======================================================== */
+function optSheets(){
+  const V = val('s-v');
+  const wSel = $('s-w').value;
+  const L = val('s-l') || 600;
+  const maxN = parseInt($('s-max').value) || 10;
+  const out = $('s-res');
+
+  if(!(V>0)){ out.innerHTML='<div class="result red">ظرفیت را وارد کنید.</div>'; return; }
+
+  const widths = wSel==='both' ? [150,152] : [parseFloat(wSel)];
+  const rows = [];
+  for(const w of widths){
+    for(let n=1;n<=maxN;n++){
+      const H=n*w;
+      const D=diameterFromVol(V,H,'torisph');
+      const C=Math.PI*D;
+      const m=Math.ceil(C/L);
+      const sheets=n*m;
+      const waste=n*(m*L-C);
+      const pct=waste/(sheets*L)*100;
+      rows.push({w,n,H,D,C,m,sheets,waste,pct});
+    }
+  }
+  rows.sort((a,b)=>{
+    if(Math.abs(a.pct-b.pct)>0.01) return a.pct-b.pct;
+    return a.sheets-b.sheets;
+  });
+  const best = {};
+  for(const w of widths){
+    const s = rows.filter(r=>r.w===w);
+    if(s.length) best[w]=s[0];
+  }
+
+  let html = `<div class="result">
+    <div class="item"><span class="lbl">ظرفیت:</span><span class="val">${fmt(V)} L</span></div>
+    <div class="item"><span class="lbl">طول ورق:</span><span class="val">${fmt(L)} cm</span></div>
+  </div>`;
+
+  html += `<div class="card" style="padding:10px;margin-top:12px">
+    <h2 style="font-size:13px">نتایج (۱۵ ردیف اول)</h2>
+    <div class="table-wrap"><table><thead><tr>
+      <th>عرض</th><th>کورس</th><th>ارتفاع</th><th>قطر</th><th>محیط</th>
+      <th>ورق/کورس</th><th>کل ورق</th><th>پرت cm</th><th>٪</th>
+    </tr></thead><tbody>`;
+  rows.slice(0,15).forEach(r=>{
+    const isB = best[r.w] && best[r.w].n===r.n;
+    html += `<tr class="${isB?'best':''}">`;
+    html += `<td>${r.w}${isB?' <span class="badge best">بهینه</span>':''}</td>`;
+    html += `<td>${r.n}</td>`;
+    html += `<td>${fmt(r.H,0)}</td>`;
+    html += `<td>${fmt(r.D,1)}</td>`;
+    html += `<td>${fmt(r.C,1)}</td>`;
+    html += `<td>${r.m}</td>`;
+    html += `<td>${r.sheets}</td>`;
+    html += `<td>${fmt(r.waste,0)}</td>`;
+    html += `<td>${fmt(r.pct,1)}</td>`;
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div></div>`;
+
+  for(const w of widths){
+    const b = best[w];
+    if(!b) continue;
+    html += `<div class="result green" style="margin-top:12px">
+      <div class="item"><span class="lbl">🏆 عرض ورق:</span><span class="val">${w} cm</span></div>
+      <div class="item"><span class="lbl">تعداد کورس:</span><span class="val">${b.n}</span></div>
+      <div class="item big"><span class="lbl">ارتفاع نهایی:</span><span class="val">${fmt(b.H,0)} cm</span></div>
+      <div class="item big"><span class="lbl">قطر نهایی:</span><span class="val">${fmt(b.D,1)} cm</span></div>
+      <div class="item"><span class="lbl">محیط:</span><span class="val">${fmt(b.C,1)} cm</span></div>
+      <div class="item"><span class="lbl">تعداد کل ورق:</span><span class="val">${b.sheets}</span></div>
+      <div class="item"><span class="lbl">پرت کل:</span><span class="val">${fmt(b.waste,0)} cm (${fmt(b.pct,1)}٪)</span></div>
+      <div class="item"><span class="lbl">سطح بدنه:</span><span class="val">${fmt(Math.PI*b.D*b.H/10000,2)} m²</span></div>
+    </div>`;
+  }
+  out.innerHTML = html;
+}
+
+/* ========================================================
+   Tab 4
+   ======================================================== */
+function calcWeight(){
+  const D = val('w-d'), H = val('w-h'), P = val('w-p');
+  const mat = $('w-mat').value;
+  const head = $('w-head').value;
+  const tManual = val('w-t') || 0;
+  const out = $('w-res');
+
+  if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red">قطر، ارتفاع و فشار را وارد کنید.</div>'; return; }
+
+  const S = MAT_S[mat];
+  let tShell = shellThickness(P, D/2, mat);
+  let tHead  = (head==='torisph') ? headThickness(P, D, mat)
+              : (head==='ellip')   ? headThickness(P, D, mat)*0.9
+              : shellThickness(P, D/2, mat)*1.3;
+
+  const STD = [4,5,6,8,10,12,14,16,18,20,22,25];
+  const roundUp = x => STD.find(s=>s>=x) || Math.ceil(x);
+
+  const tS_final = tManual>0 ? tManual : roundUp(tShell);
+  const tH_final = tManual>0 ? tManual : roundUp(tHead);
+
+  const Dm = D/100, Hm = H/100, tSm = tS_final/1000, tHm = tH_final/1000;
+
+  const vShell = Math.PI * Dm * Hm * tSm;
+  const wShell = vShell * MAT_RHO[mat];
+
+  let aHead = 0;
+  if(head==='torisph') aHead = 2 * (1.084 * Math.PI/4 * Dm*Dm);
+  else if(head==='ellip') aHead = 2 * (1.1 * Math.PI/4 * Dm*Dm);
+  else aHead = 2 * (Math.PI/4 * Dm*Dm);
+  const wHead = aHead * tHm * MAT_RHO[mat];
+
+  const wExtra = (wShell + wHead) * 0.08;
+
+  const aBody = Math.PI * Dm * Hm;
+  const aTotal = aBody + aHead;
+
+  const wTotal = wShell + wHead + wExtra;
+  const Vwater = totalVol(D, H, head);
+
+  out.innerHTML = `
+    <div class="result">
+      <div class="item"><span class="lbl">جنس:</span><span class="val">${mat}</span></div>
+      <div class="item"><span class="lbl">فشار:</span><span class="val">${fmt(P,1)} bar</span></div>
+      <div class="divider"></div>
+      <div class="item"><span class="lbl">ضخامت پوسته (ASME):</span><span class="val">${fmt(tShell,2)} mm</span></div>
+      <div class="item"><span class="lbl">ضخامت عدسی (ASME):</span><span class="val">${fmt(tHead,2)} mm</span></div>
+      <div class="item big"><span class="lbl">ضخامت انتخابی پوسته:</span><span class="val">${tS_final} mm</span></div>
+      <div class="item big"><span class="lbl">ضخامت انتخابی عدسی:</span><span class="val">${tH_final} mm</span></div>
+      <div class="divider"></div>
+      <div class="item"><span class="lbl">وزن پوسته:</span><span class="val">${fmt(wShell,0)} kg</span></div>
+      <div class="item"><span class="lbl">وزن دو عدسی:</span><span class="val">${fmt(wHead,0)} kg</span></div>
+      <div class="item"><span class="lbl">نازل+جوش+پایه (۸٪):</span><span class="val">${fmt(wExtra,0)} kg</span></div>
+      <div class="item big"><span class="lbl">وزن خالی:</span><span class="val">${fmt(wTotal,0)} kg</span></div>
+      <div class="item big"><span class="lbl">وزن پر از آب:</span><span class="val">${fmt(wTotal + Vwater,0)} kg</span></div>
+      <div class="divider"></div>
+      <div class="item"><span class="lbl">حجم آب:</span><span class="val">${fmt(Vwater)} L</span></div>
+      <div class="item"><span class="lbl">سطح رنگ:</span><span class="val">${fmt(aTotal,2)} m²</span></div>
+    </div>`;
+}
+
+/* ========================================================
+   Tab 5
+   ======================================================== */
+function findSheetPrice(mat, t){
+  const keys = Object.keys(PRICES.sheets).sort();
+  const candidates = keys.filter(k=>k.startsWith(mat+'_'));
+  if(!candidates.length){
+    const base = PRICES.sheets['A516-70_10'] || 43000;
+    return mat.startsWith('SS') ? base*4 : base;
+  }
+  let best = null;
+  for(const k of candidates){
+    const tk = parseInt(k.split('_')[1]);
+    const d = Math.abs(tk - t);
+    if(!best || d < best.d) best = {k, d, price: PRICES.sheets[k]};
+  }
+  return best.price;
+}
+
+function calcCost(){
+  const D = val('c-d'), H = val('c-h'), P = val('c-p');
+  const mat = $('c-mat').value;
+  const nMan = parseInt($('c-man').value);
+  const nNoz = parseInt($('c-noz').value);
+  const coilL = val('c-coil');
+  const coilT = $('c-coil-type').value;
+  const ins = $('c-ins').value;
+  const profitPct = val('c-profit') || 25;
+  const out = $('c-res');
+
+  if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red">اطلاعات را کامل وارد کنید.</div>'; return; }
+
+  let tShell = shellThickness(P, D/2, mat);
+  let tHead  = headThickness(P, D, mat);
+  const STD = [4,5,6,8,10,12,14,16,18,20,22,25];
+  const roundUp = x => STD.find(s=>s>=x) || Math.ceil(x);
+  const tS = roundUp(tShell);
+  const tH = roundUp(tHead);
+
+  const rho = MAT_RHO[mat];
+
+  const vShell = Math.PI*(D/100)*(H/100)*(tS/1000);
+  const wShell = vShell*rho;
+  const aHead = 2*1.084*Math.PI/4*Math.pow(D/100,2);
+  const wHead = aHead*(tH/1000)*rho;
+  const wasteFactor = 1.15;
+  const wSheet = (wShell + wHead) * wasteFactor;
+
+  const priceSheet = findSheetPrice(mat, tS);
+  const costSheet = wSheet * priceSheet;
+  const costDish = (wHead * priceSheet) * (PRICES.dish_markup_pct/100);
+  const costNozzles = nNoz * PRICES.flange_2inch;
+  const costMan = nMan * PRICES.manhole_16;
+  const costCoil = coilL > 0 ? coilL * (PRICES.pipe[coilT]||0) : 0;
+
+  const Lw = H/100 + Math.ceil(H/150)*Math.PI*D/100 + nNoz*0.3;
+  const hrsWeld = Lw * 2;
+  const costWeld = hrsWeld * PRICES.welder_hr;
+  const costFitter = (hrsWeld*0.5) * PRICES.fitter_hr;
+
+  const electrode_kg = Lw * 0.15;
+  const costElectrode = electrode_kg * PRICES.electrode_kg;
+
+  const aBody = Math.PI*(D/100)*(H/100);
+  const aTotal = aBody + aHead;
+  const costPaint = aTotal * (PRICES.paint_epoxy_m2 + PRICES.paint_zinc_m2);
+
+  let costIns = 0;
+  if(ins==='ceramic_50') costIns = aTotal * PRICES.insul_ceramic_50_m2;
+  else if(ins==='ceramic_100') costIns = aTotal * PRICES.insul_ceramic_100_m2;
+
+  const subtotal1 = costSheet + costDish + costNozzles + costMan + costCoil
+                  + costWeld + costFitter + costElectrode + costPaint + costIns;
+  const costConsumables = subtotal1 * (PRICES.consumables_pct/100);
+
+  const wTotal = wShell + wHead + nMan*50 + 50;
+  const costTransport = wTotal * PRICES.transport_per_kg;
+
+  const total = subtotal1 + costConsumables + costTransport;
+  const finalPrice = total * (1 + profitPct/100);
+
+  out.innerHTML = `
+    <div class="result">
+      <div class="item"><span class="lbl">ضخامت پوسته:</span><span class="val">${tS} mm — ${fmt(priceSheet,0)} تومان/kg</span></div>
+      <div class="item"><span class="lbl">ضخامت عدسی:</span><span class="val">${tH} mm</span></div>
+      <div class="item"><span class="lbl">وزن ورق خام:</span><span class="val">${fmt(wSheet,0)} kg</span></div>
+      <div class="divider"></div>
+      <div class="item"><span class="lbl">۱. ورق + عدسی:</span><span class="val">${fmtT(costSheet + costDish)}</span></div>
+      <div class="item"><span class="lbl">۲. نازل (${nNoz}):</span><span class="val">${fmtT(costNozzles)}</span></div>
+      <div class="item"><span class="lbl">۳. منهول (${nMan}):</span><span class="val">${fmtT(costMan)}</span></div>
+      <div class="item"><span class="lbl">۴. کویل (${coilL} m):</span><span class="val">${fmtT(costCoil)}</span></div>
+      <div class="item"><span class="lbl">۵. جوشکاری (${fmt(hrsWeld,0)} hr):</span><span class="val">${fmtT(costWeld)}</span></div>
+      <div class="item"><span class="lbl">۶. مونتاژ:</span><span class="val">${fmtT(costFitter)}</span></div>
+      <div class="item"><span class="lbl">۷. الکترود (${fmt(electrode_kg,1)} kg):</span><span class="val">${fmtT(costElectrode)}</span></div>
+      <div class="item"><span class="lbl">۸. رنگ (${fmt(aTotal,2)} m²):</span><span class="val">${fmtT(costPaint)}</span></div>
+      <div class="item"><span class="lbl">۹. عایق:</span><span class="val">${fmtT(costIns)}</span></div>
+      <div class="item"><span class="lbl">۱۰. مصرفی (${PRICES.consumables_pct}٪):</span><span class="val">${fmtT(costConsumables)}</span></div>
+      <div class="item"><span class="lbl">۱۱. حمل:</span><span class="val">${fmtT(costTransport)}</span></div>
+      <div class="divider"></div>
+      <div class="item big"><span class="lbl">جمع هزینه:</span><span class="val">${fmtT(total)} تومان</span></div>
+      <div class="item big"><span class="lbl">سود (${profitPct}٪):</span><span class="val">${fmtT(total*profitPct/100)} تومان</span></div>
+      <div class="item big" style="padding-top:14px;border-top:2px solid var(--primary)">
+        <span class="lbl">💰 قیمت نهایی:</span>
+        <span class="val" style="font-size:20px">${fmtT(finalPrice)} تومان</span>
+      </div>
+      <div class="item"><span class="lbl">قیمت/kg ساخته‌شده:</span><span class="val">${fmt(finalPrice/wTotal,0)} تومان/kg</span></div>
+    </div>
+    <div class="notice warn">
+      قیمت تقریبی است. قیمت نهایی پس از نقشه‌کشی و تأیید مهندسی اعلام می‌گردد.
+    </div>`;
+}
+
+/* ========================================================
+   Tab 6 — ویرایشگر
+   ======================================================== */
+const PRICE_LABELS = {
+  'sheets.A516-70_6':  'ورق A516 6mm (تومان/kg)',
+  'sheets.A516-70_8':  'ورق A516 8mm (تومان/kg)',
+  'sheets.A516-70_10': 'ورق A516 10mm (تومان/kg)',
+  'sheets.A516-70_12': 'ورق A516 12mm (تومان/kg)',
+  'sheets.SS304_6':    'ورق SS304 6mm (تومان/kg)',
+  'sheets.SS316_6':    'ورق SS316 6mm (تومان/kg)',
+  'dish_markup_pct':   'کارمزد ساخت عدسی (٪)',
+  'pipe.copper_1_2':   'لوله مسی ۱/۲ (تومان/m)',
+  'pipe.copper_3_4':   'لوله مسی ۳/۴ (تومان/m)',
+  'pipe.copper_1':     'لوله مسی ۱ (تومان/m)',
+  'flange_1inch':      'فلنج ۱ اینچ',
+  'flange_2inch':      'فلنج ۲ اینچ',
+  'flange_3inch':      'فلنج ۳ اینچ',
+  'flange_4inch':      'فلنج ۴ اینچ',
+  'manhole_16':        'منهول ۱۶ اینچ',
+  'electrode_kg':      'الکترود E7018 (تومان/kg)',
+  'welder_hr':         'دستمزد جوشکار (تومان/ساعت)',
+  'fitter_hr':         'دستمزد مونتاژکار (تومان/ساعت)',
+  'painter_hr':        'دستمزد رنگ‌کار (تومان/ساعت)',
+  'paint_epoxy_m2':    'رنگ اپوکسی (تومان/m²)',
+  'paint_zinc_m2':     'رنگ زینک‌ریچ (تومان/m²)',
+  'insul_ceramic_50_m2':'عایق سرامیکی ۵۰mm (تومان/m²)',
+  'insul_ceramic_100_m2':'عایق سرامیکی ۱۰۰mm (تومان/m²)',
+  'consumables_pct':   'مواد مصرفی جانبی (٪)',
+  'transport_per_kg':  'حمل (تومان/kg)',
+};
+
+function renderPriceEditor(){
+  const c = $('price-editor');
+  let html = '';
+  for(const path in PRICE_LABELS){
+    const v = path.split('.').reduce((o,k)=>o&&o[k], PRICES);
+    html += `<div class="price-row">
+      <label>${PRICE_LABELS[path]}</label>
+      <input type="number" data-path="${path}" value="${v!=null?v:0}" step="any" inputmode="decimal">
+    </div>`;
+  }
+  c.innerHTML = html;
+}
+
+function savePrices(){
+  const inputs = document.querySelectorAll('#price-editor input');
+  inputs.forEach(inp=>{
+    const path = inp.dataset.path.split('.');
+    let obj = PRICES;
+    for(let i=0;i<path.length-1;i++){
+      if(!obj[path[i]]) obj[path[i]] = {};
+      obj = obj[path[i]];
+    }
+    obj[path[path.length-1]] = parseFloat(inp.value) || 0;
+  });
+  try{
+    localStorage.setItem('caspian_prices_v1', JSON.stringify(PRICES));
+    $('price-status').innerHTML = '<div class="notice success">✅ قیمت‌ها در این دستگاه ذخیره شد.</div>';
+  }catch(e){
+    $('price-status').innerHTML = '<div class="notice danger">خطا در ذخیره‌سازی</div>';
+  }
+  setTimeout(()=>{ $('price-status').innerHTML=''; }, 2500);
+}
+
+async function resetPrices(){
+  if(!confirm('قیمت‌ها به مقدار فایل data/prices.json برگردند؟')) return;
+  localStorage.removeItem('caspian_prices_v1');
+  const r = await loadPrices();
+  renderPriceEditor();
+  $('price-status').innerHTML = r.source==='file'
+    ? '<div class="notice success">↺ قیمت‌ها از فایل بارگذاری شد.</div>'
+    : '<div class="notice warn">↺ فایل در دسترس نبود؛ مقادیر پیش‌فرض داخلی اعمال شد.</div>';
+  setTimeout(()=>{ $('price-status').innerHTML=''; }, 3000);
+}
+
+function exportPrices(){
+  const blob = new Blob([JSON.stringify(PRICES,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'prices-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ========================================================
+   🆕 initialization — همه چیز بعد از بارگذاری قیمت‌ها
+   ======================================================== */
+window.addEventListener('load', async () => {
+  const status = $('price-status-initial');
+  if(status) status.innerHTML = '<div class="loader"><span class="spin"></span> در حال بارگذاری قیمت‌ها...</div>';
+
+  const result = await loadPrices();
+
+  if(status){
+    if(result.source==='file'){
+      status.innerHTML = '<div class="notice success">✅ قیمت‌ها از فایل <code>data/prices.json</code> بارگذاری شد.</div>';
+    } else if(result.source==='localStorage'){
+      status.innerHTML = '<div class="notice info">📱 قیمت‌های ذخیره‌شده در این دستگاه بارگذاری شد. برای بازگشت به فایل، دکمه «بازنشانی» را بزنید.</div>';
+    } else {
+      status.innerHTML = '<div class="notice warn">⚠️ فایل <code>data/prices.json</code> پیدا نشد. از مقادیر پیش‌فرض استفاده می‌شود.</div>';
+    }
+  }
+
+  // ویرایشگر را با قیمت‌های بارگذاری‌شده بساز
+  renderPriceEditor();
+
+  // Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+});
+</script>
+</body>
+</html>
