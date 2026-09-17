@@ -1,10 +1,13 @@
-const CACHE = 'caspian-calc-v3';
+const CACHE = 'caspian-calc-v4';
 const ASSETS = [
   './',
   './index.html',
+  './firebase-config.js',
+  './prices.js',
+  './catalog.js',
+  './app.js',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './logo.png'
 ];
 
 self.addEventListener('install', e => {
