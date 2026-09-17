@@ -5,92 +5,102 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>محاسبه‌گر مخازن — کاسپین بویلر</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" href="logo.png">
 <style>
-:root{--bg:#0a0f0d;--bg2:#0f1613;--card:#131a17;--card2:#182220;--bd:#1e2a24;--bdh:#2a3a33;--tx:#ffffff;--txd:#94a89f;--mt:#64756c;--pr:#00d68f;--pr2:#00b377;--prd:#008f5c;--prg:rgba(0,214,143,.22);--prg2:rgba(0,214,143,.08);--ac:#00ff9d;--wn:#f5a623;--dn:#ff4757;--sel-bg:#0f2a1e;--sel-tx:#ffffff}
+:root{--bg:#0a0f0d;--bg2:#0f1613;--card:#131a17;--card2:#182220;--bd:#1e2a24;--bdh:#2a3a33;--tx:#ffffff;--txd:#94a89f;--mt:#64756c;--pr:#00d68f;--pr2:#00b377;--prd:#008f5c;--prg:rgba(0,214,143,.22);--prg2:rgba(0,214,143,.08);--ac:#00ff9d;--wn:#f5a623;--dn:#ff4757;--sel-bg:#0f2a1e}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{color-scheme:dark}
 html,body{margin:0;padding:0;font-family:Tahoma,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;min-height:100vh}
 body{background:radial-gradient(ellipse 800px 600px at 0% 0%,rgba(0,214,143,.06),transparent 60%),radial-gradient(ellipse 600px 400px at 100% 100%,rgba(0,214,143,.04),transparent 60%),var(--bg);background-attachment:fixed;padding-bottom:80px;line-height:1.6}
-header{padding:16px 16px 18px;text-align:center;position:sticky;top:0;z-index:100;background:linear-gradient(180deg,rgba(10,15,13,.98),rgba(10,15,13,.85));backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
-header .logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:75px;height:75px;border-radius:18px;background:#fff;padding:6px;margin-bottom:10px;box-shadow:0 0 24px var(--prg),0 0 0 2px rgba(0,214,143,.25)}
+header{padding:16px;text-align:center;position:sticky;top:0;z-index:100;background:linear-gradient(180deg,rgba(10,15,13,.98),rgba(10,15,13,.85));backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+header .logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:70px;height:70px;border-radius:16px;background:#fff;padding:5px;margin-bottom:8px;box-shadow:0 0 24px var(--prg),0 0 0 2px rgba(0,214,143,.25)}
 header .logo-wrap img{width:100%;height:100%;object-fit:contain;border-radius:12px}
-header h1{margin:0;font-size:18px;font-weight:800;background:linear-gradient(135deg,#fff,var(--pr));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-header p{margin:4px 0 0;font-size:10px;color:var(--mt);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+header h1{margin:0;font-size:17px;font-weight:800;background:linear-gradient(135deg,#fff,var(--pr));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{margin:3px 0 0;font-size:10px;color:var(--mt);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
 header::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:60px;height:2px;background:var(--pr);border-radius:0 0 4px 4px;box-shadow:0 0 12px var(--pr)}
-.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);position:sticky;top:120px;z-index:99;overflow-x:auto;scrollbar-width:none}
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);position:sticky;top:115px;z-index:99;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;min-width:110px;padding:14px 12px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--mt);border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;transition:.25s;white-space:nowrap;position:relative}
+.tab{flex:0 0 auto;min-width:100px;padding:13px 10px;text-align:center;cursor:pointer;font-size:11.5px;font-weight:700;color:var(--mt);border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;transition:.25s;white-space:nowrap;position:relative}
 .tab.active{color:var(--pr);border-bottom-color:var(--pr);background:linear-gradient(180deg,transparent,var(--prg2))}
 .tab.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:30px;height:2px;background:var(--pr);border-radius:0 0 4px 4px;box-shadow:0 0 10px var(--pr)}
-main{padding:16px;max-width:780px;margin:0 auto}
+main{padding:14px;max-width:820px;margin:0 auto}
 .panel{display:none;animation:fadeIn .3s}
 .panel.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
-.card{background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-.card h2{margin:0 0 16px;font-size:14px;color:var(--tx);display:flex;align-items:center;gap:10px;font-weight:700}
-.card h2::before{content:"";display:inline-block;width:4px;height:18px;background:linear-gradient(180deg,var(--pr),var(--prd));border-radius:2px;box-shadow:0 0 8px var(--prg)}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11.5px;margin-bottom:7px;color:var(--txd);font-weight:700}
-.field input,.field select,.field textarea{width:100%;padding:13px 14px;border:1.5px solid var(--bd);border-radius:11px;font-size:15px;font-family:inherit;background:var(--sel-bg);color:var(--sel-tx);transition:.2s;-webkit-appearance:none;appearance:none}
-.field select{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d68f' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 14px center;background-size:16px;padding-left:42px}
-.field select option{background:var(--sel-bg)!important;color:var(--sel-tx)!important;padding:10px}
+.card{background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.card h2{margin:0 0 12px;font-size:13px;color:var(--tx);display:flex;align-items:center;gap:8px;font-weight:700}
+.card h2::before{content:"";display:inline-block;width:3px;height:16px;background:linear-gradient(180deg,var(--pr),var(--prd));border-radius:2px;box-shadow:0 0 8px var(--prg)}
+.comp-card{padding:10px 14px}
+.comp-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--bd);margin-bottom:10px;cursor:pointer}
+.comp-head label{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--tx);cursor:pointer;flex:1}
+.comp-head input[type=checkbox]{width:20px;height:20px;accent-color:var(--pr);cursor:pointer}
+.comp-body{display:none;padding-top:6px}
+.comp-body.active{display:block}
+.comp-symbol{font-size:16px;margin-left:6px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;margin-bottom:5px;color:var(--txd);font-weight:700}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;font-size:14px;font-family:inherit;background:var(--sel-bg);color:#fff;transition:.2s;-webkit-appearance:none;appearance:none}
+.field select{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d68f' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px;padding-left:36px}
+.field select option{background:var(--sel-bg)!important;color:#fff!important;padding:10px}
 .field select option:checked{background:var(--pr)!important;color:#002018!important}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pr);background:rgba(0,214,143,.06);box-shadow:0 0 0 3px var(--prg2)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:520px){.row{grid-template-columns:1fr}}
-.btn{display:block;width:100%;padding:15px;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#002018;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;box-shadow:0 4px 16px var(--prg)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--pr);background:rgba(0,214,143,.06);box-shadow:0 0 0 3px var(--prg2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:520px){.row,.row-3{grid-template-columns:1fr}}
+.btn{display:block;width:100%;padding:13px;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#002018;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;box-shadow:0 4px 16px var(--prg)}
 .btn:hover{transform:translateY(-1px)}
 .btn.sec{background:transparent;color:var(--pr);border:1.5px solid var(--pr);box-shadow:none}
-.result{background:linear-gradient(160deg,rgba(0,214,143,.05),rgba(0,214,143,.02));border:1.5px solid rgba(0,214,143,.25);border-radius:13px;padding:16px;margin-top:14px}
-.result .item{display:flex;justify-content:space-between;padding:9px 0;font-size:13.5px;border-bottom:1px dashed rgba(0,214,143,.12);gap:10px;align-items:center}
+.mini-result{background:rgba(0,214,143,.05);border:1px dashed rgba(0,214,143,.25);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:var(--pr);font-weight:700;text-align:center;display:none}
+.mini-result.active{display:block}
+.result{background:linear-gradient(160deg,rgba(0,214,143,.05),rgba(0,214,143,.02));border:1.5px solid rgba(0,214,143,.25);border-radius:12px;padding:14px;margin-top:12px}
+.result .item{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px dashed rgba(0,214,143,.12);gap:10px;align-items:center}
 .result .item:last-child{border-bottom:none}
 .result .item .lbl{color:var(--txd);flex:1}
 .result .item .val{font-weight:800;color:var(--pr);text-align:left;direction:ltr;font-family:'Segoe UI',sans-serif}
-.result .item.big{padding:13px 0;font-size:15px}
-.result .item.big .val{font-size:18px}
+.result .item.big{padding:12px 0;font-size:14px}
+.result .item.big .val{font-size:17px}
 .result.green{background:linear-gradient(160deg,rgba(0,214,143,.1),rgba(0,214,143,.03));border-color:rgba(0,214,143,.4)}
 .result.red{background:linear-gradient(160deg,rgba(255,71,87,.08),rgba(255,71,87,.02));border-color:rgba(255,71,87,.3)}
-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-th,td{padding:9px 6px;text-align:center;border-bottom:1px solid var(--bd);white-space:nowrap}
-th{background:rgba(0,214,143,.05);color:var(--pr);font-weight:800;font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+th,td{padding:7px 5px;text-align:center;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{background:rgba(0,214,143,.05);color:var(--pr);font-weight:800;font-size:10.5px}
 td{color:var(--txd)}
-tr.cat-match{background:rgba(0,214,143,.12)}
-tr.cat-match td{color:var(--ac);font-weight:700}
-tr.best{background:rgba(0,214,143,.08)}
-tr.best td{color:var(--ac)}
-.badge.best{background:var(--pr);color:#002018;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:800}
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -18px;padding:0 18px}
-.notice{padding:12px 14px;border-radius:11px;font-size:12.5px;line-height:1.75;margin-top:12px;border:1px solid}
+tr.cat-match,tr.best{background:rgba(0,214,143,.12)}
+tr.cat-match td,tr.best td{color:var(--ac);font-weight:700}
+.badge.best{background:var(--pr);color:#002018;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:800}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px}
+.notice{padding:10px 12px;border-radius:9px;font-size:12px;line-height:1.7;margin-top:10px;border:1px solid}
 .notice.info{background:rgba(0,214,143,.06);color:#a0e8c5;border-color:rgba(0,214,143,.2)}
 .notice.success{background:rgba(0,214,143,.1);color:var(--pr);border-color:rgba(0,214,143,.35)}
 .notice.warn{background:rgba(245,166,35,.08);color:#f5c76a;border-color:rgba(245,166,35,.25)}
 .notice.danger{background:rgba(255,71,87,.08);color:#ff8a94;border-color:rgba(255,71,87,.25)}
-.footnote{font-size:11px;color:var(--mt);text-align:center;margin-top:24px;line-height:1.9;padding:0 12px}
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bdh),transparent);margin:16px 0}
-.price-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--bd);gap:12px}
-.price-row label{font-size:12.5px;color:var(--txd);flex:1;font-weight:600}
-.price-row input{width:130px;padding:9px 11px;border:1.5px solid var(--bd);border-radius:9px;font-size:13px;text-align:left;direction:ltr;background:rgba(0,0,0,.25);color:var(--pr);font-weight:700}
-.cat-badge{display:inline-block;padding:3px 10px;border-radius:8px;background:rgba(0,214,143,.12);color:var(--pr);font-size:11px;font-weight:700;border:1px solid rgba(0,214,143,.25);margin-left:6px}
-.cat-use-btn{padding:5px 10px;border-radius:8px;background:var(--pr);color:#002018;border:none;font-family:inherit;font-weight:800;font-size:10.5px;cursor:pointer}
-.empty-state{text-align:center;padding:30px 20px;color:var(--mt);font-size:13px}
-.empty-state::before{content:"📭";display:block;font-size:36px;margin-bottom:10px}
+.footnote{font-size:10.5px;color:var(--mt);text-align:center;margin-top:20px;line-height:1.8;padding:0 10px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--bdh),transparent);margin:14px 0}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--bd);gap:10px}
+.price-row label{font-size:11.5px;color:var(--txd);flex:1;font-weight:600}
+.price-row input{width:120px;padding:7px 9px;border:1.5px solid var(--bd);border-radius:7px;font-size:12px;text-align:left;direction:ltr;background:rgba(0,0,0,.25);color:var(--pr);font-weight:700}
+.cat-badge{display:inline-block;padding:2px 8px;border-radius:6px;background:rgba(0,214,143,.12);color:var(--pr);font-size:10px;font-weight:700;border:1px solid rgba(0,214,143,.25);margin-right:6px}
+.cat-use-btn{padding:4px 8px;border-radius:6px;background:var(--pr);color:#002018;border:none;font-family:inherit;font-weight:800;font-size:10px;cursor:pointer}
+.empty-state{text-align:center;padding:24px 16px;color:var(--mt);font-size:12px}
+.empty-state::before{content:"📭";display:block;font-size:30px;margin-bottom:8px}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-thumb{background:var(--bdh);border-radius:3px}
-.save-row{display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--bd)}
-.save-row .info{flex:1;font-size:12px}
+.save-row{display:flex;gap:8px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--bd)}
+.save-row .info{flex:1;font-size:11.5px}
 .save-row .info b{color:var(--pr)}
-.save-row button{padding:6px 12px;border-radius:8px;border:none;font-family:inherit;font-weight:700;cursor:pointer;font-size:11px}
+.save-row button{padding:5px 10px;border-radius:6px;border:none;font-family:inherit;font-weight:700;cursor:pointer;font-size:10.5px}
 .save-row .load{background:var(--pr);color:#002018}
 .save-row .del{background:rgba(255,71,87,.15);color:var(--dn)}
+.summary-box{background:linear-gradient(135deg,rgba(0,214,143,.12),rgba(0,214,143,.04));border:2px solid var(--pr);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center}
+.summary-box .label{font-size:11px;color:var(--txd);margin-bottom:4px}
+.summary-box .value{font-size:22px;font-weight:800;color:var(--pr);text-shadow:0 0 20px var(--prg)}
+.summary-box .sub{font-size:10px;color:var(--mt);margin-top:2px}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-wrap" id="logo-box" style="display:none">
-    <img id="logo-img" alt="لوگو">
-  </div>
+  <div class="logo-wrap" id="logo-box" style="display:none"><img id="logo-img" alt="لوگو"></div>
   <h1>محاسبه‌گر حرفه‌ای مخازن</h1>
   <p>Caspian Mobadel Amard</p>
 </header>
@@ -99,12 +109,11 @@ tr.best td{color:var(--ac)}
   <button class="tab active" data-tab="t1">حجم از ابعاد</button>
   <button class="tab" data-tab="t2">ابعاد از حجم</button>
   <button class="tab" data-tab="t3">بهینه‌سازی ورق</button>
-  <button class="tab" data-tab="t4">وزن و ضخامت</button>
-  <button class="tab" data-tab="t5">قیمت‌گذاری</button>
-  <button class="tab" data-tab="t6">قیمت‌ها</button>
-  <button class="tab" data-tab="t7">📚 کاتالوگ</button>
-  <button class="tab" data-tab="t8">🔵 سطح گسترده عدسی</button>
-  <button class="tab" data-tab="t9">💾 حافظه محاسبات</button>
+  <button class="tab" data-tab="t4">🧮 محاسبه‌گر جامع</button>
+  <button class="tab" data-tab="t5">📐 سطح گسترده عدسی</button>
+  <button class="tab" data-tab="t6">💾 حافظه</button>
+  <button class="tab" data-tab="t7">💰 قیمت‌ها</button>
+  <button class="tab" data-tab="t8">📚 کاتالوگ</button>
 </div>
 
 <main>
@@ -112,7 +121,7 @@ tr.best td{color:var(--ac)}
 <!-- ============ تب ۱ ============ -->
 <div id="t1" class="panel active">
   <div class="card">
-    <h2>محاسبه حجم از ابعاد</h2>
+    <h2>حجم از ابعاد</h2>
     <div class="field"><label>نوع مخزن</label>
       <select id="v-type">
         <option value="cyl-dish">استوانه با دو عدسی</option>
@@ -127,7 +136,6 @@ tr.best td{color:var(--ac)}
       <div class="field" id="f-v-w" style="display:none"><label>عرض (cm)</label><input type="number" id="v-w" step="0.1"></div>
     </div>
     <button class="btn" onclick="calcVol()">محاسبه</button>
-    <button class="btn sec" onclick="saveCurrentCalc('volume')">💾 ذخیره در حافظه</button>
     <div id="v-res"></div>
   </div>
 </div>
@@ -166,115 +174,82 @@ tr.best td{color:var(--ac)}
   </div>
 </div>
 
-<!-- ============ تب ۴ ============ -->
+<!-- ============ تب ۴: محاسبه‌گر جامع (وزن + قیمت) ============ -->
 <div id="t4" class="panel">
   <div class="card">
-    <h2>وزن و ضخامت</h2>
-    <div class="row">
-      <div class="field"><label>قطر (cm)</label><input type="number" id="w-d" step="0.1"></div>
-      <div class="field"><label>ارتفاع (cm)</label><input type="number" id="w-h" step="0.1"></div>
+    <h2>انتخاب تجهیز</h2>
+    <div class="field"><label>نوع تجهیز</label>
+      <select id="eq-type" onchange="loadEquipment()">
+        <option value="simple_tank">تانک ساده</option>
+        <option value="spiral">منبع اسپیرال</option>
+        <option value="u_coil">منبع کوئلی U</option>
+        <option value="softener">سختی‌گیر</option>
+        <option value="sand_filter">فیلتر شنی / کربنی</option>
+        <option value="deaerator">دی‌اریتور</option>
+        <option value="three_pass">دیگ سه‌پاس</option>
+        <option value="oil_heater">دیگ روغن داغ</option>
+        <option value="expansion">منبع انبساط</option>
+        <option value="condensate">مخزن کندانس</option>
+      </select>
     </div>
-    <div class="row">
-      <div class="field"><label>فشار (bar)</label><input type="number" id="w-p" value="6" step="0.5"></div>
-      <div class="field"><label>جنس</label>
-        <select id="w-mat">
-          <option value="ST37">ST37</option>
-          <option value="S235JR">S235JR</option>
-          <option value="A516-70">A516 Gr70</option>
-          <option value="Galvanized">گالوانیزه</option>
-          <option value="SS304">Stainless 304</option>
-          <option value="SS316">Stainless 316</option>
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field"><label>ضخامت پوسته (mm) — اختیاری</label><input type="number" id="w-ts" step="0.1" placeholder="خالی = ASME"></div>
-      <div class="field"><label>ضخامت عدسی (mm) — اختیاری</label><input type="number" id="w-th" step="0.1" placeholder="خالی = ASME"></div>
-    </div>
-    <div class="field"><label>نوع عدسی</label>
-      <select id="w-head"><option value="torisph">تورسفریکال</option><option value="ellip">بیضوی</option><option value="flat">تخت</option></select>
-    </div>
-    <button class="btn" onclick="calcWeight()">محاسبه</button>
-    <button class="btn sec" onclick="saveCurrentCalc('weight')">💾 ذخیره در حافظه</button>
-    <div id="w-res"></div>
+    <div class="notice info">با انتخاب تجهیز، اجزای مربوطه نمایش داده می‌شود. هر جزء را می‌توانید فعال/غیرفعال کنید.</div>
+  </div>
+
+  <div id="components-container"></div>
+
+  <div class="card">
+    <h2>نتیجه نهایی</h2>
+    <button class="btn" onclick="calcAll()">🧮 محاسبه وزن و قیمت</button>
+    <button class="btn sec" onclick="saveEquipCalc()">💾 ذخیره در حافظه</button>
+    <div id="total-result"></div>
   </div>
 </div>
 
-<!-- ============ تب ۵ ============ -->
+<!-- ============ تب ۵: سطح گسترده عدسی ============ -->
 <div id="t5" class="panel">
   <div class="card">
-    <h2>قیمت‌گذاری</h2>
-    <div class="row">
-      <div class="field"><label>قطر (cm)</label><input type="number" id="c-d" step="0.1"></div>
-      <div class="field"><label>ارتفاع (cm)</label><input type="number" id="c-h" step="0.1"></div>
+    <h2>محاسبه سطح گسترده عدسی</h2>
+    <div class="field"><label>نوع عدسی (پیش‌فرض گودی)</label>
+      <select id="h-type" onchange="applyHeadPreset()">
+        <option value="shallow">کم‌عمق (h = D/15) — صنعتی</option>
+        <option value="torisph">تورسفریکال F&D (h = 0.194D)</option>
+        <option value="ellip">بیضوی 2:1 (h = 0.25D)</option>
+        <option value="custom">دستی</option>
+      </select>
     </div>
     <div class="row">
-      <div class="field"><label>فشار (bar)</label><input type="number" id="c-p" value="6" step="0.5"></div>
-      <div class="field"><label>جنس</label>
-        <select id="c-mat">
-          <option value="ST37">ST37</option>
-          <option value="S235JR">S235JR</option>
-          <option value="A516-70">A516 Gr70</option>
-          <option value="Galvanized">گالوانیزه</option>
-        </select>
-      </div>
+      <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="h-d" step="1" oninput="applyHeadPreset()" placeholder="750"></div>
+      <div class="field"><label>طول لبه (mm)</label><input type="number" id="h-l" step="1" value="40" placeholder="35-40"></div>
     </div>
     <div class="row">
-      <div class="field"><label>ضخامت پوسته (mm)</label><input type="number" id="c-ts" step="0.1" placeholder="خالی = ASME"></div>
-      <div class="field"><label>ضخامت عدسی (mm)</label><input type="number" id="c-th" step="0.1" placeholder="خالی = ASME"></div>
+      <div class="field"><label>گودی عدسی h (mm)</label><input type="number" id="h-h" step="1" placeholder="50"></div>
+      <div class="field"><label>ضخامت (mm)</label><input type="number" id="h-t" step="0.1" value="6"></div>
     </div>
-    <div class="row">
-      <div class="field"><label>منهول</label>
-        <select id="c-man"><option value="0">بدون</option><option value="1" selected>۱۶ اینچ - ۱ عدد</option><option value="2">۱۶ اینچ - ۲ عدد</option><option value="18">۱۸ اینچ - ۱ عدد</option><option value="20">۲۰ اینچ - ۱ عدد</option></select>
-      </div>
-      <div class="field"><label>هدهول</label>
-        <select id="c-headhole"><option value="0">بدون</option><option value="6">۶ اینچ</option><option value="8">۸ اینچ</option></select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field"><label>هندهول</label>
-        <select id="c-handhole"><option value="0">بدون</option><option value="4">۴ اینچ</option><option value="5">۵ اینچ</option></select>
-      </div>
-      <div class="field"><label>تعداد نازل</label><input type="number" id="c-noz" value="4" step="1"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>پایه</label>
-        <select id="c-base"><option value="none">بدون پایه</option><option value="saddle2">۲ پایه زانویی</option><option value="saddle3">۳ پایه زانویی</option><option value="leg4">۴ پایه عمودی</option></select>
-      </div>
-      <div class="field"><label>پد پایه</label>
-        <select id="c-pad"><option value="0">بدون</option><option value="1">دارد</option></select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field"><label>طول کویل (m)</label><input type="number" id="c-coil" value="0" step="0.1"></div>
-      <div class="field"><label>نوع کویل</label>
-        <select id="c-coil-type"><option value="copper_1_2">مسی ۱/۲</option><option value="copper_3_4">مسی ۳/۴</option><option value="copper_1">مسی ۱</option></select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field"><label>عایق</label>
-        <select id="c-ins"><option value="none">بدون</option><option value="ceramic_1_5">۱.۵ سانتی</option><option value="ceramic_2_5">۲.۵ سانتی</option><option value="ceramic_5">۵ سانتی</option><option value="ceramic_12">۱۲ سانتی</option></select>
-      </div>
-      <div class="field"><label>کاور</label>
-        <select id="c-cover"><option value="none">بدون</option><option value="cover_steel">استیل</option><option value="cover_aluminum">آلومینیوم</option></select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="field"><label>سود (٪)</label><input type="number" id="c-profit" value="25" step="1"></div>
-    </div>
-    <button class="btn" onclick="calcCost()">محاسبه قیمت</button>
-    <button class="btn sec" onclick="saveCurrentCalc('cost')">💾 ذخیره در حافظه</button>
-    <div id="c-res"></div>
+    <div class="hint" style="font-size:11px;color:var(--mt);margin:4px 0 10px">💡 مثال: عدسی با قطر داخلی ۷۵۰mm، لبه ۴۰mm، گسترده ۹۲۵mm می‌دهد.</div>
+    <button class="btn" onclick="calcBlank()">محاسبه</button>
+    <button class="btn sec" onclick="saveHeadCalc()">💾 ذخیره</button>
+    <div id="h-res"></div>
   </div>
 </div>
 
-<!-- ============ تب ۶ — قیمت‌ها ============ -->
+<!-- ============ تب ۶: حافظه ============ -->
 <div id="t6" class="panel">
+  <div class="card">
+    <h2>حافظه محاسبات</h2>
+    <div class="field"><label>🔍 جستجو</label><input type="text" id="mem-search" placeholder="نام..." oninput="renderMemory()"></div>
+    <div id="mem-list"></div>
+    <button class="btn sec" onclick="exportMemory()">⬇ خروجی CSV</button>
+    <button class="btn sec" onclick="clearMemory()">🗑 پاک کردن همه</button>
+  </div>
+</div>
+
+<!-- ============ تب ۷: قیمت‌ها ============ -->
+<div id="t7" class="panel">
   <div class="card">
     <h2>قیمت‌ها</h2>
     <div class="row">
-      <button class="btn" onclick="syncPricesFromFirebase()">📥 دریافت از سرور</button>
-      <button class="btn sec" onclick="syncPricesToFirebase()">📤 ارسال به سرور</button>
+      <button class="btn" onclick="syncFromFirebase()">📥 دریافت از سرور</button>
+      <button class="btn sec" onclick="syncToFirebase()">📤 ارسال به سرور</button>
     </div>
     <div id="price-status"></div>
     <div id="price-editor"></div>
@@ -284,50 +259,14 @@ tr.best td{color:var(--ac)}
   </div>
 </div>
 
-<!-- ============ تب ۷ — کاتالوگ ============ -->
-<div id="t7" class="panel">
+<!-- ============ تب ۸: کاتالوگ ============ -->
+<div id="t8" class="panel">
   <div class="card">
     <h2>کاتالوگ محصولات</h2>
     <div class="field"><label>دسته‌بندی</label><select id="cat-category" onchange="renderCatalog()"></select></div>
     <div class="field"><label>🔍 جستجو</label><input type="text" id="cat-search" placeholder="مثلاً 3000" oninput="renderCatalog()"></div>
     <div id="cat-info"></div>
     <div id="cat-table"></div>
-  </div>
-</div>
-
-<!-- ============ تب ۸ — سطح گسترده عدسی ============ -->
-<div id="t8" class="panel">
-  <div class="card">
-    <h2>محاسبه سطح گسترده عدسی</h2>
-    <div class="field"><label>نوع عدسی</label>
-      <select id="h-type">
-        <option value="torisph">تورسفریکال F&D</option>
-        <option value="ellip">بیضوی 2:1</option>
-        <option value="hemi">نیم‌کره</option>
-      </select>
-    </div>
-    <div class="row">
-      <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="h-d" step="1"></div>
-      <div class="field"><label>گودی عدسی (mm)</label><input type="number" id="h-h" step="1"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>طول لبه راست (mm)</label><input type="number" id="h-l" step="1" value="0"></div>
-      <div class="field"><label>ضخامت (mm)</label><input type="number" id="h-t" step="0.1" value="6"></div>
-    </div>
-    <button class="btn" onclick="calcHeadBlank()">محاسبه سطح گسترده</button>
-    <button class="btn sec" onclick="saveHeadCalc()">💾 ذخیره در حافظه</button>
-    <div id="h-res"></div>
-  </div>
-</div>
-
-<!-- ============ تب ۹ — حافظه محاسبات ============ -->
-<div id="t9" class="panel">
-  <div class="card">
-    <h2>حافظه محاسبات</h2>
-    <div class="field"><label>🔍 جستجو</label><input type="text" id="mem-search" placeholder="نام یا ظرفیت..." oninput="renderMemory()"></div>
-    <div id="mem-list"></div>
-    <button class="btn sec" onclick="exportMemory()">⬇ خروجی CSV</button>
-    <button class="btn sec" onclick="clearMemory()">🗑 پاک کردن همه</button>
   </div>
 </div>
 
@@ -338,651 +277,5 @@ tr.best td{color:var(--ac)}
 <script src="prices.js"></script>
 <script src="catalog.js"></script>
 <script src="app.js"></script>
-<script>
-// ===== راه‌اندازی =====
-(async function(){
-  // ۱. Firebase
-  await initFirebase();
-
-  // ۲. بارگذاری قیمت‌های محلی
-  loadPricesLocal();
-
-  // ۳. بارگذاری کاتالوگ
-  if (typeof window.EMBEDDED_CATALOG !== 'undefined') {
-    CATALOG = window.EMBEDDED_CATALOG;
-  }
-
-  // ۴. لوگو
-  initLogo();
-
-  // ۵. رندر اولیه
-  renderPriceEditor();
-  initCatalog();
-  renderMemory();
-
-  // ۶. گوش دادن به قیمت‌های Firebase
-  listenToPrices((remotePrices) => {
-    if (remotePrices && remotePrices.version !== PRICES.version) {
-      PRICES = Object.assign({}, window.EMBEDDED_PRICES, remotePrices);
-      savePricesLocal(false);
-      renderPriceEditor();
-      showStatus('info', '🔄 قیمت‌ها از سرور بروزرسانی شد.');
-    }
-  });
-
-  console.log('✅ App ready');
-})();
-
-// ===== لوگو =====
-function initLogo(){
-  const candidates = ['logo.png','Logo.png','logo.jpg','icons/logo.png','icon-192.png'];
-  const img = document.getElementById('logo-img');
-  const box = document.getElementById('logo-box');
-  if(!img || !box) return;
-  let i = 0;
-  img.onerror = function(){
-    i++;
-    if(i >= candidates.length){ box.style.display = 'none'; return; }
-    img.src = candidates[i];
-  };
-  img.onload = function(){
-    box.style.display = 'inline-flex';
-  };
-  img.src = candidates[0];
-}
-
-// ===== Tab ها =====
-document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    document.getElementById(t.dataset.tab).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-});
-
-// ===== محاسبه حجم =====
-function calcVol(){
-  const t = document.getElementById('v-type').value;
-  const out = document.getElementById('v-res');
-  if(t==='box'){
-    const W=val('v-d'), L=val('v-l'), H=val('v-w');
-    if(!(W>0&&L>0&&H>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">همه ابعاد را پر کنید</span></div></div>'; return; }
-    const V=W*L*H/1000;
-    out.innerHTML = `<div class="result">
-      <div class="item"><span class="lbl">ابعاد:</span><span class="val">${fmt(W,1)}×${fmt(L,1)}×${fmt(H,1)}</span></div>
-      <div class="item big"><span class="lbl">حجم:</span><span class="val">${fmt(V)} لیتر</span></div>
-      <div class="item"><span class="lbl">سطح:</span><span class="val">${fmt(2*(W*L+W*H+L*H)/10000,2)} m²</span></div>
-    </div>`;
-    return;
-  }
-  const D=val('v-d'), H=val('v-h');
-  if(!(D>0&&H>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">قطر و ارتفاع</span></div></div>'; return; }
-  const head = t==='cyl-dish'?'torisph':'flat';
-  const vB = cylVol(D,H), vH = head==='torisph'?2*dishVT(D):0;
-  const V = vB+vH;
-  const aB = Math.PI*D*H/10000;
-  const aH = head==='torisph'?2*dishAT(D)/10000:2*(Math.PI/4*D*D)/10000;
-  out.innerHTML = `<div class="result">
-    <div class="item"><span class="lbl">حجم بدنه:</span><span class="val">${fmt(vB)} L</span></div>
-    <div class="item"><span class="lbl">حجم عدسی‌ها:</span><span class="val">${fmt(vH)} L</span></div>
-    <div class="item big"><span class="lbl">حجم کل:</span><span class="val">${fmt(V)} L</span></div>
-    <div class="item"><span class="lbl">سطح کل:</span><span class="val">${fmt(aB+aH,2)} m²</span></div>
-  </div>`;
-}
-
-// ===== محاسبه ابعاد =====
-function calcDim(){
-  const V=val('d-v'), D=val('d-d')||0, H=val('d-h')||0;
-  const head = document.getElementById('d-type').value==='cyl-dish'?'torisph':'flat';
-  const out = document.getElementById('d-res');
-  if(!(V>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">ظرفیت را وارد کنید</span></div></div>'; return; }
-  let html = '<div class="result">';
-  if(D>0&&H>0){
-    const Vc = totalVol(D,H,head);
-    html += `<div class="item big"><span class="lbl">حجم:</span><span class="val">${fmt(Vc)} L</span></div>`;
-    html += `<div class="item"><span class="lbl">اختلاف:</span><span class="val">${fmt(Vc-V,1)} L</span></div>`;
-  } else if(D>0){
-    const Hc = hFromV(V,D,head);
-    html += `<div class="item big"><span class="lbl">ارتفاع:</span><span class="val">${fmt(Hc,1)} cm</span></div>`;
-    const n=Math.max(1,Math.round(Hc/150)), Hf=n*150;
-    html += `<div class="item"><span class="lbl">با ورق ۱۵۰:</span><span class="val">${n} کورس = ${Hf} cm</span></div>`;
-  } else if(H>0){
-    const Dc = diamFromV(V,H,head);
-    html += `<div class="item big"><span class="lbl">قطر:</span><span class="val">${fmt(Dc,1)} cm</span></div>`;
-    html += `<div class="item"><span class="lbl">محیط:</span><span class="val">${fmt(Math.PI*Dc,1)} cm</span></div>`;
-  } else {
-    let best=null;
-    for(let n=1;n<=10;n++){
-      const Hf=n*150, Df=diamFromV(V,Hf,head);
-      const C=Math.PI*Df, m=Math.ceil(C/600), waste=n*(m*600-C);
-      const pct=waste/(n*m*600)*100;
-      if(!best||pct<best.pct) best={n,H:Hf,D:Df,C,m,waste,pct};
-    }
-    html += `<div class="item big"><span class="lbl">ارتفاع:</span><span class="val">${fmt(best.H,0)} cm</span></div>`;
-    html += `<div class="item big"><span class="lbl">قطر:</span><span class="val">${fmt(best.D,1)} cm</span></div>`;
-    html += `<div class="item"><span class="lbl">پرت:</span><span class="val">${fmt(best.pct,1)}٪</span></div>`;
-  }
-  out.innerHTML = html+'</div>';
-}
-
-// ===== بهینه‌سازی ورق =====
-function optSheets(){
-  const V=val('s-v'), wSel=document.getElementById('s-w').value, L=val('s-l')||600, maxN=parseInt(document.getElementById('s-max').value)||10;
-  const out=document.getElementById('s-res');
-  if(!(V>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">ظرفیت</span></div></div>'; return; }
-  const widths = wSel==='both'?[150,152]:[parseFloat(wSel)];
-  const rows=[];
-  for(const w of widths) for(let n=1;n<=maxN;n++){
-    const H=n*w, D=diamFromV(V,H,'torisph'), C=Math.PI*D;
-    const m=Math.ceil(C/L), sheets=n*m, waste=n*(m*L-C), pct=waste/(sheets*L)*100;
-    rows.push({w,n,H,D,C,m,sheets,waste,pct});
-  }
-  rows.sort((a,b)=>Math.abs(a.pct-b.pct)>0.01?a.pct-b.pct:a.sheets-b.sheets);
-  const best={};
-  for(const w of widths){const s=rows.filter(r=>r.w===w); if(s.length) best[w]=s[0];}
-  let html = '<div class="table-wrap"><table><thead><tr><th>عرض</th><th>کورس</th><th>ارتفاع</th><th>قطر</th><th>ورق</th><th>کل</th><th>پرت٪</th></tr></thead><tbody>';
-  rows.slice(0,15).forEach(r=>{
-    const isB = best[r.w]&&best[r.w].n===r.n;
-    html += `<tr class="${isB?'best':''}"><td>${r.w}${isB?' <span class="badge best">✓</span>':''}</td><td>${r.n}</td><td>${fmt(r.H,0)}</td><td>${fmt(r.D,1)}</td><td>${r.m}</td><td>${r.sheets}</td><td>${fmt(r.pct,1)}</td></tr>`;
-  });
-  html += '</tbody></table></div>';
-  for(const w of widths){const b=best[w]; if(!b) continue;
-    html += `<div class="result green" style="margin-top:12px">
-      <div class="item"><span class="lbl">🏆 عرض:</span><span class="val">${w} cm</span></div>
-      <div class="item big"><span class="lbl">ارتفاع:</span><span class="val">${fmt(b.H,0)} cm</span></div>
-      <div class="item big"><span class="lbl">قطر:</span><span class="val">${fmt(b.D,1)} cm</span></div>
-      <div class="item"><span class="lbl">کل ورق:</span><span class="val">${b.sheets}</span></div>
-      <div class="item"><span class="lbl">پرت:</span><span class="val">${fmt(b.pct,1)}٪</span></div>
-    </div>`;
-  }
-  out.innerHTML = html;
-}
-
-// ===== وزن و ضخامت =====
-function calcWeight(){
-  const D=val('w-d'), H=val('w-h'), P=val('w-p'), mat=document.getElementById('w-mat').value;
-  const head=document.getElementById('w-head').value;
-  const tS_manual=val('w-ts')||0, tH_manual=val('w-th')||0;
-  const out=document.getElementById('w-res');
-  if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">اطلاعات کامل</span></div></div>'; return; }
-  let tS_ASME=sT(P,D/2,mat), tH_ASME=hT(P,D,mat);
-  const STD=[4,5,6,8,10,12,14,16,18,20,22,25];
-  const rU = x => STD.find(s=>s>=x)||Math.ceil(x);
-  const tSf = tS_manual>0 ? tS_manual : rU(tS_ASME);
-  const tHf = tH_manual>0 ? tH_manual : rU(tH_ASME);
-  const Dm=D/100, Hm=H/100;
-  const wShell = Math.PI*Dm*Hm*(tSf/1000)*MR[mat];
-  let aH=0;
-  if(head==='torisph') aH=2*1.084*Math.PI/4*Dm*Dm;
-  else if(head==='ellip') aH=2*1.1*Math.PI/4*Dm*Dm;
-  else aH=2*Math.PI/4*Dm*Dm;
-  const wH = aH*(tHf/1000)*MR[mat];
-  const wE = (wShell+wH)*0.08;
-  const Vw = totalVol(D,H,head);
-  const wT = wShell+wH+wE;
-  out.innerHTML = `<div class="result">
-    <div class="item"><span class="lbl">ضخامت ASME پوسته:</span><span class="val">${fmt(tS_ASME,2)} mm</span></div>
-    <div class="item"><span class="lbl">ضخامت ASME عدسی:</span><span class="val">${fmt(tH_ASME,2)} mm</span></div>
-    <div class="item big"><span class="lbl">پوسته انتخابی:</span><span class="val">${tSf} mm</span></div>
-    <div class="item big"><span class="lbl">عدسی انتخابی:</span><span class="val">${tHf} mm</span></div>
-    <div class="divider"></div>
-    <div class="item"><span class="lbl">وزن پوسته:</span><span class="val">${fmt(wShell,0)} kg</span></div>
-    <div class="item"><span class="lbl">وزن عدسی‌ها:</span><span class="val">${fmt(wH,0)} kg</span></div>
-    <div class="item big"><span class="lbl">وزن خالی:</span><span class="val">${fmt(wT,0)} kg</span></div>
-    <div class="item big"><span class="lbl">وزن پر آب:</span><span class="val">${fmt(wT+Vw,0)} kg</span></div>
-    <div class="item"><span class="lbl">حجم آب:</span><span class="val">${fmt(Vw)} L</span></div>
-  </div>`;
-}
-
-// ===== قیمت‌گذاری =====
-function findSheetP(mat,t){
-  const keys = Object.keys(PRICES.sheets||{});
-  const c = keys.filter(k=>k.startsWith(mat+'_'));
-  if(!c.length){const b=PRICES.sheets['ST37_6']||70000; return mat.startsWith('SS')?b*4:b;}
-  let best=null;
-  for(const k of c){const tk=parseFloat(k.split('_')[1]), d=Math.abs(tk-t); if(!best||d<best.d) best={d,p:PRICES.sheets[k]};}
-  return best.p;
-}
-
-function calcCost(){
-  const D=val('c-d'), H=val('c-h'), P=val('c-p'), mat=document.getElementById('c-mat').value;
-  const manSel=document.getElementById('c-man').value;
-  const headholeSel=document.getElementById('c-headhole').value;
-  const handholeSel=document.getElementById('c-handhole').value;
-  const nNoz=parseInt(document.getElementById('c-noz').value)||0;
-  const baseSel=document.getElementById('c-base').value;
-  const padSel=document.getElementById('c-pad').value;
-  const coilL=val('c-coil'), coilT=document.getElementById('c-coil-type').value;
-  const ins=document.getElementById('c-ins').value;
-  const cover=document.getElementById('c-cover').value;
-  const pp=val('c-profit')||25;
-  const tS_manual=val('c-ts')||0, tH_manual=val('c-th')||0;
-  const out=document.getElementById('c-res');
-  if(!(D>0&&H>0&&P>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">اطلاعات کامل</span></div></div>'; return; }
-
-  let tS_ASME=sT(P,D/2,mat), tH_ASME=hT(P,D,mat);
-  const STD=[4,5,6,8,10,12,14,16,18,20,22,25];
-  const rU = x => STD.find(s=>s>=x)||Math.ceil(x);
-  const tS = tS_manual>0 ? tS_manual : rU(tS_ASME);
-  const tH = tH_manual>0 ? tH_manual : rU(tH_ASME);
-
-  const rho=MR[mat];
-  const wS=Math.PI*(D/100)*(H/100)*(tS/1000)*rho;
-  const aH=2*1.084*Math.PI/4*Math.pow(D/100,2);
-  const wH=aH*(tH/1000)*rho;
-  const wSh=(wS+wH)*1.15;
-  const pS=findSheetP(mat,tS);
-  const cS=wSh*pS;
-  const cD=(wH*pS)*((PRICES.dish_markup_pct||35)/100);
-
-  // منهول
-  let cMan = 0;
-  if(manSel==='1') cMan = PRICES.manholes['manhole_16']||0;
-  else if(manSel==='2') cMan = 2*(PRICES.manholes['manhole_16']||0);
-  else if(manSel==='18') cMan = PRICES.manholes['manhole_18']||0;
-  else if(manSel==='20') cMan = PRICES.manholes['manhole_20']||0;
-
-  // هدهول
-  let cHeadHole = 0;
-  if(headholeSel==='6') cHeadHole = PRICES.headholes['headhole_6']||0;
-  else if(headholeSel==='8') cHeadHole = PRICES.headholes['headhole_8']||0;
-
-  // هندهول
-  let cHandHole = 0;
-  if(handholeSel==='4') cHandHole = PRICES.handholes['handhole_4']||0;
-  else if(handholeSel==='5') cHandHole = PRICES.handholes['handhole_5']||0;
-
-  // نازل
-  const cNoz = nNoz*(PRICES.flanges['flange_2']||0);
-
-  // کویل
-  const cCoil = coilL>0 ? coilL*((PRICES.copperCoils[coilT])||0) : 0;
-
-  // جوشکاری
-  const Lw = H/100 + Math.ceil(H/150)*Math.PI*D/100 + nNoz*0.3;
-  const hW = Lw*2;
-  const cW = hW*(PRICES.welder_hr||0);
-  const cF = (hW*0.5)*(PRICES.fitter_hr||0);
-  const eK = Lw*0.15;
-  const cE = eK*(PRICES.electrode_kg||0);
-
-  // رنگ
-  const aB=Math.PI*(D/100)*(H/100);
-  const aT=aB+aH;
-  const cP=aT*((PRICES.paint_epoxy_m2||0)+(PRICES.paint_zinc_m2||0));
-
-  // عایق
-  let cI=0;
-  if(ins && ins!=='none') cI = aT*(PRICES.insulation[ins]||0);
-
-  // کاور
-  let cCover=0;
-  if(cover && cover!=='none') cCover = aT*(PRICES.covers[cover]||0);
-
-  // پایه
-  let cBase = 0;
-  if(baseSel==='saddle2') cBase = 3500000;
-  else if(baseSel==='saddle3') cBase = 5000000;
-  else if(baseSel==='leg4') cBase = 4200000;
-
-  // پد پایه
-  let cPad = 0;
-  if(padSel==='1') cPad = 800000;
-
-  const s1=cS+cD+cMan+cHeadHole+cHandHole+cNoz+cCoil+cW+cF+cE+cP+cI+cCover+cBase+cPad;
-  const cCn=s1*((PRICES.consumables_pct||8)/100);
-  const wT=wS+wH+50;
-  const cT=wT*(PRICES.transport_per_kg||0);
-  const total=s1+cCn+cT;
-  const final=total*(1+pp/100);
-
-  out.innerHTML = `<div class="result">
-    <div class="item"><span class="lbl">ضخامت پوسته:</span><span class="val">${tS} mm</span></div>
-    <div class="item"><span class="lbl">ضخامت عدسی:</span><span class="val">${tH} mm</span></div>
-    <div class="item"><span class="lbl">قیمت ورق:</span><span class="val">${fmt(pS,0)}</span></div>
-    <div class="divider"></div>
-    <div class="item"><span class="lbl">ورق+عدسی:</span><span class="val">${fmtT(cS+cD)}</span></div>
-    <div class="item"><span class="lbl">منهول:</span><span class="val">${fmtT(cMan)}</span></div>
-    <div class="item"><span class="lbl">هدهول:</span><span class="val">${fmtT(cHeadHole)}</span></div>
-    <div class="item"><span class="lbl">هندهول:</span><span class="val">${fmtT(cHandHole)}</span></div>
-    <div class="item"><span class="lbl">نازل:</span><span class="val">${fmtT(cNoz)}</span></div>
-    <div class="item"><span class="lbl">کویل:</span><span class="val">${fmtT(cCoil)}</span></div>
-    <div class="item"><span class="lbl">پایه:</span><span class="val">${fmtT(cBase)}</span></div>
-    <div class="item"><span class="lbl">پد پایه:</span><span class="val">${fmtT(cPad)}</span></div>
-    <div class="item"><span class="lbl">جوشکاری:</span><span class="val">${fmtT(cW)}</span></div>
-    <div class="item"><span class="lbl">مونتاژ:</span><span class="val">${fmtT(cF)}</span></div>
-    <div class="item"><span class="lbl">الکترود:</span><span class="val">${fmtT(cE)}</span></div>
-    <div class="item"><span class="lbl">رنگ:</span><span class="val">${fmtT(cP)}</span></div>
-    <div class="item"><span class="lbl">عایق:</span><span class="val">${fmtT(cI)}</span></div>
-    <div class="item"><span class="lbl">کاور:</span><span class="val">${fmtT(cCover)}</span></div>
-    <div class="item"><span class="lbl">مصرفی:</span><span class="val">${fmtT(cCn)}</span></div>
-    <div class="item"><span class="lbl">حمل:</span><span class="val">${fmtT(cT)}</span></div>
-    <div class="divider"></div>
-    <div class="item big"><span class="lbl">جمع:</span><span class="val">${fmtT(total)}</span></div>
-    <div class="item big" style="border-top:2px solid var(--pr);padding-top:14px"><span class="lbl">💰 نهایی:</span><span class="val" style="font-size:22px">${fmtT(final)}</span></div>
-  </div>`;
-}
-
-// ===== سطح گسترده عدسی =====
-function calcHeadBlank(){
-  const D = val('h-d'), h = val('h-h'), L = val('h-l')||0, t = val('h-t')||6;
-  const type = document.getElementById('h-type').value;
-  const out = document.getElementById('h-res');
-  if(!(D>0 && h>0)){ out.innerHTML='<div class="result red"><div class="item"><span class="lbl">قطر و گودی را وارد کنید</span></div></div>'; return; }
-  const res = calcHeadBlankCalc(D, h, L, t, type);
-  out.innerHTML = `<div class="result">
-    <div class="item big"><span class="lbl">قطر گسترده:</span><span class="val">${fmt(res.D_blank,1)} mm</span></div>
-    <div class="item big"><span class="lbl">سطح گسترده:</span><span class="val">${fmt(res.A,3)} m²</span></div>
-    <div class="item big"><span class="lbl">وزن عدسی:</span><span class="val">${fmt(res.W,1)} kg</span></div>
-    <div class="item"><span class="lbl">محیط لبه:</span><span class="val">${fmt(res.perim,1)} mm</span></div>
-  </div>`;
-}
-
-function calcHeadBlankCalc(D, h, L, t, type){
-  let D_blank;
-  if(type === 'torisph'){
-    D_blank = Math.sqrt(D*D + 4*D*h) + 2*L;
-  } else if(type === 'ellip'){
-    D_blank = Math.sqrt(D*D + 4*h*h) + 2*L;
-  } else {
-    D_blank = 1.414 * D + 2 * L;
-  }
-  const A = Math.PI/4 * Math.pow(D_blank/1000, 2);
-  const W = A * (t/1000) * 7850;
-  const perim = Math.PI * D_blank;
-  return { D_blank, A, W, perim };
-}
-
-// ===== ذخیره محاسبات =====
-function saveCurrentCalc(type){
-  const name = prompt('نام محاسبه:', 'محاسبه ' + new Date().toLocaleDateString('fa-IR'));
-  if(!name) return;
-  const data = { name: name, type: type };
-  if(type==='volume'){
-    data.inputs = { D: val('v-d'), H: val('v-h') };
-    data.outputs = { V: totalVol(val('v-d'), val('v-h'), 'torisph') };
-  } else if(type==='weight'){
-    data.inputs = { D: val('w-d'), H: val('w-h'), P: val('w-p'), mat: document.getElementById('w-mat').value };
-    data.outputs = { weight: 'محاسبه شده' };
-  } else if(type==='cost'){
-    data.inputs = { D: val('c-d'), H: val('c-h'), P: val('c-p'), mat: document.getElementById('c-mat').value };
-    data.outputs = { price: 'محاسبه شده' };
-  }
-  if(saveCalculation(type, name, data.inputs, data.outputs)){
-    showStatus('success', '✅ ذخیره شد');
-    renderMemory();
-  }
-}
-
-function saveHeadCalc(){
-  const D = val('h-d'), h = val('h-h'), L = val('h-l')||0, t = val('h-t')||6;
-  const type = document.getElementById('h-type').value;
-  if(!(D>0 && h>0)){ showStatus('danger', 'اطلاعات کامل نیست'); return; }
-  const res = calcHeadBlankCalc(D, h, L, t, type);
-  const name = prompt('نام محاسبه:', 'عدسی ' + D + 'mm');
-  if(!name) return;
-  if(saveCalculation('head', name, {D, h, L, t, type}, res)){
-    showStatus('success', '✅ ذخیره شد');
-    renderMemory();
-  }
-}
-
-function renderMemory(){
-  const list = loadCalculations();
-  const el = document.getElementById('mem-list');
-  if(!list.length){ el.innerHTML='<div class="empty-state">هیچ محاسبه‌ای ذخیره نشده</div>'; return; }
-  let html = '';
-  list.forEach(c=>{
-    html += `<div class="save-row">
-      <div class="info"><b>${c.name}</b><br>${c.type} — ${c.date}</div>
-      <button class="load" onclick="loadCalc('${c.id}')">بارگذاری</button>
-      <button class="del" onclick="delCalc('${c.id}')">حذف</button>
-    </div>`;
-  });
-  el.innerHTML = html;
-}
-
-function loadCalc(id){
-  const list = loadCalculations();
-  const c = list.find(x=>x.id===id);
-  if(!c) return;
-  if(c.type==='volume'){
-    document.getElementById('v-d').value = c.inputs.D;
-    document.getElementById('v-h').value = c.inputs.H;
-    document.querySelector('[data-tab="t1"]').click();
-    calcVol();
-  } else if(c.type==='head'){
-    document.getElementById('h-d').value = c.inputs.D;
-    document.getElementById('h-h').value = c.inputs.h;
-    document.getElementById('h-l').value = c.inputs.L;
-    document.getElementById('h-t').value = c.inputs.t;
-    document.getElementById('h-type').value = c.inputs.type;
-    document.querySelector('[data-tab="t8"]').click();
-    calcHeadBlank();
-  }
-  showStatus('success', '✅ بارگذاری شد');
-}
-
-function delCalc(id){
-  if(!confirm('حذف شود؟')) return;
-  deleteCalculation(id);
-  renderMemory();
-}
-
-function clearMemory(){
-  if(!confirm('همه محاسبات پاک شوند؟')) return;
-  localStorage.removeItem('csp_calcs');
-  renderMemory();
-}
-
-function exportMemory(){
-  const list = loadCalculations();
-  if(!list.length){ showStatus('warn', 'لیست خالی است'); return; }
-  let csv = 'نام,نوع,تاریخ\n';
-  list.forEach(c=>{
-    csv += `"${c.name}","${c.type}","${c.date}"\n`;
-  });
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'calculations.csv';
-  a.click();
-}
-
-// ===== قیمت‌ها =====
-function renderPriceEditor(){
-  const c = document.getElementById('price-editor');
-  if(!c) return;
-  let html = '';
-  // ورق‌ها
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">ورق‌ها (تومان/kg)</h3>';
-  for(const k in PRICES.sheets){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="sheets" data-key="${k}" value="${PRICES.sheets[k]}" step="any"></div>`;
-  }
-  // لوله‌ها
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">لوله‌ها (تومان/شاخه)</h3>';
-  for(const k in PRICES.pipes){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="pipes" data-key="${k}" value="${PRICES.pipes[k]}" step="any"></div>`;
-  }
-  // بوشن
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">بوشن‌ها</h3>';
-  for(const k in PRICES.bushings){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="bushings" data-key="${k}" value="${PRICES.bushings[k]}" step="any"></div>`;
-  }
-  // فلنج
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">فلنج‌ها</h3>';
-  for(const k in PRICES.flanges){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="flanges" data-key="${k}" value="${PRICES.flanges[k]}" step="any"></div>`;
-  }
-  // منهول/هدهول/هندهول
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">منهول / هدهول / هندهول</h3>';
-  for(const k in PRICES.manholes){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="manholes" data-key="${k}" value="${PRICES.manholes[k]}" step="any"></div>`;
-  }
-  for(const k in PRICES.headholes){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="headholes" data-key="${k}" value="${PRICES.headholes[k]}" step="any"></div>`;
-  }
-  for(const k in PRICES.handholes){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="handholes" data-key="${k}" value="${PRICES.handholes[k]}" step="any"></div>`;
-  }
-  // عایق
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">عایق (تومان/m²)</h3>';
-  for(const k in PRICES.insulation){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="insulation" data-key="${k}" value="${PRICES.insulation[k]}" step="any"></div>`;
-  }
-  // کویل مسی
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">کویل مسی (تومان/m)</h3>';
-  for(const k in PRICES.copperCoils){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="copperCoils" data-key="${k}" value="${PRICES.copperCoils[k]}" step="any"></div>`;
-  }
-  // کاور
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">کاور (تومان/m²)</h3>';
-  for(const k in PRICES.covers){
-    html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="covers" data-key="${k}" value="${PRICES.covers[k]}" step="any"></div>`;
-  }
-  // سایر
-  html += '<h3 style="color:var(--pr);font-size:13px;margin:14px 0 8px">سایر</h3>';
-  const otherKeys = ['dish_markup_pct','electrode_kg','welder_hr','fitter_hr','painter_hr','paint_epoxy_m2','paint_zinc_m2','consumables_pct','transport_per_kg'];
-  const otherLabels = {'dish_markup_pct':'کارمزد عدسی (٪)','electrode_kg':'الکترود','welder_hr':'جوشکار/ساعت','fitter_hr':'مونتاژکار/ساعت','painter_hr':'رنگ‌کار/ساعت','paint_epoxy_m2':'اپوکسی/m²','paint_zinc_m2':'زینک/m²','consumables_pct':'مصرفی (٪)','transport_per_kg':'حمل/kg'};
-  for(const k of otherKeys){
-    html += `<div class="price-row"><label>${otherLabels[k]}</label><input type="number" data-cat="_root" data-key="${k}" value="${PRICES[k]}" step="any"></div>`;
-  }
-  c.innerHTML = html;
-}
-
-function savePricesLocal(modified){
-  document.querySelectorAll('#price-editor input').forEach(inp=>{
-    const cat = inp.dataset.cat;
-    const key = inp.dataset.key;
-    const v = parseFloat(inp.value)||0;
-    if(cat==='_root'){ PRICES[key]=v; }
-    else if(PRICES[cat]){ PRICES[cat][key]=v; }
-  });
-  savePricesLocalCall(modified);
-  showStatus('success','✅ ذخیره محلی شد');
-}
-
-function savePricesLocalCall(modified){
-  try{
-    localStorage.setItem('csp_prices', JSON.stringify({
-      version: PRICES.version,
-      modified: !!modified,
-      data: PRICES,
-      savedAt: Date.now()
-    }));
-  }catch(e){}
-}
-
-function resetPrices(){
-  if(!confirm('بازگشت به پیش‌فرض؟')) return;
-  localStorage.removeItem('csp_prices');
-  PRICES = JSON.parse(JSON.stringify(window.EMBEDDED_PRICES));
-  renderPriceEditor();
-  showStatus('success','↺ بازگشت');
-}
-
-function exportPrices(){
-  const b = new Blob([JSON.stringify(PRICES,null,2)],{type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(b);
-  a.download = 'prices.json';
-  a.click();
-}
-
-function showStatus(t,m){
-  const s = document.getElementById('price-status');
-  if(!s) return;
-  s.innerHTML = `<div class="notice ${t}">${m}</div>`;
-  setTimeout(()=>{ s.innerHTML=''; }, 4000);
-}
-
-// ===== کاتالوگ =====
-function initCatalog(){
-  const sel = document.getElementById('cat-category'); if(!sel) return;
-  sel.innerHTML = '<option value="">— انتخاب —</option>';
-  for(const k in CATALOG.categories){
-    const o = document.createElement('option');
-    o.value = k;
-    o.textContent = CATALOG.categories[k].name;
-    sel.appendChild(o);
-  }
-  document.getElementById('cat-table').innerHTML = '<div class="empty-state">یک دسته انتخاب کنید</div>';
-}
-
-function renderCatalog(){
-  const k = document.getElementById('cat-category').value;
-  const search = (document.getElementById('cat-search').value||'').trim();
-  const info = document.getElementById('cat-info'), tbl = document.getElementById('cat-table');
-  if(!k){info.innerHTML=''; tbl.innerHTML='<div class="empty-state">یک دسته انتخاب کنید</div>'; return;}
-  const cat = CATALOG.categories[k];
-  if(!cat){tbl.innerHTML='<div class="empty-state">پیدا نشد</div>'; return;}
-  let rows = cat.rows;
-  if(search){
-    const s = search.toLowerCase();
-    rows = rows.filter(r => r.some(v => String(v).toLowerCase().includes(s)));
-  }
-  let mIdx = -1;
-  const n = parseFloat(search);
-  if(!isNaN(n) && /^\d+$/.test(search)){
-    let bd = Infinity;
-    rows.forEach((r,i)=>{
-      const cap = parseFloat(r[1])||0;
-      const d = Math.abs(cap-n);
-      if(cap>0 && d<bd){bd=d; mIdx=i;}
-    });
-  }
-  info.innerHTML = `<div class="notice info"><strong>${cat.name}</strong> <span class="cat-badge">${rows.length} مدل</span>${mIdx>=0?'<br>🎯 نزدیک‌ترین سبز':''}</div>`;
-  let h = '<div class="table-wrap"><table><thead><tr>';
-  cat.columns.forEach(c => h += `<th>${c}</th>`);
-  h += '<th>عملیات</th></tr></thead><tbody>';
-  rows.forEach((r,i)=>{
-    const isM = i===mIdx;
-    h += `<tr class="${isM?'cat-match':''}">`;
-    r.forEach(v => h += `<td>${v!=null?v:'—'}</td>`);
-    const dIdx = cat.keys.indexOf('D')>=0 ? cat.keys.indexOf('D') : cat.keys.indexOf('D1');
-    const hIdx = cat.keys.indexOf('H1')>=0 ? cat.keys.indexOf('H1') : cat.keys.indexOf('L1')>=0 ? cat.keys.indexOf('L1') : cat.keys.indexOf('H')>=0 ? cat.keys.indexOf('H') : cat.keys.indexOf('L');
-    const data = JSON.stringify({model:r[0], D:dIdx>=0?r[dIdx]:'', H:hIdx>=0?r[hIdx]:''}).replace(/"/g,'&quot;');
-    h += `<td><button class="cat-use-btn" onclick="useFromCat(this)" data-info="${data}">استفاده</button></td></tr>`;
-  });
-  h += '</tbody></table></div>';
-  tbl.innerHTML = h;
-}
-
-function useFromCat(btn){
-  try{
-    const info = JSON.parse(btn.dataset.info);
-    const D = info.D ? (parseFloat(info.D)/10).toFixed(1) : '';
-    const H = info.H ? (parseFloat(info.H)/10).toFixed(1) : '';
-    ['v-d','d-d','w-d','c-d'].forEach(id => {if(document.getElementById(id)&&D) document.getElementById(id).value = D;});
-    ['v-h','d-h','w-h','c-h'].forEach(id => {if(document.getElementById(id)&&H) document.getElementById(id).value = H;});
-    showStatus('success', `✓ ${info.model}`);
-    setTimeout(()=>document.querySelector('[data-tab="t1"]').click(), 300);
-  }catch(e){console.warn(e);}
-}
-
-// ===== کمک‌کننده =====
-function fmt(n,d=2){if(!isFinite(n)||n==null)return'—'; return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:d});}
-function fmtT(n){
-  if(!isFinite(n))return'—';
-  if(n>=1e9)return fmt(n/1e9,3)+' میلیارد';
-  if(n>=1e6)return fmt(n/1e6,2)+' میلیون';
-  if(n>=1e3)return fmt(n/1e3,1)+' هزار';
-  return fmt(n,0);
-}
-function val(id){const e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
-
-// ===== تغییر نوع مخزن =====
-document.addEventListener('DOMContentLoaded',()=>{
-  const vt = document.getElementById('v-type');
-  if(vt) vt.addEventListener('change',e=>{
-    const b = e.target.value==='box';
-    document.getElementById('f-v-l').style.display = b?'block':'none';
-    document.getElementById('f-v-w').style.display = b?'block':'none';
-    document.getElementById('f-v-h').style.display = b?'none':'block';
-  });
-});
-</script>
 </body>
 </html>
