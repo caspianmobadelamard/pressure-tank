@@ -1,17 +1,19 @@
 {
-  "name": "محاسبه‌گر مخازن کاسپین بویلر",
-  "short_name": "محاسبه‌گر",
-  "description": "محاسبه حجم، ابعاد، وزن و قیمت مخازن",
-  "lang": "fa",
-  "dir": "rtl",
+  "name": "Pressure Tank Calculator",
+  "short_name": "PT Calculator",
+  "description": "Pressure Tank Weight & Cost Calculator",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0f0d",
-  "theme_color": "#00d68f",
+  "background_color": "#050908",
+  "theme_color": "#00ff9d",
   "icons": [
-    { "src": "logo.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
