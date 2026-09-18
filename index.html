@@ -2,463 +2,222 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>پیش‌نمایش — محاسبه‌گر مخازن</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#050908">
+<title>محاسبه‌گر مخازن — کاسپین بویلر</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-0:#050908;
-  --bg-1:#08110d;
-  --bg-2:#0b1812;
-  --card-1:#0e1e17;
-  --card-2:#12271e;
-  --card-3:#173228;
-  --border:#1a3a2a;
-  --border-soft:#142e22;
-  --neon:#00ff9d;
-  --neon-2:#00d68f;
-  --neon-dim:#00a86b;
-  --neon-glow:rgba(0,255,157,.35);
-  --neon-soft:rgba(0,255,157,.08);
-  --text:#e8f5ee;
-  --text-2:#a5bfb2;
-  --text-3:#5f7a6e;
-  --warn:#ffb547;
-  --danger:#ff4757;
-  --blue:#4dabf7;
+  --bg-0:#050908;--bg-1:#08110d;--bg-2:#0b1812;
+  --card-1:#0e1e17;--card-2:#12271e;--card-3:#173228;
+  --border:#1a3a2a;--border-soft:#142e22;
+  --neon:#00ff9d;--neon-2:#00d68f;--neon-dim:#00a86b;
+  --neon-glow:rgba(0,255,157,.35);--neon-soft:rgba(0,255,157,.08);
+  --text:#e8f5ee;--text-2:#a5bfb2;--text-3:#5f7a6e;
+  --warn:#ffb547;--danger:#ff4757;--blue:#4dabf7;
+  --sel-bg:#0e1e17;
+  --bg:var(--bg-0);--bg2:var(--bg-1);--card:var(--card-1);--card2:var(--card-2);
+  --bd:var(--border);--bdh:#1a3a2a;--tx:var(--text);--txd:var(--text-2);
+  --mt:var(--text-3);--pr:var(--neon);--pr2:var(--neon-2);--prd:var(--neon-dim);
+  --prg:var(--neon-glow);--prg2:var(--neon-soft);--ac:var(--neon);
+  --wn:var(--warn);--dn:var(--danger);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{color-scheme:dark}
+html,body{margin:0;padding:0;font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg-0);color:var(--text);font-size:14px;min-height:100vh;line-height:1.6}
 body{
-  margin:0;
-  font-family:'Vazirmatn',Tahoma,sans-serif;
-  background:var(--bg-0);
-  color:var(--text);
-  line-height:1.6;
-  min-height:100vh;
-  padding-bottom:80px;
   background-image:
     radial-gradient(circle at 0% 0%, rgba(0,255,157,.06), transparent 40%),
     radial-gradient(circle at 100% 100%, rgba(0,255,157,.04), transparent 40%),
-    repeating-linear-gradient(0deg, rgba(0,255,157,.015) 0px, rgba(0,255,157,.015) 1px, transparent 1px, transparent 40px),
-    repeating-linear-gradient(90deg, rgba(0,255,157,.015) 0px, rgba(0,255,157,.015) 1px, transparent 1px, transparent 40px);
+    repeating-linear-gradient(0deg, rgba(0,255,157,.012) 0px, rgba(0,255,157,.012) 1px, transparent 1px, transparent 40px),
+    repeating-linear-gradient(90deg, rgba(0,255,157,.012) 0px, rgba(0,255,157,.012) 1px, transparent 1px, transparent 40px);
+  background-attachment:fixed;padding-bottom:80px;
 }
-.num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.num,.val{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
 
-/* ========== Header ========== */
-header{
-  padding:18px 16px 16px;
-  text-align:center;
-  position:sticky;top:0;z-index:100;
-  background:linear-gradient(180deg, rgba(5,9,8,.98) 0%, rgba(5,9,8,.82) 100%);
-  backdrop-filter:blur(20px) saturate(150%);
-  -webkit-backdrop-filter:blur(20px) saturate(150%);
-  border-bottom:1px solid var(--border-soft);
-}
-header::after{
-  content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
-  width:100px;height:2px;
-  background:linear-gradient(90deg,transparent,var(--neon),transparent);
-  filter:drop-shadow(0 0 8px var(--neon));
-}
-.logo{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:72px;height:72px;border-radius:20px;
-  background:linear-gradient(135deg,#fff,#e8f5ee);
-  padding:6px;margin-bottom:10px;
-  box-shadow:
-    0 0 0 1px rgba(0,255,157,.3),
-    0 0 30px var(--neon-glow),
-    inset 0 2px 4px rgba(0,0,0,.1);
-  animation:pulse 3s ease-in-out infinite;
-}
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 0 1px rgba(0,255,157,.3),0 0 30px var(--neon-glow),inset 0 2px 4px rgba(0,0,0,.1)}
-  50%{box-shadow:0 0 0 1px rgba(0,255,157,.5),0 0 45px var(--neon-glow),inset 0 2px 4px rgba(0,0,0,.1)}
-}
-.logo svg{width:100%;height:100%}
-h1{
-  margin:0;font-size:18px;font-weight:800;letter-spacing:.3px;
-  background:linear-gradient(135deg, #fff 20%, var(--neon) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.sub{
-  margin:4px 0 0;font-size:9px;color:var(--text-3);
-  letter-spacing:3px;text-transform:uppercase;font-weight:700;
-}
+/* Header */
+header{padding:18px 16px 16px;text-align:center;position:sticky;top:0;z-index:100;background:linear-gradient(180deg, rgba(5,9,8,.98) 0%, rgba(5,9,8,.82) 100%);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);border-bottom:1px solid var(--border-soft)}
+header::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:100px;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);filter:drop-shadow(0 0 8px var(--neon))}
+header .logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#fff,#e8f5ee);padding:6px;margin-bottom:10px;box-shadow:0 0 0 1px rgba(0,255,157,.3), 0 0 30px var(--neon-glow), inset 0 2px 4px rgba(0,0,0,.1);animation:pulseGlow 3s ease-in-out infinite}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 1px rgba(0,255,157,.3), 0 0 30px var(--neon-glow), inset 0 2px 4px rgba(0,0,0,.1)}50%{box-shadow:0 0 0 1px rgba(0,255,157,.5), 0 0 45px var(--neon-glow), inset 0 2px 4px rgba(0,0,0,.1)}}
+header .logo-wrap img{width:100%;height:100%;object-fit:contain;border-radius:14px}
+header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px;background:linear-gradient(135deg, #fff 20%, var(--neon) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{margin:4px 0 0;font-size:9px;color:var(--text-3);letter-spacing:3px;text-transform:uppercase;font-weight:700}
 
-/* ========== Tabs ========== */
-.tabs{
-  display:flex;
-  background:var(--bg-1);
-  border-bottom:1px solid var(--border-soft);
-  position:sticky;top:118px;z-index:99;
-  overflow-x:auto;scrollbar-width:none;
-}
+/* Tabs */
+.tabs{display:flex;background:var(--bg-1);border-bottom:1px solid var(--border-soft);position:sticky;top:118px;z-index:99;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{
-  flex:0 0 auto;padding:14px 14px;font-size:11.5px;font-weight:700;
-  color:var(--text-3);background:none;border:none;cursor:pointer;
-  font-family:inherit;position:relative;
-  border-bottom:2px solid transparent;transition:.25s;
-  white-space:nowrap;
-}
+.tab{flex:0 0 auto;min-width:100px;padding:14px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);background:none;border:none;cursor:pointer;font-family:inherit;position:relative;border-bottom:2px solid transparent;transition:.25s;white-space:nowrap}
 .tab:hover{color:var(--text-2)}
-.tab.on{
-  color:var(--neon);
-  border-bottom-color:var(--neon);
-  background:linear-gradient(180deg, transparent, var(--neon-soft));
-}
-.tab.on::before{
-  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:36px;height:2px;
-  background:var(--neon);
-  border-radius:0 0 4px 4px;
-  box-shadow:0 0 12px var(--neon),0 0 24px var(--neon-glow);
-}
+.tab.active{color:var(--neon);border-bottom-color:var(--neon);background:linear-gradient(180deg, transparent, var(--neon-soft))}
+.tab.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:36px;height:2px;background:var(--neon);border-radius:0 0 4px 4px;box-shadow:0 0 12px var(--neon),0 0 24px var(--neon-glow)}
 
-/* ========== Main ========== */
+/* Main */
 main{padding:16px;max-width:820px;margin:0 auto}
+.panel{display:none;animation:fadeIn .3s}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
 
-/* ========== Equipment Selector ========== */
-.eq-select{
-  background:linear-gradient(135deg, var(--card-1) 0%, var(--card-2) 100%);
-  border:1px solid var(--border);
-  border-radius:18px;padding:16px;margin-bottom:14px;
-  box-shadow:0 8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.03);
-  position:relative;overflow:hidden;
-}
-.eq-select::before{
-  content:"";position:absolute;top:0;left:20px;right:20px;height:1px;
-  background:linear-gradient(90deg,transparent,var(--border),transparent);
-}
-.eq-select label{
-  display:flex;align-items:center;gap:8px;
-  font-size:11px;font-weight:800;color:var(--text-2);
-  letter-spacing:1px;text-transform:uppercase;
-  margin-bottom:10px;
-}
-.eq-select label svg{width:16px;height:16px;stroke:var(--neon);fill:none;stroke-width:2}
-.sel-wrap{position:relative}
-.sel-wrap select{
-  width:100%;padding:14px 46px 14px 16px;
-  background:rgba(0,0,0,.4);
-  border:1.5px solid var(--border);
-  border-radius:12px;
-  color:#fff;font-family:inherit;font-size:15px;font-weight:700;
-  cursor:pointer;transition:.2s;
-  -webkit-appearance:none;appearance:none;
-}
-.sel-wrap::before{
-  content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  width:20px;height:20px;
-  background:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff9d' stroke-width='2.5' stroke-linecap='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e") no-repeat center;
-  background-size:contain;
-  pointer-events:none;
-}
-.sel-wrap select:focus{
-  outline:none;border-color:var(--neon);
-  box-shadow:0 0 0 4px var(--neon-soft),0 0 20px var(--neon-glow);
-  background:rgba(0,255,157,.04);
-}
-.sel-wrap option{background:#0e1e17;color:#fff;padding:12px}
+/* Cards */
+.card{background:linear-gradient(135deg, var(--card-1) 0%, var(--card-2) 100%);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.03);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.card h2{margin:0 0 14px;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.3px}
+.card h2::before{content:"";display:inline-block;width:4px;height:18px;background:linear-gradient(180deg,var(--neon),var(--neon-dim));border-radius:2px;box-shadow:0 0 8px var(--neon)}
 
-/* ========== Equipment Header Card ========== */
-.eq-header{
-  background:linear-gradient(135deg, rgba(0,255,157,.08), rgba(0,255,157,.02));
-  border:1.5px solid rgba(0,255,157,.25);
-  border-radius:18px;padding:16px;margin-bottom:14px;
-  display:flex;align-items:center;gap:16px;
-  box-shadow:0 4px 24px rgba(0,255,157,.05), inset 0 1px 0 rgba(0,255,157,.1);
-  position:relative;overflow:hidden;
-}
-.eq-header::after{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(circle at 90% 50%, var(--neon-soft), transparent 50%);
-  pointer-events:none;
-}
-.eq-icon{
-  width:64px;height:64px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.4);
-  border-radius:16px;
-  border:1px solid rgba(0,255,157,.3);
-  position:relative;z-index:1;
-}
-.eq-icon svg{width:40px;height:40px;stroke:var(--neon);fill:none;stroke-width:1.5}
-.eq-info{flex:1;position:relative;z-index:1}
-.eq-info h3{
-  margin:0 0 4px;font-size:15px;font-weight:800;color:var(--neon);
-  letter-spacing:.3px;
-}
-.eq-info p{margin:0;font-size:11px;color:var(--text-2)}
-.eq-badge{
-  display:inline-block;padding:3px 8px;margin-top:6px;
-  background:rgba(0,255,157,.12);
-  border:1px solid rgba(0,255,157,.3);
-  border-radius:6px;font-size:10px;font-weight:800;
-  color:var(--neon);
-}
+/* Fields */
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;margin-bottom:6px;color:var(--text-3);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border-soft);border-radius:11px;font-size:14.5px;font-family:inherit;background:rgba(0,0,0,.4);color:#fff;transition:.2s;-webkit-appearance:none;appearance:none}
+.field input[type="number"]{font-family:'JetBrains Mono',monospace;font-weight:600}
+.field select{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff9d' stroke-width='2.5' stroke-linecap='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px;padding-left:40px;font-family:'Vazirmatn',sans-serif;font-weight:600}
+.field select option{background:#0e1e17!important;color:#fff!important;padding:12px}
+.field select option:checked{background:var(--neon)!important;color:#002018!important}
+.field input::placeholder{color:var(--text-3);opacity:.6}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--neon);background:rgba(0,255,157,.04);box-shadow:0 0 0 4px var(--neon-soft),0 0 20px var(--neon-glow)}
 
-/* ========== Component Card ========== */
-.comp{
-  background:linear-gradient(135deg, var(--card-1) 0%, var(--card-2) 100%);
-  border:1px solid var(--border-soft);
-  border-radius:14px;
-  margin-bottom:10px;
-  overflow:hidden;
-  transition:all .3s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 4px 16px rgba(0,0,0,.3);
-  position:relative;
-}
-.comp:hover{
-  border-color:var(--border);
-  transform:translateY(-1px);
-}
-.comp.on{
-  border-color:rgba(0,255,157,.3);
-  box-shadow:0 4px 24px rgba(0,255,157,.08), 0 0 0 1px rgba(0,255,157,.1);
-}
-.comp.on::before{
-  content:"";position:absolute;
-  top:0;right:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,var(--neon),var(--neon-dim));
-  box-shadow:0 0 12px var(--neon);
-}
+/* Rows */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:560px){.row,.row-3{grid-template-columns:1fr}}
 
-.comp-head{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 14px;
-  cursor:pointer;user-select:none;
-  transition:.2s;
-}
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;background:linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);color:#002018;border:none;border-radius:12px;font-size:14.5px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;letter-spacing:.3px;transition:.25s cubic-bezier(.4,0,.2,1);box-shadow:0 6px 24px var(--neon-glow), inset 0 1px 0 rgba(255,255,255,.3);position:relative;overflow:hidden}
+.btn::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:translateX(-100%);transition:transform .6s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px var(--neon-glow), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover::before{transform:translateX(100%)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.sec{background:rgba(0,255,157,.05);color:var(--neon);border:1.5px solid rgba(0,255,157,.3);box-shadow:none}
+.btn.sec:hover{background:rgba(0,255,157,.1);border-color:var(--neon)}
+.btn.blue{background:linear-gradient(135deg,#4dabf7,#1d4ed8);color:#fff;box-shadow:0 6px 24px rgba(77,171,247,.3)}
+.btn.danger{background:linear-gradient(135deg,#ff4757,#d63447);color:#fff;box-shadow:0 6px 24px rgba(255,71,87,.3)}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+
+/* Result */
+.result,.result-preview{background:linear-gradient(135deg, rgba(0,255,157,.06), rgba(0,255,157,.02));border:1.5px solid rgba(0,255,157,.25);border-radius:16px;padding:18px;margin-top:12px;box-shadow:0 4px 24px rgba(0,255,157,.05), inset 0 1px 0 rgba(0,255,157,.1);position:relative}
+.result::before,.result-preview::before{content:"";position:absolute;top:-1px;left:24px;right:24px;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);border-radius:2px}
+.result .item,.res-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:12px;font-size:13px;border-bottom:1px dashed rgba(0,255,157,.1)}
+.result .item:last-child,.res-row:last-child{border-bottom:none}
+.result .item .lbl,.res-row .lbl{color:var(--text-2);flex:1}
+.result .item .val,.res-row .val{color:var(--neon);font-weight:800;text-align:left;direction:ltr;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.result .item.big{padding:13px 0;font-size:15px}
+.result .item.big .val{font-size:18px}
+.result.green{background:linear-gradient(135deg, rgba(0,255,157,.1), rgba(0,255,157,.03));border-color:rgba(0,255,157,.4)}
+.result.red{background:linear-gradient(135deg, rgba(255,71,87,.08), rgba(255,71,87,.02));border-color:rgba(255,71,87,.3)}
+.result.red .item .val{color:var(--danger)}
+
+.res-summary{text-align:center;padding:16px 0;margin-bottom:12px;border-bottom:1px dashed rgba(0,255,157,.15)}
+.res-summary .lbl{font-size:10.5px;color:var(--text-3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.res-summary .val{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:800;color:var(--neon);margin:6px 0;text-shadow:0 0 24px var(--neon-glow);line-height:1;direction:ltr}
+.res-summary .unit{font-size:13px;color:var(--text-2);font-weight:600}
+
+/* Component cards */
+.comp{background:linear-gradient(135deg, var(--card-1) 0%, var(--card-2) 100%);border:1px solid var(--border-soft);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 16px rgba(0,0,0,.3);position:relative}
+.comp:hover{border-color:var(--border);transform:translateY(-1px)}
+.comp.on{border-color:rgba(0,255,157,.3);box-shadow:0 4px 24px rgba(0,255,157,.08), 0 0 0 1px rgba(0,255,157,.1)}
+.comp.on::before{content:"";position:absolute;top:0;right:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--neon),var(--neon-dim));box-shadow:0 0 12px var(--neon)}
+.comp-head{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;user-select:none;transition:.2s}
 .comp.on .comp-head{background:rgba(0,255,157,.03)}
 .comp-head:hover{background:rgba(0,255,157,.04)}
-
-.comp-icon{
-  width:36px;height:36px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.3);
-  border:1px solid var(--border);
-  border-radius:10px;
-  transition:.3s;
-}
-.comp.on .comp-icon{
-  border-color:rgba(0,255,157,.4);
-  background:rgba(0,255,157,.06);
-  box-shadow:0 0 12px var(--neon-soft);
-}
+.comp-icon{width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;transition:.3s}
+.comp.on .comp-icon{border-color:rgba(0,255,157,.4);background:rgba(0,255,157,.06);box-shadow:0 0 12px var(--neon-soft)}
 .comp-icon svg{width:20px;height:20px;stroke:var(--text-3);fill:none;stroke-width:1.8;transition:.3s}
 .comp.on .comp-icon svg{stroke:var(--neon)}
-
 .comp-title{flex:1;font-size:13.5px;font-weight:700;color:var(--text-2);transition:.2s}
 .comp.on .comp-title{color:var(--text)}
-
-.comp-toggle{
-  position:relative;width:42px;height:24px;flex-shrink:0;
-  background:rgba(0,0,0,.5);
-  border:1px solid var(--border);
-  border-radius:24px;
-  transition:.3s;
-  cursor:pointer;
-}
-.comp.on .comp-toggle{
-  background:linear-gradient(90deg,var(--neon-dim),var(--neon));
-  border-color:var(--neon);
-  box-shadow:0 0 12px var(--neon-soft);
-}
-.comp-toggle::after{
-  content:"";position:absolute;
-  top:2px;right:2px;
-  width:18px;height:18px;
-  border-radius:50%;
-  background:var(--text-3);
-  transition:.3s cubic-bezier(.4,0,.2,1);
-}
-.comp.on .comp-toggle::after{
-  right:22px;
-  background:#fff;
-  box-shadow:0 2px 6px rgba(0,0,0,.3);
-}
-
-.comp-badge{
-  padding:3px 10px;
-  background:rgba(0,255,157,.1);
-  border:1px solid rgba(0,255,157,.25);
-  border-radius:8px;
-  font-size:10.5px;font-weight:800;
-  color:var(--neon);
-  font-family:'JetBrains Mono',monospace;
-  display:none;
-}
+.comp-toggle{position:relative;width:42px;height:24px;flex-shrink:0;background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:24px;transition:.3s;cursor:pointer}
+.comp.on .comp-toggle{background:linear-gradient(90deg,var(--neon-dim),var(--neon));border-color:var(--neon);box-shadow:0 0 12px var(--neon-soft)}
+.comp-toggle::after{content:"";position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:var(--text-3);transition:.3s cubic-bezier(.4,0,.2,1)}
+.comp.on .comp-toggle::after{right:22px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.comp-badge{padding:3px 10px;background:rgba(0,255,157,.1);border:1px solid rgba(0,255,157,.25);border-radius:8px;font-size:10.5px;font-weight:800;color:var(--neon);font-family:'JetBrains Mono',monospace;display:none}
 .comp.on .comp-badge{display:inline-block}
-
-.comp-body{
-  display:none;
-  padding:14px;
-  border-top:1px solid var(--border-soft);
-  background:rgba(0,0,0,.2);
-  animation:slideDown .3s ease;
-}
+.comp-body{display:none;padding:14px;border-top:1px solid var(--border-soft);background:rgba(0,0,0,.2);animation:slideDown .3s ease}
 .comp.on .comp-body{display:block}
 @keyframes slideDown{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 
-/* ========== Fields ========== */
+/* Grid helpers for parts */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 @media(max-width:560px){.grid-2,.grid-3{grid-template-columns:1fr}}
-
 .fld{display:flex;flex-direction:column;gap:5px}
-.fld label{
-  font-size:10.5px;font-weight:700;
-  color:var(--text-3);
-  letter-spacing:.5px;
-  text-transform:uppercase;
-}
-.fld input,.fld select{
-  width:100%;padding:11px 12px;
-  background:rgba(0,0,0,.4);
-  border:1.5px solid var(--border-soft);
-  border-radius:10px;
-  color:#fff;font-family:'JetBrains Mono',monospace;
-  font-size:14px;font-weight:600;
-  transition:.2s;
-  -webkit-appearance:none;appearance:none;
-}
-.fld select{
-  font-family:'Vazirmatn',sans-serif;
-  font-weight:600;
-  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff9d' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
-  background-repeat:no-repeat;
-  background-position:left 12px center;
-  background-size:14px;
-  padding-left:36px;
-}
-.fld select option{background:#0e1e17;color:#fff;padding:10px}
-.fld input:focus,.fld select:focus{
-  outline:none;
-  border-color:var(--neon);
-  background:rgba(0,255,157,.04);
-  box-shadow:0 0 0 3px var(--neon-soft), 0 0 16px var(--neon-soft);
-}
-.fld input::placeholder{color:var(--text-3);opacity:.6}
+.fld label{font-size:10.5px;font-weight:700;color:var(--text-3);letter-spacing:.5px;text-transform:uppercase}
+.fld input,.fld select{width:100%;padding:11px 12px;background:rgba(0,0,0,.4);border:1.5px solid var(--border-soft);border-radius:10px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;transition:.2s;-webkit-appearance:none;appearance:none}
+.fld select{font-family:'Vazirmatn',sans-serif;font-weight:600;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff9d' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px;padding-left:36px}
+.fld select option{background:#0e1e17;color:#fff}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--neon);background:rgba(0,255,157,.04);box-shadow:0 0 0 3px var(--neon-soft), 0 0 16px var(--neon-soft)}
+.fld-hint{font-size:10px;color:var(--text-3);margin-top:2px;line-height:1.5}
 
-.fld-hint{
-  font-size:10px;color:var(--text-3);
-  margin-top:2px;line-height:1.5;
-}
+/* Equipment header */
+.eq-header{background:linear-gradient(135deg, rgba(0,255,157,.08), rgba(0,255,157,.02));border:1.5px solid rgba(0,255,157,.25);border-radius:18px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 24px rgba(0,255,157,.05), inset 0 1px 0 rgba(0,255,157,.1);position:relative;overflow:hidden}
+.eq-header::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 50%, var(--neon-soft), transparent 50%);pointer-events:none}
+.eq-icon{width:64px;height:64px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);border-radius:16px;border:1px solid rgba(0,255,157,.3);position:relative;z-index:1}
+.eq-icon svg{width:40px;height:40px;stroke:var(--neon);fill:none;stroke-width:1.5}
+.eq-info{flex:1;position:relative;z-index:1}
+.eq-info h3{margin:0 0 4px;font-size:15px;font-weight:800;color:var(--neon)}
+.eq-info p{margin:0;font-size:11px;color:var(--text-2)}
+.eq-badge{display:inline-block;padding:3px 8px;margin-top:6px;background:rgba(0,255,157,.12);border:1px solid rgba(0,255,157,.3);border-radius:6px;font-size:10px;font-weight:800;color:var(--neon)}
 
-/* ========== Action Buttons ========== */
-.actions{
-  background:linear-gradient(135deg, var(--card-1) 0%, var(--card-2) 100%);
-  border:1px solid var(--border);
-  border-radius:14px;padding:14px;margin-top:14px;
-  box-shadow:0 4px 16px rgba(0,0,0,.3);
-}
-.btn{
-  width:100%;padding:16px;
-  border:none;border-radius:12px;
-  font-family:inherit;font-size:14.5px;font-weight:800;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:.25s cubic-bezier(.4,0,.2,1);
-  position:relative;overflow:hidden;
-  letter-spacing:.3px;
-}
-.btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
-.btn-main{
-  background:linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
-  color:#002018;
-  box-shadow:0 6px 24px var(--neon-glow), inset 0 1px 0 rgba(255,255,255,.3);
-}
-.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 32px var(--neon-glow), inset 0 1px 0 rgba(255,255,255,.3)}
-.btn-main:active{transform:translateY(0) scale(.98)}
-.btn-main::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
-  transform:translateX(-100%);
-  transition:transform .6s;
-}
-.btn-main:hover::before{transform:translateX(100%)}
-.btn-ghost{
-  background:rgba(0,255,157,.05);
-  color:var(--neon);
-  border:1.5px solid rgba(0,255,157,.3);
-  margin-top:8px;
-}
-.btn-ghost:hover{background:rgba(0,255,157,.1);border-color:var(--neon)}
+/* Summary box */
+.summary-box{background:linear-gradient(135deg, rgba(0,255,157,.12), rgba(0,255,157,.04));border:2px solid var(--neon);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center}
+.summary-box .label{font-size:11px;color:var(--text-2);letter-spacing:.5px}
+.summary-box .value{font-size:26px;font-weight:800;color:var(--neon);text-shadow:0 0 20px var(--neon-glow);direction:ltr;font-family:'JetBrains Mono',monospace}
+.summary-box .sub{font-size:10px;color:var(--text-3);margin-top:3px}
+.summary-box.blue{background:linear-gradient(135deg, rgba(77,171,247,.12), rgba(77,171,247,.04));border-color:var(--blue)}
+.summary-box.blue .value{color:var(--blue);text-shadow:0 0 20px rgba(77,171,247,.3)}
 
-.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--border-soft);white-space:nowrap}
+th{background:rgba(0,255,157,.05);color:var(--neon);font-weight:800;font-size:10.5px}
+td{color:var(--text-2);font-family:'JetBrains Mono',monospace}
+tr.cat-match,tr.best{background:rgba(0,255,157,.12)}
+tr.cat-match td,tr.best td{color:var(--neon);font-weight:700}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px}
 
-/* ========== Preview Section ========== */
-.section-title{
-  display:flex;align-items:center;gap:10px;
-  font-size:12px;font-weight:800;
-  color:var(--text-2);
-  letter-spacing:1px;text-transform:uppercase;
-  margin:24px 0 12px;
-}
-.section-title::before{
-  content:"";width:4px;height:20px;
-  background:linear-gradient(180deg,var(--neon),var(--neon-dim));
-  border-radius:2px;
-  box-shadow:0 0 10px var(--neon);
-}
-.section-title::after{
-  content:"";flex:1;height:1px;
-  background:linear-gradient(90deg,var(--border),transparent);
-}
+/* Notices */
+.notice{padding:12px 14px;border-radius:11px;font-size:12.5px;line-height:1.7;margin-top:10px;border:1px solid}
+.notice.info{background:rgba(0,255,157,.06);color:#a0e8c5;border-color:rgba(0,255,157,.2)}
+.notice.success{background:rgba(0,255,157,.1);color:var(--neon);border-color:rgba(0,255,157,.35)}
+.notice.warn{background:rgba(255,181,71,.08);color:#ffc977;border-color:rgba(255,181,71,.25)}
+.notice.danger{background:rgba(255,71,87,.08);color:#ff8a94;border-color:rgba(255,71,87,.25)}
 
-/* ========== Result Preview ========== */
-.result-preview{
-  background:linear-gradient(135deg, rgba(0,255,157,.06), rgba(0,255,157,.02));
-  border:1.5px solid rgba(0,255,157,.25);
-  border-radius:16px;padding:18px;
-  box-shadow:0 4px 24px rgba(0,255,157,.05), inset 0 1px 0 rgba(0,255,157,.1);
-  position:relative;
-}
-.result-preview::before{
-  content:"";position:absolute;top:-1px;left:24px;right:24px;height:2px;
-  background:linear-gradient(90deg,transparent,var(--neon),transparent);
-  border-radius:2px;
-}
-.res-summary{
-  text-align:center;padding:16px 0;margin-bottom:12px;
-  border-bottom:1px dashed rgba(0,255,157,.15);
-}
-.res-summary .lbl{font-size:10.5px;color:var(--text-3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
-.res-summary .val{
-  font-family:'JetBrains Mono',monospace;
-  font-size:34px;font-weight:800;color:var(--neon);
-  margin:6px 0;
-  text-shadow:0 0 24px var(--neon-glow);
-  line-height:1;
-}
-.res-summary .unit{font-size:13px;color:var(--text-2);font-weight:600}
+/* Utility */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:14px 0}
+.hint{font-size:11px;color:var(--text-3);margin-top:4px;line-height:1.6}
+.footnote{font-size:10.5px;color:var(--text-3);text-align:center;margin-top:24px;line-height:1.9;padding:0 10px}
+.empty-state{text-align:center;padding:30px 16px;color:var(--text-3);font-size:12.5px}
+.empty-state::before{content:"📭";display:block;font-size:34px;margin-bottom:10px;opacity:.5}
 
-.res-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;gap:12px;
-  border-bottom:1px dashed rgba(0,255,157,.08);
-  font-size:13px;
-}
-.res-row:last-child{border-bottom:none}
-.res-row .lbl{color:var(--text-2);flex:1}
-.res-row .val{
-  color:var(--neon);font-weight:700;
-  font-family:'JetBrains Mono',monospace;
-  font-variant-numeric:tabular-nums;
-}
+/* Section title */
+.section-title{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:var(--text-2);letter-spacing:1px;text-transform:uppercase;margin:24px 0 12px}
+.section-title::before{content:"";width:4px;height:20px;background:linear-gradient(180deg,var(--neon),var(--neon-dim));border-radius:2px;box-shadow:0 0 10px var(--neon)}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
 
-/* ========== Bottom Info ========== */
-.bottom-info{
-  margin-top:30px;padding:14px;
-  text-align:center;font-size:10.5px;
-  color:var(--text-3);line-height:1.9;
-}
+/* Price editor */
+.price-section-title{color:var(--neon);font-size:12px;margin:16px 0 8px;font-weight:800;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border-soft);gap:10px}
+.price-row label{font-size:11.5px;color:var(--text-2);flex:1;font-weight:600}
+.price-row input{width:120px;padding:8px 10px;border:1.5px solid var(--border-soft);border-radius:8px;font-size:12px;text-align:left;direction:ltr;background:rgba(0,0,0,.4);color:var(--neon);font-weight:700;font-family:'JetBrains Mono',monospace}
+.price-row input:focus{outline:none;border-color:var(--neon);box-shadow:0 0 0 3px var(--neon-soft)}
 
-/* ========== Scrollbar ========== */
+/* Badges */
+.cat-badge{display:inline-block;padding:3px 10px;border-radius:8px;background:rgba(0,255,157,.12);color:var(--neon);font-size:10.5px;font-weight:700;border:1px solid rgba(0,255,157,.25);margin-right:6px}
+.cat-use-btn{padding:5px 10px;border-radius:8px;background:var(--neon);color:#002018;border:none;font-family:inherit;font-weight:800;font-size:10.5px;cursor:pointer;transition:.2s}
+.cat-use-btn:hover{background:#00e88f;transform:scale(1.05)}
+.badge.best{background:var(--neon);color:#002018;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:800}
+
+/* Memory */
+.save-row{display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border-soft)}
+.save-row .info{flex:1;font-size:11.5px;line-height:1.7}
+.save-row .info b{color:var(--neon);font-weight:800}
+.save-row button{padding:6px 12px;border-radius:8px;border:none;font-family:inherit;font-weight:700;cursor:pointer;font-size:10.5px;transition:.2s}
+.save-row .load{background:var(--neon);color:#002018}
+.save-row .load:hover{background:#00e88f;transform:scale(1.05)}
+.save-row .del{background:rgba(255,71,87,.15);color:var(--danger)}
+.save-row .del:hover{background:rgba(255,71,87,.25)}
+
+/* Scrollbar */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -468,295 +227,215 @@ main{padding:16px;max-width:820px;margin:0 auto}
 <body>
 
 <header>
-  <div class="logo">
-    <svg viewBox="0 0 100 100" fill="none" stroke="#0a0f0d" stroke-width="3">
-      <rect x="15" y="35" width="70" height="40" rx="8" fill="#0a0f0d"/>
-      <path d="M15 45 Q50 25 85 45" fill="#00ff9d" opacity="0.2"/>
-      <circle cx="50" cy="30" r="4" fill="#00ff9d"/>
-      <line x1="50" y1="20" x2="50" y2="26"/>
-      <path d="M40 50 L45 55 L40 60" stroke="#00ff9d" stroke-width="2"/>
-      <path d="M60 50 L55 55 L60 60" stroke="#00ff9d" stroke-width="2"/>
-      <text x="50" y="70" font-family="Arial" font-size="14" font-weight="900" fill="#00ff9d" text-anchor="middle">PT</text>
-    </svg>
-  </div>
+  <div class="logo-wrap" id="logo-box" style="display:none"><img id="logo-img" alt="لوگو"></div>
   <h1>محاسبه‌گر حرفه‌ای مخازن</h1>
-  <p class="sub">Caspian Mobadel Amard</p>
+  <p>Caspian Mobadel Amard</p>
 </header>
 
 <div class="tabs">
-  <button class="tab on">حجم</button>
-  <button class="tab">ابعاد</button>
-  <button class="tab">ورق</button>
-  <button class="tab">⚖️ وزن‌دهی</button>
-  <button class="tab">💰 قیمت‌گذاری</button>
-  <button class="tab">📐 عدسی</button>
-  <button class="tab">💾 حافظه</button>
-  <button class="tab">📊 قیمت‌ها</button>
-  <button class="tab">📚 کاتالوگ</button>
+  <button class="tab active" data-tab="t1">حجم</button>
+  <button class="tab" data-tab="t2">ابعاد</button>
+  <button class="tab" data-tab="t3">ورق</button>
+  <button class="tab" data-tab="t4">⚖️ وزن‌دهی</button>
+  <button class="tab" data-tab="t5">💰 قیمت‌گذاری</button>
+  <button class="tab" data-tab="t6">📐 عدسی</button>
+  <button class="tab" data-tab="t7">💾 حافظه</button>
+  <button class="tab" data-tab="t8">📊 قیمت‌ها</button>
+  <button class="tab" data-tab="t9">📚 کاتالوگ</button>
 </div>
 
 <main>
 
-<div class="section-title">پیش‌نمایش تب وزن‌دهی</div>
-
-<!-- Equipment Selector -->
-<div class="eq-select">
-  <label>
-    <svg viewBox="0 0 24 24"><path d="M12 2 L2 22 L22 22 Z"/><path d="M12 8 L12 14"/><circle cx="12" cy="17" r="1"/></svg>
-    انتخاب تجهیز
-  </label>
-  <div class="sel-wrap">
-    <select>
-      <option>منبع اسپیرال</option>
-      <option>منبع کوئلی U شکل</option>
-      <option>سختی‌گیر</option>
-      <option>فیلتر شنی / کربنی</option>
-      <option>دی‌اریتور</option>
-      <option>منبع انبساط بسته</option>
-      <option>منبع انبساط باز</option>
-      <option>مخزن کندانس</option>
-    </select>
-  </div>
-</div>
-
-<!-- Equipment Header -->
-<div class="eq-header">
-  <div class="eq-icon">
-    <svg viewBox="0 0 24 24">
-      <rect x="3" y="7" width="18" height="10" rx="1"/>
-      <line x1="3" y1="7" x2="21" y2="7"/>
-      <line x1="3" y1="17" x2="21" y2="17"/>
-      <path d="M6 7 Q6 4 12 4 Q18 4 18 7"/>
-      <path d="M6 17 Q6 20 12 20 Q18 20 18 17"/>
-      <path d="M8 12 Q10 10 12 12 Q14 14 16 12" stroke-dasharray="1 1"/>
-    </svg>
-  </div>
-  <div class="eq-info">
-    <h3>منبع اسپیرال</h3>
-    <p>۸ جزء قابل تنظیم — کویل مارپیچ + عدسی + پوسته</p>
-    <span class="eq-badge">فعال: ۵ جزء</span>
-  </div>
-</div>
-
-<!-- Component: Shell (enabled) -->
-<div class="comp on">
-  <div class="comp-head">
-    <div class="comp-icon">
-      <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="0.5"/><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+<!-- ============ تب ۱: حجم ============ -->
+<div id="t1" class="panel active">
+  <div class="card">
+    <h2>محاسبه حجم از ابعاد</h2>
+    <div class="field"><label>نوع مخزن</label>
+      <select id="v-type">
+        <option value="cyl-dish">استوانه با دو عدسی</option>
+        <option value="cyl-flat">استوانه سر تخت</option>
+        <option value="box">مکعبی</option>
+      </select>
     </div>
-    <span class="comp-title">پوسته استوانه</span>
-    <span class="comp-badge">245.5 kg</span>
-    <div class="comp-toggle"></div>
-  </div>
-  <div class="comp-body">
-    <div class="grid-2">
-      <div class="fld">
-        <label>قطر داخلی (cm)</label>
-        <input type="text" value="160" class="num">
-      </div>
-      <div class="fld">
-        <label>ارتفاع (cm)</label>
-        <input type="text" value="300" class="num">
-      </div>
-      <div class="fld">
-        <label>ضخامت (mm)</label>
-        <input type="text" value="6" class="num">
-      </div>
-      <div class="fld">
-        <label>جنس ورق</label>
-        <select>
-          <option>ST37</option>
-          <option>S235JR</option>
-          <option>A516 Gr70</option>
-          <option>گالوانیزه</option>
-          <option>استیل ۳۰۴</option>
-        </select>
-      </div>
+    <div class="row">
+      <div class="field"><label>قطر/عرض (cm)</label><input type="number" id="v-d" step="0.1"></div>
+      <div class="field" id="f-v-h"><label>ارتفاع (cm)</label><input type="number" id="v-h" step="0.1"></div>
+      <div class="field" id="f-v-l" style="display:none"><label>طول (cm)</label><input type="number" id="v-l" step="0.1"></div>
+      <div class="field" id="f-v-w" style="display:none"><label>عرض (cm)</label><input type="number" id="v-w" step="0.1"></div>
     </div>
+    <button class="btn" onclick="calcVol()">محاسبه</button>
+    <div id="v-res"></div>
   </div>
 </div>
 
-<!-- Component: Coil (enabled) -->
-<div class="comp on">
-  <div class="comp-head">
-    <div class="comp-icon">
-      <svg viewBox="0 0 24 24"><path d="M6 6 Q10 3 12 7 Q14 11 18 8 Q22 5 20 10 Q18 15 14 13 Q10 11 8 15 Q6 19 4 15"/></svg>
+<!-- ============ تب ۲: ابعاد ============ -->
+<div id="t2" class="panel">
+  <div class="card">
+    <h2>ابعاد از حجم</h2>
+    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="d-v" step="1"></div>
+    <div class="field"><label>نوع</label>
+      <select id="d-type"><option value="cyl-dish">با عدسی</option><option value="cyl-flat">سر تخت</option></select>
     </div>
-    <span class="comp-title">کویل مارپیچ</span>
-    <span class="comp-badge">28.4 kg</span>
-    <div class="comp-toggle"></div>
-  </div>
-  <div class="comp-body">
-    <div class="grid-2">
-      <div class="fld">
-        <label>سایز لوله</label>
-        <select>
-          <option>مسی ۱/۲ اینچ</option>
-          <option>مسی ۳/۴ اینچ</option>
-          <option>مسی ۱ اینچ</option>
-          <option>گالوانیزه ۳/۴ اینچ</option>
-          <option>گالوانیزه ۱ اینچ</option>
-          <option>استیل ۳۰۴ ۳/۴ اینچ</option>
-          <option>استیل ۳۰۴ ۱ اینچ</option>
-          <option>استیل ۳۰۴ ۱ ۱/۴ اینچ</option>
-          <option>استیل ۳۰۴ ۱ ۱/۲ اینچ</option>
-          <option>استیل ۳۰۴ ۲ اینچ</option>
-          <option>استیل ۳۰۴ ۳ اینچ</option>
-          <option>استیل ۳۰۴ ۴ اینچ</option>
-        </select>
-      </div>
-      <div class="fld">
-        <label>مقدار مصرف (شاخه ۶۰۰ cm)</label>
-        <input type="text" value="2.5" class="num">
-        <span class="fld-hint">مثال: ۳.۵ شاخه = ۲۱۰۰ سانتی‌متر</span>
-      </div>
-      <div class="fld">
-        <label>سطح حرارتی (m²)</label>
-        <input type="text" value="8.5" class="num">
-      </div>
+    <div class="row">
+      <div class="field"><label>قطر (cm) — اختیاری</label><input type="number" id="d-d" step="0.1"></div>
+      <div class="field"><label>ارتفاع (cm) — اختیاری</label><input type="number" id="d-h" step="0.1"></div>
     </div>
+    <button class="btn" onclick="calcDim()">محاسبه</button>
+    <div id="d-res"></div>
   </div>
 </div>
 
-<!-- Component: Manhole (enabled) -->
-<div class="comp on">
-  <div class="comp-head">
-    <div class="comp-icon">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="4" fill="currentColor" fill-opacity="0.3"/><line x1="12" y1="6" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="18"/></svg>
+<!-- ============ تب ۳: ورق ============ -->
+<div id="t3" class="panel">
+  <div class="card">
+    <h2>بهینه‌سازی ورق</h2>
+    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="s-v" step="1"></div>
+    <div class="row">
+      <div class="field"><label>عرض ورق</label>
+        <select id="s-w"><option value="both">مقایسه ۱۵۰ و ۱۵۲</option><option value="150">۱۵۰</option><option value="152">۱۵۲</option></select>
+      </div>
+      <div class="field"><label>طول ورق (cm)</label><input type="number" id="s-l" value="600" step="1"></div>
     </div>
-    <span class="comp-title">منهول</span>
-    <span class="comp-badge">۱۲۵ kg</span>
-    <div class="comp-toggle"></div>
+    <div class="field"><label>حداکثر کورس</label><input type="number" id="s-max" value="10" min="1" max="20" step="1"></div>
+    <button class="btn" onclick="optSheets()">محاسبه</button>
+    <div id="s-res"></div>
   </div>
-  <div class="comp-body">
-    <div class="grid-2">
-      <div class="fld">
-        <label>سایز (اینچ)</label>
-        <select><option>۱۶</option><option>۱۸</option><option>۲۰</option></select>
-      </div>
-      <div class="fld">
-        <label>تعداد</label>
-        <input type="text" value="1" class="num">
-      </div>
-      <div class="fld">
-        <label>عرض (mm)</label>
-        <input type="text" value="400" class="num">
-      </div>
-      <div class="fld">
-        <label>ارتفاع (mm)</label>
-        <input type="text" value="500" class="num">
-      </div>
-      <div class="fld">
-        <label>ضخامت (mm)</label>
-        <input type="text" value="20" class="num">
-      </div>
+</div>
+
+<!-- ============ تب ۴: وزن‌دهی ============ -->
+<div id="t4" class="panel">
+  <div class="card">
+    <h2>⚖️ محاسبه‌گر وزن</h2>
+    <div class="field"><label>نوع تجهیز</label>
+      <select id="w-eq" onchange="loadEquipment('weight')">
+        <option value="spiral">منبع اسپیرال</option>
+        <option value="u_coil">منبع کوئلی U شکل</option>
+        <option value="softener">سختی‌گیر</option>
+        <option value="sand_filter">فیلتر شنی / کربنی</option>
+        <option value="deaerator">دی‌اریتور</option>
+        <option value="expansion_closed">منبع انبساط بسته</option>
+        <option value="expansion_open">منبع انبساط باز</option>
+        <option value="condensate">مخزن کندانس</option>
+      </select>
     </div>
+    <div id="w-eq-header"></div>
+  </div>
+  <div id="w-components"></div>
+  <div class="card">
+    <button class="btn" onclick="calcWeight()">⚖️ محاسبه وزن کل</button>
+    <button class="btn sec" onclick="exportPDF('weight')">📄 دانلود PDF</button>
+    <div id="w-result"></div>
   </div>
 </div>
 
-<!-- Component: Ladder (enabled) -->
-<div class="comp on">
-  <div class="comp-head">
-    <div class="comp-icon">
-      <svg viewBox="0 0 24 24"><line x1="8" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="16" y2="21"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+<!-- ============ تب ۵: قیمت‌گذاری ============ -->
+<div id="t5" class="panel">
+  <div class="card">
+    <h2>💰 محاسبه‌گر قیمت</h2>
+    <div class="field"><label>نوع تجهیز</label>
+      <select id="c-eq" onchange="loadEquipment('cost')">
+        <option value="spiral">منبع اسپیرال</option>
+        <option value="u_coil">منبع کوئلی U شکل</option>
+        <option value="softener">سختی‌گیر</option>
+        <option value="sand_filter">فیلتر شنی / کربنی</option>
+        <option value="deaerator">دی‌اریتور</option>
+        <option value="expansion_closed">منبع انبساط بسته</option>
+        <option value="expansion_open">منبع انبساط باز</option>
+        <option value="condensate">مخزن کندانس</option>
+      </select>
     </div>
-    <span class="comp-title">نردبان</span>
-    <span class="comp-badge">85 kg</span>
-    <div class="comp-toggle"></div>
+    <div id="c-eq-header"></div>
   </div>
-  <div class="comp-body">
-    <div class="grid-2">
-      <div class="fld">
-        <label>سایز قوطی</label>
-        <select><option>30×30</option><option>40×40</option><option>50×50</option></select>
-      </div>
-      <div class="fld">
-        <label>مقدار مصرف (شاخه ۶۰۰ cm)</label>
-        <input type="text" value="1.5" class="num">
-        <span class="fld-hint">معادل ۹۰۰ سانتی‌متر قوطی</span>
-      </div>
+  <div id="c-components"></div>
+  <div class="card">
+    <div class="field"><label>درصد سود و مالیات</label><input type="number" id="c-profit" value="25" step="1"></div>
+    <button class="btn" onclick="calcCost()">💰 محاسبه قیمت نهایی</button>
+    <div id="c-result"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۶: عدسی ============ -->
+<div id="t6" class="panel">
+  <div class="card">
+    <h2>📐 سطح گسترده عدسی</h2>
+    <div class="field"><label>نوع عدسی (پیش‌فرض گودی)</label>
+      <select id="h-type" onchange="applyHeadPreset()">
+        <option value="shallow">کم‌عمق صنعتی (h = D/15)</option>
+        <option value="torisph">تورسفریکال F&D (h = 0.194D)</option>
+        <option value="ellip">بیضوی 2:1 (h = 0.25D)</option>
+        <option value="hemi">نیم‌کره (h = 0.5D)</option>
+        <option value="custom">دستی</option>
+      </select>
     </div>
-  </div>
-</div>
-
-<!-- Component: Disabled (off) -->
-<div class="comp">
-  <div class="comp-head">
-    <div class="comp-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 4 L20 20 L4 20 Z"/><line x1="12" y1="10" x2="12" y2="15"/><circle cx="12" cy="17.5" r="0.8" fill="currentColor"/></svg>
+    <div class="row">
+      <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="h-d" step="1" oninput="applyHeadPreset()" placeholder="750"></div>
+      <div class="field"><label>طول لبه (mm)</label><input type="number" id="h-l" step="1" value="40"></div>
     </div>
-    <span class="comp-title">حفاظت کاتدی</span>
-    <div class="comp-toggle"></div>
+    <div class="row">
+      <div class="field"><label>گودی h (mm)</label><input type="number" id="h-h" step="1"></div>
+      <div class="field"><label>ضخامت (mm)</label><input type="number" id="h-t" step="0.1" value="6"></div>
+    </div>
+    <div class="field"><label>جنس ورق</label>
+      <select id="h-mat">
+        <option value="ST37">ST37</option>
+        <option value="S235JR">S235JR</option>
+        <option value="A516-70">A516 Gr70</option>
+        <option value="Galvanized">گالوانیزه</option>
+        <option value="SS304">استیل ۳۰۴</option>
+        <option value="SS316">استیل ۳۱۶</option>
+      </select>
+    </div>
+    <div class="hint">💡 مثال: عدسی قطر ۷۵۰mm، لبه ۴۰mm → گسترده حدود ۹۲۵mm</div>
+    <button class="btn" onclick="calcBlank()">محاسبه</button>
+    <button class="btn sec" onclick="saveHeadCalc()">💾 ذخیره</button>
+    <div id="h-res"></div>
   </div>
 </div>
 
-<!-- Actions -->
-<div class="actions">
-  <button class="btn btn-main">
-    <svg viewBox="0 0 24 24"><path d="M12 3 L12 21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-    ⚖️ محاسبه وزن کل
-  </button>
-  <div class="btn-row">
-    <button class="btn btn-ghost">
-      <svg viewBox="0 0 24 24"><path d="M6 9 L12 15 L18 9"/></svg>
-      ذخیره
-    </button>
-    <button class="btn btn-ghost">
-      <svg viewBox="0 0 24 24"><path d="M6 4 L18 4 L18 20 L6 20 Z"/><line x1="10" y1="4" x2="10" y2="20"/></svg>
-      PDF
-    </button>
+<!-- ============ تب ۷: حافظه ============ -->
+<div id="t7" class="panel">
+  <div class="card">
+    <h2>💾 حافظه محاسبات</h2>
+    <div class="field"><label>🔍 جستجو</label><input type="text" id="mem-search" placeholder="نام..." oninput="renderMemory()"></div>
+    <div id="mem-list"></div>
+    <button class="btn sec" onclick="exportMemory()">⬇ خروجی CSV</button>
+    <button class="btn sec danger" onclick="clearMemory()">🗑 پاک کردن همه</button>
   </div>
 </div>
 
-<!-- Result Preview -->
-<div class="section-title">نتیجه محاسبه (نمونه)</div>
-
-<div class="result-preview">
-  <div class="res-summary">
-    <div class="lbl">وزن خالی کل</div>
-    <div class="val">۶۴۷.۸</div>
-    <div class="unit">کیلوگرم</div>
-  </div>
-  <div class="res-row">
-    <span class="lbl">پوسته استوانه</span>
-    <span class="val">۲۴۵.۵ kg</span>
-  </div>
-  <div class="res-row">
-    <span class="lbl">دو عدسی</span>
-    <span class="val">۱۲۵.۲ kg</span>
-  </div>
-  <div class="res-row">
-    <span class="lbl">کویل مارپیچ (۲.۵ شاخه)</span>
-    <span class="val">۲۸.۴ kg</span>
-  </div>
-  <div class="res-row">
-    <span class="lbl">منهول ۱۶ اینچ</span>
-    <span class="val">۱۲۵.۰ kg</span>
-  </div>
-  <div class="res-row">
-    <span class="lbl">نردبان (۱.۵ شاخه)</span>
-    <span class="val">۸۵.۰ kg</span>
-  </div>
-  <div class="res-row">
-    <span class="lbl">پایه‌ها (۲ عدد)</span>
-    <span class="val">۳۵.۴ kg</span>
-  </div>
-  <div class="res-row">
-    <span class="lbl">جوش، رنگ، متعلقات (۸٪)</span>
-    <span class="val">۳.۳ kg</span>
-  </div>
-  <div class="res-row" style="border-top:1px dashed rgba(0,255,157,.25);margin-top:8px;padding-top:12px">
-    <span class="lbl" style="color:var(--text);font-weight:700">وزن پر از آب</span>
-    <span class="val" style="font-size:15px">۶,۶۴۹ kg</span>
+<!-- ============ تب ۸: قیمت‌ها ============ -->
+<div id="t8" class="panel">
+  <div class="card">
+    <h2>📊 ویرایش قیمت‌ها</h2>
+    <div class="row">
+      <button class="btn" onclick="syncFromFirebase()">📥 دریافت</button>
+      <button class="btn blue" onclick="syncToFirebase()">📤 ارسال</button>
+    </div>
+    <div id="price-status"></div>
+    <div id="price-editor"></div>
+    <button class="btn" onclick="savePricesLocal(true)">💾 ذخیره محلی</button>
+    <button class="btn sec" onclick="resetPrices()">↺ بازگشت به پیش‌فرض</button>
+    <button class="btn sec" onclick="exportPrices()">⬇ دانلود JSON</button>
   </div>
 </div>
 
-<div class="bottom-info">
-  پیش‌نمایش گرافیکی جدید — نسخه ۲.۰<br>
-  <span style="color:var(--neon);font-weight:700">مشکی عمیق + سبز نئون + نمادهای مهندسی</span>
+<!-- ============ تب ۹: کاتالوگ ============ -->
+<div id="t9" class="panel">
+  <div class="card">
+    <h2>📚 کاتالوگ محصولات</h2>
+    <div class="field"><label>دسته‌بندی</label><select id="cat-category" onchange="renderCatalog()"></select></div>
+    <div class="field"><label>🔍 جستجو</label><input type="text" id="cat-search" placeholder="مثلاً 3000" oninput="renderCatalog()"></div>
+    <div id="cat-info"></div>
+    <div id="cat-table"></div>
+  </div>
 </div>
 
+<p class="footnote">ASME Sec VIII Div 1 — UG-27 / UG-32<br>محاسبات پیش‌طراحی است؛ نقشه مهندسی الزامی است.</p>
 </main>
 
+<script src="firebase-config.js"></script>
+<script src="prices.js"></script>
+<script src="catalog.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
