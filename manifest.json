@@ -1,7 +1,7 @@
 {
   "name": "Pressure Tank Calculator",
   "short_name": "PT Calculator",
-  "description": "Pressure Tank Weight & Cost Calculator",
+  "description": "Pressure Tank Weight & Cost Calculator — Caspian Mobadel Amard",
   "lang": "en",
   "dir": "ltr",
   "start_url": "./index.html",
@@ -11,9 +11,29 @@
   "background_color": "#050908",
   "theme_color": "#00ff9d",
   "icons": [
-    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
