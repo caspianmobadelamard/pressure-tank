@@ -1,7 +1,8 @@
+/* ============ متغیرهای سراسری ============ */
 let PRICES = JSON.parse(JSON.stringify(window.EMBEDDED_PRICES || {}));
 let CATALOG = window.EMBEDDED_CATALOG || {categories:{}};
 
-// ============ SVG Icons ============
+/* ============ SVG Icons ============ */
 const SVG_ICONS = {
   tank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="10" rx="0.5"/><path d="M2 7 Q6 3 12 3 Q18 3 22 7"/><path d="M2 17 Q6 21 12 21 Q18 21 22 17"/></svg>',
   head:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12 Q12 2 21 12"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
@@ -9,15 +10,15 @@ const SVG_ICONS = {
   utube:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 4 L8 14 Q8 18 12 18 Q16 18 16 14 L16 4"/></svg>',
   base:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6 L4 20 L8 20 L8 12 L16 12 L16 20 L20 20 L20 6"/></svg>',
   pad:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="14" width="20" height="5"/></svg>',
-  manhole:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="5" r="0.7" fill="currentColor"/><circle cx="12" cy="19" r="0.7" fill="currentColor"/><circle cx="5" cy="12" r="0.7" fill="currentColor"/><circle cx="19" cy="12" r="0.7" fill="currentColor"/></svg>',
-  flange:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="5" r="0.6" fill="currentColor"/><circle cx="12" cy="19" r="0.6" fill="currentColor"/><circle cx="5" cy="12" r="0.6" fill="currentColor"/><circle cx="19" cy="12" r="0.6" fill="currentColor"/></svg>',
-  valve:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7 L12 12 L6 17 Z"/><path d="M18 7 L12 12 L18 17 Z"/><line x1="12" y1="12" x2="12" y2="4"/></svg>',
-  cathode:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="3" x2="12" y2="21"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="19" x2="17" y2="19"/><circle cx="12" cy="10" r="1.5" fill="currentColor"/></svg>',
+  manhole:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="4.5"/></svg>',
+  flange:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg>',
+  valve:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7 L12 12 L6 17 Z"/><path d="M18 7 L12 12 L18 17 Z"/></svg>',
+  cathode:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="3" x2="12" y2="21"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="19" x2="17" y2="19"/></svg>',
   ladder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="3" x2="7" y2="21"/><line x1="17" y1="3" x2="17" y2="21"/><line x1="7" y1="6" x2="17" y2="6"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="17" y2="14"/><line x1="7" y1="18" x2="17" y2="18"/></svg>',
-  resin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="9" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="14" r="2"/><circle cx="17" cy="13" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg>',
+  resin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="9" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="14" r="2"/><circle cx="17" cy="13" r="2"/></svg>',
   tower:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="3" width="10" height="18" rx="0.5"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>',
-  tray:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="2.5"/><circle cx="6" cy="9.2" r="0.6" fill="currentColor"/><circle cx="12" cy="9.2" r="0.6" fill="currentColor"/><circle cx="18" cy="9.2" r="0.6" fill="currentColor"/><rect x="3" y="14" width="18" height="2.5"/><circle cx="6" cy="15.2" r="0.6" fill="currentColor"/><circle cx="12" cy="15.2" r="0.6" fill="currentColor"/><circle cx="18" cy="15.2" r="0.6" fill="currentColor"/></svg>',
-  diaphragm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6 Q12 12 4 18"/><path d="M20 6 Q12 12 20 18"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>',
+  tray:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="2.5"/><rect x="3" y="14" width="18" height="2.5"/></svg>',
+  diaphragm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6 Q12 12 4 18"/><path d="M20 6 Q12 12 20 18"/></svg>',
   box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8 L12 3 L21 8 L21 20 L12 20 L3 20 Z"/><path d="M3 8 L12 13 L21 8"/><line x1="12" y1="13" x2="12" y2="20"/></svg>',
   nozzle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9 L18 9 L18 15 L6 15 Z"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>',
   pipeIn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12 L10 12 L10 8 L18 8 L18 16 L10 16 L10 12"/><circle cx="20" cy="12" r="1.5" fill="currentColor"/></svg>'
@@ -26,17 +27,36 @@ const SVG_ICONS = {
 const MAT_RHO = {'ST37':7850,'S235JR':7850,'A516-70':7850,'Galvanized':7850,'SS304':8000,'SS316':8000};
 const MAT_S = {'ST37':13500,'S235JR':15000,'A516-70':20000,'Galvanized':14000,'SS304':16700,'SS316':16700};
 
-// ============ فرمول‌ها ============
+/* ============ فرمول‌ها ============ */
 const cylVol=(D,H)=>Math.PI/4*D*D*H/1000;
 const dishVT=D=>0.0809*Math.pow(D,3)/1000;
 const dishVE=D=>Math.PI/6*Math.pow(D,3)/1000/2;
 const dishAT=D=>1.084*Math.PI/4*D*D;
 
-function totalVol(D,H,head){let v=cylVol(D,H);if(head==='torisph')v+=2*dishVT(D);else if(head==='ellip')v+=2*dishVE(D);return v;}
-function diamFromV(V,H,head){const k=head==='torisph'?0.0809/1000:head==='ellip'?(Math.PI/6/2/1000):0;let lo=10,hi=1000;for(let i=0;i<80;i++){const m=(lo+hi)/2;const f=2*k*Math.pow(m,3)+(Math.PI*H/4)*m*m-V*1000;if(f>0)hi=m;else lo=m;}return(lo+hi)/2;}
-function hFromV(V,D,head){let vh=0;if(head==='torisph')vh=2*dishVT(D);else if(head==='ellip')vh=2*dishVE(D);const vc=V-vh;if(vc<=0)return 0;return vc*1000/(Math.PI/4*D*D);}
-const sT=(P,R,mat)=>{const p=P*14.5038;const S=MAT_S[mat]||20000;return(p*R)/(S-0.6*p)+1.5;};
-const hT=(P,D,mat)=>{const p=P*14.5038;const S=MAT_S[mat]||20000;return 0.885*p*D/(S-0.1*p)+1.5;};
+function totalVol(D,H,head){
+  let v=cylVol(D,H);
+  if(head==='torisph')v+=2*dishVT(D);
+  else if(head==='ellip')v+=2*dishVE(D);
+  return v;
+}
+function diamFromV(V,H,head){
+  const k=head==='torisph'?0.0809/1000:head==='ellip'?(Math.PI/6/2/1000):0;
+  let lo=10,hi=1000;
+  for(let i=0;i<80;i++){
+    const m=(lo+hi)/2;
+    const f=2*k*Math.pow(m,3)+(Math.PI*H/4)*m*m-V*1000;
+    if(f>0)hi=m;else lo=m;
+  }
+  return(lo+hi)/2;
+}
+function hFromV(V,D,head){
+  let vh=0;
+  if(head==='torisph')vh=2*dishVT(D);
+  else if(head==='ellip')vh=2*dishVE(D);
+  const vc=V-vh;
+  if(vc<=0)return 0;
+  return vc*1000/(Math.PI/4*D*D);
+}
 
 function calcBlank(D,h,L,t,type){
   let Db;
@@ -48,29 +68,28 @@ function calcBlank(D,h,L,t,type){
   return{Db,A,W:A*(t/1000)*7850,perim:Math.PI*Db};
 }
 
-// سطح حرارتی خودکار کویل مارپیچ
 function calcThermalArea(branches, dCoilCm){
   const L_m = branches * 6;
   const D_m = dCoilCm / 100;
   return Math.PI * D_m * L_m;
 }
 
-// ============ تجهیزات ============
+/* ============ تعریف تجهیزات ============ */
 const EQUIPMENT_DEFS = {
-  spiral: {name:'منبع اسپیرال', svg:'tank', parts:['shell','head','coil_pipe','manhole','ladder','base','base_pad','cathode','inlet_outlet']},
-  u_coil: {name:'منبع کوئلی U شکل', svg:'tank', parts:['shell','head','utube','tube_sheet','manhole','base','base_pad','inlet_outlet']},
-  softener: {name:'سختی‌گیر', svg:'tank', parts:['shell','head','resin','control_valve','manhole','ladder','base','base_pad','inlet_outlet']},
-  sand_filter: {name:'فیلتر شنی / کربنی', svg:'tank', parts:['shell','head','manhole','ladder','base','base_pad','inlet_outlet']},
-  deaerator: {name:'دی‌اریتور', svg:'tower', parts:['shell','head','tower_shell','tower_head','tray','manhole','ladder','base','base_pad','inlet_outlet']},
-  expansion_closed: {name:'منبع انبساط بسته', svg:'tank', parts:['shell','head','diaphragm','manhole','base','base_pad']},
-  expansion_open: {name:'منبع انبساط باز', svg:'box', parts:['box_shell','nozzles','base']},
-  condensate: {name:'مخزن کندانس', svg:'tank', parts:['shell','head','manhole','base','base_pad','inlet_outlet']}
+  spiral:{name:'منبع اسپیرال',svg:'tank',parts:['shell','head','coil_pipe','manhole','ladder','base','base_pad','cathode','inlet_outlet']},
+  u_coil:{name:'منبع کوئلی U',svg:'tank',parts:['shell','head','utube','tube_sheet','manhole','base','base_pad','inlet_outlet']},
+  softener:{name:'سختی‌گیر',svg:'tank',parts:['shell','head','resin','control_valve','manhole','ladder','base','base_pad','inlet_outlet']},
+  sand_filter:{name:'فیلتر شنی',svg:'tank',parts:['shell','head','manhole','ladder','base','base_pad','inlet_outlet']},
+  deaerator:{name:'دی‌اریتور',svg:'tower',parts:['shell','head','tower_shell','tower_head','tray','manhole','ladder','base','base_pad']},
+  expansion_closed:{name:'منبع انبساط بسته',svg:'tank',parts:['shell','head','diaphragm','manhole','base','base_pad']},
+  expansion_open:{name:'منبع انبساط باز',svg:'box',parts:['box_shell','nozzles','base']},
+  condensate:{name:'مخزن کندانس',svg:'tank',parts:['shell','head','manhole','base','base_pad','inlet_outlet']}
 };
 
 const COST_ONLY_PARTS = ['flange','bushing','nozzle'];
 
 const PART_DEFS = {
-  shell:{name:'پوسته استوانه',icon:'shell',color:'turquoise',defOn:true,fields:[
+  shell:{name:'پوسته استوانه',icon:'shell',color:'',defOn:true,fields:[
     {id:'d',label:'قطر داخلی (cm)',def:160},{id:'h',label:'ارتفاع/طول (cm)',def:300},
     {id:'t',label:'ضخامت (mm)',def:6},
     {id:'mat',label:'جنس ورق',type:'select',options:[['ST37','ST37'],['S235JR','S235JR'],['A516-70','A516 Gr70'],['Galvanized','گالوانیزه'],['SS304','استیل ۳۰۴'],['SS316','استیل ۳۱۶']],def:'ST37'}]},
@@ -89,8 +108,8 @@ const PART_DEFS = {
       ['SS304_1_1_2','استیل ۳۰۴ ۱ ۱/۲'],['SS304_2','استیل ۳۰۴ ۲'],['SS304_2_1_2','استیل ۳۰۴ ۲ ۱/۲'],
       ['SS304_3','استیل ۳۰۴ ۳'],['SS304_4','استیل ۳۰۴ ۴']
     ],def:'SS304_1'},
-    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:2.5,hint:'می‌تواند اعشاری باشد'},
-    {id:'d_coil',label:'قطر کویل (cm)',def:145,hint:'اگر خالی باشد خودکار از پوسته'},
+    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:2.5,hint:'۲.۵ شاخه = ۱۵۰۰ سانتی‌متر'},
+    {id:'d_coil',label:'قطر کویل (cm)',def:145,hint:'اگر خالی باشد از پوسته گرفته می‌شود'},
     {id:'thermal',label:'سطح حرارتی (m²) — خودکار',def:0,autoCalc:true}]},
   utube:{name:'کویل U شکل',icon:'utube',color:'purple',defOn:true,fields:[
     {id:'mat',label:'جنس',type:'select',options:[['copper','مس'],['SS304','استیل ۳۰۴'],['SS309','استیل ۳۰۹']],def:'copper'},
@@ -114,12 +133,12 @@ const PART_DEFS = {
     {id:'t',label:'ضخامت (mm)',def:20},{id:'n',label:'تعداد',def:1}]},
   ladder:{name:'نردبان',icon:'ladder',color:'lime',defOn:false,fields:[
     {id:'pipe',label:'سایز قوطی',type:'select',options:[['pipe_30x30','۳۰×۳۰'],['pipe_40x40','۴۰×۴۰'],['pipe_50x50','۵۰×۵۰']],def:'pipe_40x40'},
-    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:1.5,hint:'مثال: ۱.۵ شاخه = ۹۰۰ سانتی‌متر'}]},
+    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:1.5,hint:'۱.۵ شاخه = ۹۰۰ سانتی‌متر'}]},
   base:{name:'پایه‌ها',icon:'base',color:'cyan',defOn:true,fields:[
-    {id:'type',label:'نوع پایه',type:'select',options:[['saddle','زانویی'],['leg','عمودی']],def:'saddle'},
+    {id:'type',label:'نوع',type:'select',options:[['saddle','زانویی'],['leg','عمودی']],def:'saddle'},
     {id:'n',label:'تعداد',def:2},{id:'l',label:'طول (cm)',def:120},
     {id:'w',label:'عرض (cm)',def:40},{id:'h',label:'ارتفاع (cm)',def:50},
-    {id:'t',label:'ضخامت ورق (mm)',def:10}]},
+    {id:'t',label:'ضخامت (mm)',def:10}]},
   base_pad:{name:'پد پایه',icon:'pad',color:'cyan',defOn:true,fields:[
     {id:'n',label:'تعداد',def:2},{id:'l',label:'طول (cm)',def:50},
     {id:'w',label:'عرض (cm)',def:30},{id:'t',label:'ضخامت (mm)',def:8}]},
@@ -127,15 +146,14 @@ const PART_DEFS = {
     {id:'type',label:'نوع آند',type:'select',options:[['zn','آند روی'],['al','آند آلومینیوم'],['mg','آند منیزیم']],def:'zn'},
     {id:'n',label:'تعداد',def:2}]},
   inlet_outlet:{name:'لوله ورودی/خروجی',icon:'pipeIn',color:'lime',defOn:true,fields:[
-    {id:'size',label:'سایز لوله',type:'select',options:[
+    {id:'size',label:'سایز',type:'select',options:[
       ['galv_1','گالوانیزه ۱'],['galv_1_1_2','گالوانیزه ۱ ۱/۲'],['galv_2','گالوانیزه ۲'],
       ['galv_3','گالوانیزه ۳'],['galv_4','گالوانیزه ۴'],
-      ['seamless40_2','مانیسمان ۲'],['seamless40_3','مانیسمان ۳'],['seamless40_4','مانیسمان ۴'],
       ['SS304_1','استیل ۳۰۴ ۱'],['SS304_2','استیل ۳۰۴ ۲'],['SS304_3','استیل ۳۰۴ ۳'],['SS304_4','استیل ۳۰۴ ۴']
     ],def:'galv_2'},
-    {id:'len',label:'طول لوله (cm)',def:200},
+    {id:'len',label:'طول هر لوله (cm)',def:200},
     {id:'n',label:'تعداد',def:2}]},
-  resin:{name:'رزین تبادل یونی',icon:'resin',color:'turquoise',defOn:true,fields:[
+  resin:{name:'رزین تبادل یونی',icon:'resin',color:'',defOn:true,fields:[
     {id:'d',label:'قطر بستر (cm)',def:100},{id:'h',label:'ارتفاع بستر (cm)',def:120},
     {id:'fill',label:'ضریب پر شدن',def:0.6}]},
   control_valve:{name:'شیر کنترل',icon:'valve',color:'orange',defOn:true,fields:[
@@ -151,26 +169,25 @@ const PART_DEFS = {
   diaphragm:{name:'دیافراگم',icon:'diaphragm',color:'pink',defOn:true,fields:[
     {id:'d',label:'قطر (mm)',def:600},
     {id:'type',label:'نوع',type:'select',options:[['butyl','بوتیل'],['epdm','EPDM']],def:'butyl'}]},
-  box_shell:{name:'بدنه مکعبی',icon:'box',color:'turquoise',defOn:true,fields:[
+  box_shell:{name:'بدنه مکعبی',icon:'box',color:'',defOn:true,fields:[
     {id:'l',label:'طول (cm)',def:100},{id:'w',label:'عرض (cm)',def:100},{id:'h',label:'ارتفاع (cm)',def:100},
     {id:'t',label:'ضخامت (mm)',def:4},
-    {id:'mat',label:'جنس',type:'select',options:[['ST37','ST37'],['S235JR','S235JR'],['Galvanized','گالوانیزه']],def:'ST37'}]},
-  nozzles:{name:'نازل‌های ورودی/خروجی',icon:'nozzle',color:'orange',defOn:true,fields:[
-    {id:'size',label:'سایز',type:'select',options:[['1','۱ اینچ'],['1_1_4','۱ ۱/۴'],['1_1_2','۱ ۱/۲'],['2','۲ اینچ'],['3','۳ اینچ'],['4','۴ اینچ']],def:'2'},
+    {id:'mat',label:'جنس',type:'select',options:[['ST37','ST37'],['Galvanized','گالوانیزه']],def:'ST37'}]},
+  nozzles:{name:'نازل‌ها',icon:'nozzle',color:'orange',defOn:true,fields:[
+    {id:'size',label:'سایز',type:'select',options:[['1','۱'],['2','۲'],['3','۳'],['4','۴']],def:'2'},
     {id:'n',label:'تعداد',def:4}]},
-  // فقط در قیمت
   flange:{name:'فلنج',icon:'flange',color:'pink',defOn:false,costOnly:true,fields:[
-    {id:'size',label:'سایز',type:'select',options:[['flange_1_2','۱/۲ اینچ'],['flange_3_4','۳/۴ اینچ'],['flange_1','۱ اینچ'],['flange_1_1_4','۱ ۱/۴'],['flange_1_1_2','۱ ۱/۲'],['flange_2','۲ اینچ'],['flange_2_1_2','۲ ۱/۲'],['flange_3','۳ اینچ'],['flange_4','۴ اینچ'],['flange_6','۶ اینچ'],['flange_8','۸ اینچ']],def:'flange_2'},
+    {id:'size',label:'سایز',type:'select',options:[['flange_2','۲ اینچ'],['flange_3','۳ اینچ'],['flange_4','۴ اینچ'],['flange_6','۶ اینچ'],['flange_8','۸ اینچ']],def:'flange_2'},
     {id:'n',label:'تعداد',def:4}]},
   bushing:{name:'بوشن',icon:'nozzle',color:'pink',defOn:false,costOnly:true,fields:[
-    {id:'size',label:'سایز',type:'select',options:[['bush_1_2','۱/۲ اینچ'],['bush_3_4','۳/۴ اینچ'],['bush_1','۱ اینچ'],['bush_1_1_4','۱ ۱/۴'],['bush_1_1_2','۱ ۱/۲'],['bush_2','۲ اینچ'],['bush_2_1_2','۲ ۱/۲'],['bush_3','۳ اینچ'],['bush_4','۴ اینچ']],def:'bush_2'},
+    {id:'size',label:'سایز',type:'select',options:[['bush_1','۱'],['bush_2','۲'],['bush_3','۳'],['bush_4','۴']],def:'bush_2'},
     {id:'n',label:'تعداد',def:4}]},
-  nozzle:{name:'نازل',icon:'nozzle',color:'pink',defOn:false,costOnly:true,fields:[
-    {id:'size',label:'سایز',type:'select',options:[['1','۱ اینچ'],['1_1_4','۱ ۱/۴'],['1_1_2','۱ ۱/۲'],['2','۲ اینچ'],['3','۳ اینچ'],['4','۴ اینچ']],def:'2'},
+  nozzle:{name:'نازل (فقط قیمت)',icon:'nozzle',color:'pink',defOn:false,costOnly:true,fields:[
+    {id:'size',label:'سایز',type:'select',options:[['1','۱'],['2','۲'],['3','۳'],['4','۴']],def:'2'},
     {id:'n',label:'تعداد',def:4}]}
 };
 
-// ============ State ============
+/* ============ State ============ */
 const EQ_STATE = {weight:{}, cost:{}};
 
 function initEqState(mode){
@@ -196,7 +213,7 @@ function initEqState(mode){
   }
 }
 
-// ============ نمایش تجهیز ============
+/* ============ نمایش تجهیز ============ */
 function loadEquipment(mode){
   initEqState(mode);
   const eqId = mode==='weight'?'w-eq':'c-eq';
@@ -229,7 +246,7 @@ function loadEquipment(mode){
     if(!pd) return;
     const st = state[pid];
     if(!st) return;
-    const colorClass = pd.color === 'turquoise' ? '' : ' ' + pd.color;
+    const colorClass = pd.color ? ' ' + pd.color : '';
     html += `<div class="comp${colorClass}${st.on?' on':''}" data-mode="${mode}" data-pid="${pid}">
       <div class="comp-head" onclick="toggleComp('${mode}','${eq}','${pid}')">
         <div class="comp-icon">${SVG_ICONS[pd.icon]||SVG_ICONS.tank}</div>
@@ -245,7 +262,7 @@ function loadEquipment(mode){
 
 function renderFields(mode, eq, pid, pd, st){
   const fields = pd.fields||[];
-  if(fields.length === 0) return '<div class="fld-hint">بدون پارامتر — قیمت ثابت</div>';
+  if(fields.length === 0) return '<div class="fld-hint">بدون پارامتر</div>';
   let html = '<div class="grid-2">';
   fields.forEach(f=>{
     const v = st.fields[f.id];
@@ -264,7 +281,7 @@ function renderFields(mode, eq, pid, pd, st){
       const area = calcThermalArea(branches, dCoil);
       html += `<div class="fld"><label>${f.label}</label>
         <input type="text" value="${area.toFixed(2)}" readonly style="color:var(--lime);background:rgba(132,204,22,.08);border-color:rgba(132,204,22,.3)">
-        <span class="fld-hint"><b>محاسبه خودکار:</b> π × ${(dCoil/100).toFixed(2)} × ${(branches*6).toFixed(1)} m</span></div>`;
+        <span class="fld-hint"><b>خودکار:</b> π × ${(dCoil/100).toFixed(2)} × ${(branches*6).toFixed(1)} = ${area.toFixed(2)} m²</span></div>`;
     } else {
       html += `<div class="fld"><label>${f.label}</label>
         <input type="number" step="any" value="${v}" oninput="updateField('${mode}','${eq}','${pid}','${f.id}',parseFloat(this.value)||0)">
@@ -277,8 +294,8 @@ function renderFields(mode, eq, pid, pd, st){
 
 function getTankDiameter(mode, eq){
   const st = EQ_STATE[mode][eq];
-  if(st && st.shell) return st.shell.fields.d;
-  if(st && st.box_shell) return st.box_shell.fields.l;
+  if(st && st.shell && st.shell.fields.d > 0) return st.shell.fields.d;
+  if(st && st.box_shell && st.box_shell.fields.l > 0) return st.box_shell.fields.l;
   return 150;
 }
 
@@ -293,81 +310,43 @@ function toggleComp(mode, eq, pid){
 
 function updateField(mode, eq, pid, fid, value){
   EQ_STATE[mode][eq][pid].fields[fid] = value;
-  // اگر کویل را عوض کردیم، سطح حرارتی دوباره رندر شود
+  // اگر کویل را عوض کردیم، دوباره رندر کن
   if(pid === 'coil_pipe'){
-    const def = EQUIPMENT_DEFS[eq];
-    if(def){
-      const body = document.querySelector(`.comp[data-mode="${mode}"][data-pid="coil_pipe"] .comp-body`);
-      if(body){
-        const st = EQ_STATE[mode][eq].coil_pipe;
-        const pd = PART_DEFS.coil_pipe;
-        body.innerHTML = renderFields(mode, eq, 'coil_pipe', pd, st);
-      }
-    }
+    const st = EQ_STATE[mode][eq].coil_pipe;
+    const pd = PART_DEFS.coil_pipe;
+    const body = document.querySelector(`.comp[data-mode="${mode}"][data-pid="coil_pipe"] .comp-body`);
+    if(body) body.innerHTML = renderFields(mode, eq, 'coil_pipe', pd, st);
   }
   const out = document.getElementById(mode==='weight'?'w-result':'c-result');
   if(out) out.innerHTML = '';
 }
 
-// ============ محاسبه وزن ============
-function partWeight(part, f, mode, eq){
+/* ============ محاسبه وزن ============ */
+function partWeight(part, f){
   switch(part){
     case 'shell': return Math.PI*(f.d/100)*(f.h/100)*(f.t/1000)*MAT_RHO[f.mat||'ST37'];
-    case 'head': {
-      const res = calcBlank(f.d, f.h||f.d*0.15, f.l||40, f.t, f.htype||'shallow');
-      return res.W * (f.n||2);
-    }
-    case 'coil_pipe': {
-      const lenM = (f.branches||0) * 6;
-      const wkg = (PRICES.pipeWeights||{})[f.size] || 2;
-      return lenM * wkg;
-    }
-    case 'utube': {
-      const lenM = (f.len||0)/100;
-      const wkg = (PRICES.pipeWeights||{})[f.size] || 2;
-      return lenM * wkg * (f.n||1);
-    }
+    case 'head': return calcBlank(f.d, f.h||f.d*0.15, f.l||40, f.t, f.htype||'shallow').W * (f.n||2);
+    case 'coil_pipe': return (f.branches||0) * 6 * ((PRICES.pipeWeights||{})[f.size] || 2);
+    case 'utube': return ((f.len||0)/100) * ((PRICES.pipeWeights||{})[f.size] || 2) * (f.n||1);
     case 'tube_sheet': return Math.PI/4*(f.d/100)*(f.d/100)*(f.t/1000)*MAT_RHO[f.mat||'ST37'];
-    case 'base': {
-      const one = (f.l/100)*(f.w/100)*(f.h/100)*(f.t/1000)*MAT_RHO['ST37'];
-      return one * (f.n||2);
-    }
-    case 'base_pad': {
-      const one = (f.l/100)*(f.w/100)*(f.t/1000)*MAT_RHO['ST37'];
-      return one * (f.n||2);
-    }
+    case 'base': return (f.l/100)*(f.w/100)*(f.h/100)*(f.t/1000)*MAT_RHO['ST37'] * (f.n||2);
+    case 'base_pad': return (f.l/100)*(f.w/100)*(f.t/1000)*MAT_RHO['ST37'] * (f.n||2);
     case 'manhole': {
       const vol = (f.w/1000)*(f.h/1000)*(f.t/1000);
       const base = vol*MAT_RHO['A516-70'];
       const extra = f.size==='16'?80:f.size==='18'?100:120;
       return (base + extra) * (f.n||1);
     }
-    case 'ladder': {
-      const lenM = (f.branches||0) * 6;
-      return lenM * ((PRICES.equipmentParts?.ladder?.weight_per_m)||15);
-    }
+    case 'ladder': return (f.branches||0) * 6 * ((PRICES.equipmentParts?.ladder?.weight_per_m)||15);
     case 'cathode': return (f.n||1)*5;
-    case 'inlet_outlet': {
-      const lenM = (f.len||0)/100;
-      const wkg = (PRICES.pipeWeights||{})[f.size] || 2;
-      return lenM * wkg * (f.n||2);
-    }
-    case 'resin': {
-      const V = Math.PI/4*(f.d/100)*(f.d/100)*(f.h/100);
-      return V*750*(f.fill||0.6);
-    }
+    case 'inlet_outlet': return ((f.len||0)/100) * ((PRICES.pipeWeights||{})[f.size] || 2) * (f.n||2);
+    case 'resin': return Math.PI/4*(f.d/100)*(f.d/100)*(f.h/100)*750*(f.fill||0.6);
     case 'control_valve': return 15;
     case 'tower_shell': return Math.PI*(f.d/100)*(f.h/100)*(f.t/1000)*MAT_RHO[f.mat||'SS304'];
     case 'tower_head': return calcBlank(f.d, f.d*0.15, 30, f.t, 'shallow').W;
     case 'tray': return (f.n||5)*25;
-    case 'diaphragm': {
-      const A = Math.PI/4*Math.pow(f.d/1000,2);
-      return A * (f.type==='butyl'?2.5:3.5);
-    }
-    case 'box_shell': {
-      const l=f.l/100, w=f.w/100, h=f.h/100;
-      return 2*(l*w + w*h + l*h)*(f.t/1000)*MAT_RHO[f.mat||'ST37'];
-    }
+    case 'diaphragm': return Math.PI/4*Math.pow(f.d/1000,2) * (f.type==='butyl'?2.5:3.5);
+    case 'box_shell': return 2*((f.l/100)*(f.w/100) + (f.w/100)*(f.h/100) + (f.l/100)*(f.h/100))*(f.t/1000)*MAT_RHO[f.mat||'ST37'];
     case 'nozzles': return (f.n||4)*3;
     case 'flange': return (f.n||1)*3;
     case 'bushing': return (f.n||1)*1;
@@ -381,7 +360,7 @@ function calcWeight(){
   const def = EQUIPMENT_DEFS[eq];
   const state = EQ_STATE.weight[eq];
   const out = document.getElementById('w-result');
-  if(!def || !state){ out.innerHTML = '<div class="info-box"><b>خطا:</b> تجهیز یافت نشد</div>'; return; }
+  if(!def || !state){ out.innerHTML = '<div class="info-box orange"><b>خطا:</b> تجهیز یافت نشد</div>'; return; }
 
   let total = 0;
   const details = [];
@@ -390,7 +369,7 @@ function calcWeight(){
     if(!st || !st.on) return;
     const pd = PART_DEFS[pid];
     if(!pd) return;
-    const w = partWeight(pid, st.fields, 'weight', eq);
+    const w = partWeight(pid, st.fields);
     total += w;
     details.push({name: pd.name, w});
     const badge = document.getElementById(`badge-weight-${pid}`);
@@ -412,8 +391,8 @@ function calcWeight(){
   });
   html += `<div class="res-row"><span class="lbl">جوش، رنگ، متعلقات (۸٪)</span><span class="val">${fmt(extras,1)} kg</span></div>`;
   if(volume>0){
-    html += `<div class="res-row"><span class="lbl"><b>حجم آب داخل</b></span><span class="val" style="color:var(--turquoise)">${fmt(volume,0)} L</span></div>`;
-    html += `<div class="res-row"><span class="lbl"><b>وزن پر از آب</b></span><span class="val" style="color:var(--turquoise);font-size:15px">${fmt(grand+volume,0)} kg</span></div>`;
+    html += `<div class="res-row"><span class="lbl"><b>حجم آب داخل</b></span><span class="val">${fmt(volume,0)} L</span></div>`;
+    html += `<div class="res-row"><span class="lbl"><b>وزن پر از آب</b></span><span class="val" style="font-size:15px">${fmt(grand+volume,0)} kg</span></div>`;
   }
   html += `</div>`;
   out.innerHTML = html;
@@ -431,7 +410,7 @@ function estimateVolume(eq, state){
   return 0;
 }
 
-// ============ محاسبه قیمت ============
+/* ============ محاسبه قیمت ============ */
 function findSheetPrice(mat, t){
   const keys = Object.keys(PRICES.sheets||{});
   const c = keys.filter(k=>k.startsWith(mat+'_'));
@@ -462,8 +441,7 @@ function partCost(part, f){
     case 'ladder': return partWeight('ladder',f)*((PRICES.equipmentParts?.ladder?.price_per_kg)||80000);
     case 'cathode': {
       const c = PRICES.equipmentParts?.cathodic || {};
-      const price = f.type==='zn'?c.anode_zn:f.type==='al'?c.anode_al:c.anode_mg;
-      return (price||350000)*(f.n||1);
+      return (f.type==='zn'?c.anode_zn:f.type==='al'?c.anode_al:c.anode_mg)*(f.n||1);
     }
     case 'inlet_outlet': return ((f.len||0)/100/6)*((PRICES.pipes||{})[f.size]||0)*(f.n||2);
     case 'resin': return partWeight('resin',f)*((PRICES.equipmentParts?.softener?.resin_kg)||180000);
@@ -483,7 +461,7 @@ function partCost(part, f){
     case 'flange': return (f.n||1)*((PRICES.flanges||{})[f.size]||0);
     case 'bushing': return (f.n||1)*((PRICES.bushings||{})[f.size]||0);
     case 'nozzle': {
-      const map = {'1':'flange_1','1_1_4':'flange_1_1_4','1_1_2':'flange_1_1_2','2':'flange_2','3':'flange_3','4':'flange_4'};
+      const map = {'1':'flange_1','2':'flange_2','3':'flange_3','4':'flange_4'};
       return (f.n||1)*((PRICES.flanges||{})[map[f.size]]||780000);
     }
     default: return 0;
@@ -496,7 +474,7 @@ function calcCost(){
   const state = EQ_STATE.cost[eq];
   const out = document.getElementById('c-result');
   const pp = parseFloat(document.getElementById('c-profit').value)||25;
-  if(!def || !state){ out.innerHTML = '<div class="info-box"><b>خطا:</b> تجهیز یافت نشد</div>'; return; }
+  if(!def || !state){ out.innerHTML = '<div class="info-box orange"><b>خطا:</b> تجهیز یافت نشد</div>'; return; }
 
   let total = 0;
   const details = [];
@@ -507,7 +485,7 @@ function calcCost(){
     const pd = PART_DEFS[pid];
     if(!pd) return;
     const c = partCost(pid, st.fields);
-    const w = partWeight(pid, st.fields, 'cost', eq);
+    const w = partWeight(pid, st.fields);
     total += c;
     details.push({name: pd.name, c, w});
     const badge = document.getElementById(`badge-cost-${pid}`);
@@ -536,20 +514,19 @@ function calcCost(){
   details.forEach(d=>{
     html += `<div class="res-row cost"><span class="lbl">${d.name}</span><span class="val">${fmtT(d.c)}</span></div>`;
   });
-  html += `<div class="res-row"><span class="lbl">جوشکاری (${fmt(weldHours,1)} hr)</span><span class="val">${fmtT(weldCost)}</span></div>`;
+  html += `<div class="res-row"><span class="lbl">جوشکاری</span><span class="val">${fmtT(weldCost)}</span></div>`;
   html += `<div class="res-row"><span class="lbl">مونتاژ</span><span class="val">${fmtT(fitterCost)}</span></div>`;
   html += `<div class="res-row"><span class="lbl">الکترود</span><span class="val">${fmtT(electrode)}</span></div>`;
   html += `<div class="res-row"><span class="lbl">رنگ</span><span class="val">${fmtT(paintCost)}</span></div>`;
-  html += `<div class="res-row"><span class="lbl">مصرفی (${PRICES.consumables_pct}٪)</span><span class="val">${fmtT(consumables)}</span></div>`;
+  html += `<div class="res-row"><span class="lbl">مصرفی</span><span class="val">${fmtT(consumables)}</span></div>`;
   html += `<div class="res-row"><span class="lbl">حمل</span><span class="val">${fmtT(transport)}</span></div>`;
-  html += `<div class="res-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:8px"><span class="lbl"><b>جمع هزینه</b></span><span class="val">${fmtT(beforeProfit)}</span></div>`;
+  html += `<div class="res-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:8px"><span class="lbl"><b>جمع</b></span><span class="val">${fmtT(beforeProfit)}</span></div>`;
   html += `<div class="res-row"><span class="lbl">سود (${pp}٪)</span><span class="val">${fmtT(beforeProfit*pp/100)}</span></div>`;
   html += `</div>`;
-
   out.innerHTML = html;
 }
 
-// ============ PDF ============
+/* ============ PDF ============ */
 function exportPDF(type){
   const eqId = type==='weight'?'w-eq':'c-eq';
   const resId = type==='weight'?'w-result':'c-result';
@@ -559,30 +536,30 @@ function exportPDF(type){
   if(!def || !resEl.innerHTML){ alert('ابتدا محاسبه کن'); return; }
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>گزارش</title>
-    <style>@page{size:A4;margin:15mm}body{font-family:Tahoma;direction:rtl;color:#000;font-size:12px}
+    <style>@page{size:A4;margin:15mm}body{font-family:Tahoma;direction:rtl;font-size:12px}
     h1{color:#006699;text-align:center;font-size:20px;border-bottom:2px solid #00D9FF;padding-bottom:10px}
     .info{background:#F0F8FF;padding:10px;border-radius:8px;margin:10px 0;font-size:11px}
-    .res-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ccc;font-size:12px}
+    .res-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ccc}
     .res-row .val{color:#006699;font-weight:700}
-    .total{font-size:16px;font-weight:800;color:#006699;text-align:center;padding:15px;background:#E6F4FB;border-radius:8px;margin-top:15px}
+    .res-summary{font-size:16px;font-weight:800;color:#006699;text-align:center;padding:15px;background:#E6F4FB;border-radius:8px;margin-top:15px}
     .footer{margin-top:30px;text-align:center;font-size:10px;color:#666;border-top:1px solid #ccc;padding-top:10px}</style>
     </head><body>
     <h1>Pressure Tank Calculator</h1>
     <div class="info"><b>تجهیز:</b> ${def.name} — <b>نوع:</b> ${type==='weight'?'وزن‌دهی':'قیمت‌گذاری'} — <b>تاریخ:</b> ${new Date().toLocaleDateString('fa-IR')}</div>
-    ${resEl.innerHTML.replace(/class="res-summary[^"]*"/g,'class="total"').replace(/class="res-row [^"]*"/g,'class="res-row"')}
+    ${resEl.innerHTML.replace(/class="res-summary[^"]*"/g,'class="res-summary"').replace(/class="res-row [^"]*"/g,'class="res-row"').replace(/class="res-row"/g,'class="res-row"')}
     <div class="footer">Caspian Mobadel Amard<br>محاسبات پیش‌طراحی است</div>
     </body></html>`);
   win.document.close();
   setTimeout(()=>win.print(), 500);
 }
 
-// ============ تب‌های ساده ============
+/* ============ تب‌های ساده ============ */
 function calcVol(){
   const t = document.getElementById('v-type').value;
   const out = document.getElementById('v-res');
   if(t==='box'){
     const W=val('v-d'), L=val('v-l'), H=val('v-w');
-    if(!(W>0&&L>0&&H>0)){out.innerHTML='<div class="info-box orange"><b>خطا:</b> ابعاد را کامل کنید</div>';return;}
+    if(!(W>0&&L>0&&H>0)){out.innerHTML='<div class="info-box orange"><b>خطا:</b> ابعاد</div>';return;}
     const V=W*L*H/1000;
     out.innerHTML=`<div class="res-summary"><div class="lbl">حجم</div><div class="val">${fmt(V,1)}</div><div class="unit">لیتر</div></div>`;
     return;
@@ -598,13 +575,9 @@ function calcDim(){
   const V=val('d-v'), D=val('d-d')||0, H=val('d-h')||0;
   const head = document.getElementById('d-type').value==='cyl-dish'?'torisph':'flat';
   const out = document.getElementById('d-res');
-  if(!(V>0)){out.innerHTML='<div class="info-box orange">ظرفیت را وارد کن</div>';return;}
+  if(!(V>0)){out.innerHTML='<div class="info-box orange">ظرفیت</div>';return;}
   let html = '<div class="info-box">';
-  if(D>0 && H>0){
-    const Vc = totalVol(D,H,head);
-    html += `<div class="res-row"><span class="lbl">حجم محاسبه</span><span class="val">${fmt(Vc,1)} L</span></div>`;
-    html += `<div class="res-row"><span class="lbl">اختلاف</span><span class="val">${fmt(Vc-V,1)} L</span></div>`;
-  } else if(D>0){
+  if(D>0){
     const Hc = hFromV(V,D,head);
     html += `<div class="res-row"><span class="lbl"><b>ارتفاع لازم</b></span><span class="val" style="font-size:16px">${fmt(Hc,1)} cm</span></div>`;
   } else if(H>0){
@@ -628,7 +601,7 @@ function calcDim(){
 function optSheets(){
   const V=val('s-v'), wSel=document.getElementById('s-w').value, L=val('s-l')||600, maxN=parseInt(document.getElementById('s-max').value)||10;
   const out=document.getElementById('s-res');
-  if(!(V>0)){out.innerHTML='<div class="info-box orange">ظرفیت را وارد کن</div>';return;}
+  if(!(V>0)){out.innerHTML='<div class="info-box orange">ظرفیت</div>';return;}
   const widths = wSel==='both'?[150,152]:[parseFloat(wSel)];
   const rows=[];
   for(const w of widths) for(let n=1;n<=maxN;n++){
@@ -671,11 +644,11 @@ function calcBlank(){
     <div class="res-row auto"><span class="lbl"><b>قطر گسترده</b></span><span class="val">${fmt(res.Db,1)} mm</span></div>
     <div class="res-row auto"><span class="lbl"><b>سطح گسترده</b></span><span class="val">${fmt(res.A,3)} m²</span></div>
     <div class="res-row auto"><span class="lbl"><b>وزن عدسی</b></span><span class="val">${fmt(res.W,1)} kg</span></div>
-    <div class="res-row"><span class="lbl">هزینه ساخت (با ۳۵٪)</span><span class="val">${fmtT(cost)}</span></div>
+    <div class="res-row"><span class="lbl">هزینه ساخت</span><span class="val">${fmtT(cost)}</span></div>
   </div>`;
 }
 
-// ============ حافظه ============
+/* ============ حافظه ============ */
 function saveCalculation(type, name, inputs, outputs){
   try{
     let list = JSON.parse(localStorage.getItem('csp_calcs')||'[]');
@@ -694,7 +667,7 @@ function renderMemory(){
   let html = '';
   list.forEach(c=>{
     html += `<div class="save-row"><div class="info"><b>${c.name}</b><br>${c.type} — ${c.date}</div>
-      <button class="load" onclick="delCalc('${c.id}')">حذف</button></div>`;
+      <button onclick="delCalc('${c.id}')">حذف</button></div>`;
   });
   el.innerHTML = html;
 }
@@ -725,10 +698,13 @@ function saveHeadCalc(){
   const res = calcBlank(D,h,L,t,document.getElementById('h-type').value);
   const name = prompt('نام:', 'عدسی '+D+'mm');
   if(!name)return;
-  if(saveCalculation('head', name, {D,h,L,t}, res)) renderMemory();
+  if(saveCalculation('head', name, {D,h,L,t}, res)){
+    renderMemory();
+    showStatus('success','✅ ذخیره شد');
+  }
 }
 
-// ============ قیمت‌ها ============
+/* ============ قیمت‌ها ============ */
 function renderPriceEditor(){
   const c = document.getElementById('price-editor');
   if(!c) return;
@@ -747,8 +723,7 @@ function savePricesLocal(){
   document.querySelectorAll('#price-editor input').forEach(inp=>{
     const cat = inp.dataset.cat, key = inp.dataset.key;
     const v = parseFloat(inp.value)||0;
-    if(cat==='_root') PRICES[key]=v;
-    else if(PRICES[cat]) PRICES[cat][key]=v;
+    if(PRICES[cat]) PRICES[cat][key]=v;
   });
   try{localStorage.setItem('csp_prices', JSON.stringify({version:'local_'+Date.now(), data:PRICES}));}catch(e){}
   showStatus('success','✅ ذخیره شد');
@@ -768,17 +743,17 @@ function exportPrices(){
   a.click();
 }
 function showStatus(t,m){
-  const s = document.getElementById('price-status');
+  const s = document.getElementById('price-status') || document.getElementById('cat-status');
   if(!s) return;
   s.innerHTML = `<div class="info-box ${t==='success'?'lime':'orange'}">${m}</div>`;
-  setTimeout(()=>s.innerHTML='', 3000);
+  setTimeout(()=>{ if(s) s.innerHTML=''; }, 3000);
 }
 
-// ============ کاتالوگ ============
+/* ============ کاتالوگ ============ */
 function initCatalog(){
   const sel = document.getElementById('cat-category');
   if(!sel) return;
-  sel.innerHTML = '<option value="">— انتخاب —</option>';
+  sel.innerHTML = '<option value="">— انتخاب دسته —</option>';
   for(const k in CATALOG.categories){
     const o = document.createElement('option');
     o.value = k;
@@ -786,11 +761,12 @@ function initCatalog(){
     sel.appendChild(o);
   }
 }
+
 function renderCatalog(){
   const k = document.getElementById('cat-category').value;
   const search = (document.getElementById('cat-search').value||'').trim();
   const info = document.getElementById('cat-info'), tbl = document.getElementById('cat-table');
-  if(!k){tbl.innerHTML='<div class="empty-state">دسته را انتخاب کن</div>';return;}
+  if(!k){tbl.innerHTML='<div class="empty-state">دسته را انتخاب کن</div>'; if(info) info.innerHTML=''; return;}
   const cat = CATALOG.categories[k];
   if(!cat) return;
   let rows = cat.rows;
@@ -798,45 +774,106 @@ function renderCatalog(){
     const s = search.toLowerCase();
     rows = rows.filter(r => r.some(v => String(v).toLowerCase().includes(s)));
   }
+  let mIdx = -1;
+  const n = parseFloat(search);
+  if(!isNaN(n) && /^\d+$/.test(search)){
+    let bd = Infinity;
+    rows.forEach((r,i)=>{
+      const cap = parseFloat(r[1])||0;
+      const d = Math.abs(cap-n);
+      if(cap>0 && d<bd){bd=d; mIdx=i;}
+    });
+  }
   let h = '<div style="overflow-x:auto"><table><thead><tr>';
   cat.columns.forEach(c => h += `<th>${c}</th>`);
   h += '<th>عملیات</th></tr></thead><tbody>';
-  rows.forEach((r)=>{
-    h += '<tr>';
+  rows.forEach((r,i)=>{
+    const isM = i===mIdx;
+    h += `<tr class="${isM?'best':''}">`;
     r.forEach(v => h += `<td>${v!=null?v:'—'}</td>`);
-    const data = JSON.stringify({model:r[0], D:r[3]||'', H:r[4]||''}).replace(/"/g,'&quot;');
+    const data = JSON.stringify({model:r[0], D:r[2]||'', H:r[3]||'', cat:k}).replace(/"/g,'&quot;');
     h += `<td><button class="cat-use-btn" onclick="useFromCat(this)" data-info="${data}">استفاده</button></td></tr>`;
   });
   h += '</tbody></table></div>';
   tbl.innerHTML = h;
   info.innerHTML = `<div class="info-box"><b>${cat.name}</b> — ${rows.length} مدل</div>`;
 }
+
 function useFromCat(btn){
   try{
     const info = JSON.parse(btn.dataset.info);
     const D = info.D ? (parseFloat(info.D)/10).toFixed(1) : '';
     const H = info.H ? (parseFloat(info.H)/10).toFixed(1) : '';
-    // پر کردن فیلدهای هر دو تب
+    const modelName = info.model || '';
+    
+    // تشخیص نوع تجهیز
+    let eqType = 'spiral';
+    if(modelName.includes('HE-C')) eqType = 'u_coil';
+    else if(modelName.includes('SG-S-')) eqType = 'softener';
+    else if(modelName.includes('SG-F-')) eqType = 'sand_filter';
+    else if(modelName.includes('SG-DE-')) eqType = 'deaerator';
+    else if(modelName.includes('SG-OE-')) eqType = 'expansion_open';
+    else if(modelName.includes('SG-CE-')) eqType = 'expansion_closed';
+    else if(modelName.includes('SG-CT-')) eqType = 'condensate';
+    
+    // پر کردن تب‌های ساده
     ['v-d','d-d'].forEach(id=>{if(document.getElementById(id)&&D) document.getElementById(id).value=D;});
     ['v-h','d-h'].forEach(id=>{if(document.getElementById(id)&&H) document.getElementById(id).value=H;});
-    showStatus('success', `✓ ${info.model} بارگذاری شد`);
-  }catch(e){}
+    
+    // حذف state قدیمی و ساخت مجدد
+    delete EQ_STATE.weight[eqType];
+    delete EQ_STATE.cost[eqType];
+    
+    // ست کردن نوع تجهیز
+    document.getElementById('w-eq').value = eqType;
+    document.getElementById('c-eq').value = eqType;
+    
+    // init
+    initEqState('weight');
+    initEqState('cost');
+    
+    // پر کردن فیلدهای پوسته
+    if(EQ_STATE.weight[eqType] && EQ_STATE.weight[eqType].shell){
+      EQ_STATE.weight[eqType].shell.fields.d = parseFloat(D);
+      EQ_STATE.weight[eqType].shell.fields.h = parseFloat(H);
+    }
+    if(EQ_STATE.cost[eqType] && EQ_STATE.cost[eqType].shell){
+      EQ_STATE.cost[eqType].shell.fields.d = parseFloat(D);
+      EQ_STATE.cost[eqType].shell.fields.h = parseFloat(H);
+    }
+    
+    // رندر مجدد
+    loadEquipment('weight');
+    loadEquipment('cost');
+    
+    showStatus('success', `✓ ${modelName} بارگذاری شد`);
+    
+    // سوییچ به تب وزن
+    setTimeout(()=>{
+      const tab = document.querySelector('[data-tab="t4"]');
+      if(tab) tab.click();
+    }, 400);
+  }catch(e){
+    console.error('useFromCat error:', e);
+    showStatus('orange', 'خطا در بارگذاری');
+  }
 }
 
-// ============ Firebase ============
+/* ============ Firebase ============ */
 async function syncFromFirebase(){
-  if(typeof loadPricesFromFirebase !== 'function') return;
+  if(typeof loadPricesFromFirebase !== 'function'){ showStatus('orange','Firebase فعال نیست'); return; }
   const remote = await loadPricesFromFirebase();
   if(remote){PRICES = Object.assign({},window.EMBEDDED_PRICES,remote); renderPriceEditor(); showStatus('success','✅ دریافت شد');}
+  else showStatus('orange','داده‌ای نیافتم');
 }
 async function syncToFirebase(){
-  if(typeof savePricesToFirebase !== 'function') return;
+  if(typeof savePricesToFirebase !== 'function'){ showStatus('orange','Firebase فعال نیست'); return; }
   PRICES.version = 'cloud_'+Date.now();
   const ok = await savePricesToFirebase(PRICES);
   showStatus(ok?'success':'orange', ok?'✅ ارسال شد':'❌ خطا');
 }
 
-// ============ کمک‌کننده ============
+/* ============ کمک‌کننده ============ */
 function fmt(n,d=2){if(!isFinite(n)||n==null)return'—';return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:d});}
 function fmtT(n){
   if(!isFinite(n))return'—';
@@ -848,27 +885,33 @@ function fmtT(n){
 function val(id){const e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
 
 function initLogo(){
-  const candidates = ['icon-192.png','icon-512.png','logo.png','Logo.png'];
   const img = document.getElementById('logo-img');
-  const box = document.getElementById('logo-box');
-  if(!img||!box) return;
-  let i=0;
+  if(!img) return;
   img.onerror = function(){
-    i++;
-    if(i>=candidates.length){box.style.display='none';return;}
-    img.src = candidates[i];
+    // SVG پیش‌فرض
+    const parent = img.parentElement;
+    if(parent){
+      parent.innerHTML = '<svg viewBox="0 0 100 100" fill="none" style="width:100%;height:100%"><rect x="15" y="35" width="70" height="40" rx="8" fill="#0B1420"/><path d="M15 45 Q50 25 85 45" fill="#00D9FF" opacity="0.3"/><circle cx="50" cy="30" r="4" fill="#A855F7"/><text x="50" y="66" font-family="Arial" font-size="16" font-weight="900" fill="#00D9FF" text-anchor="middle">PT</text></svg>';
+    }
   };
-  img.onload = function(){box.style.display='inline-flex';};
-  img.src = candidates[0];
 }
 
-// ============ Bootstrap ============
+/* ============ Bootstrap ============ */
 window.addEventListener('load', async () => {
-  if(typeof initFirebase === 'function') await initFirebase();
+  console.log('🚀 Starting app...');
+  console.log('CATALOG:', typeof CATALOG, Object.keys(CATALOG.categories||{}).length);
+  console.log('PRICES:', typeof PRICES);
+  
+  if(typeof initFirebase === 'function'){
+    try{ await initFirebase(); }catch(e){ console.warn('Firebase skipped'); }
+  }
+  
   try{
     const s = localStorage.getItem('csp_prices');
     if(s) PRICES = Object.assign({}, window.EMBEDDED_PRICES, JSON.parse(s).data);
   }catch(e){}
+
+  initLogo();
 
   // Tabs
   document.querySelectorAll('.tab').forEach(t=>{
@@ -876,7 +919,8 @@ window.addEventListener('load', async () => {
       document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
       t.classList.add('active');
-      document.getElementById(t.dataset.tab).classList.add('active');
+      const panel = document.getElementById(t.dataset.tab);
+      if(panel) panel.classList.add('active');
       window.scrollTo({top:0,behavior:'smooth'});
     });
   });
@@ -898,5 +942,6 @@ window.addEventListener('load', async () => {
   renderMemory();
   loadEquipment('weight');
   loadEquipment('cost');
-  console.log('✅ App ready v3.0');
+  
+  console.log('✅ App ready v3.1');
 });
