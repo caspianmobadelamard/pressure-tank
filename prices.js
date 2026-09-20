@@ -1,7 +1,7 @@
 window.EMBEDDED_PRICES = {
-  version: '2025-03-15',
-  lastUpdate: '1404/12/15',
-  currency: 'تومان',
+  version: '2025-03-25',
+  lastUpdate: '1404/01/05',
+  currency: 'Toman',
 
   sheets: {
     'ST37_2.5':72000,'ST37_3':108455,'ST37_4':108000,'ST37_5':108000,'ST37_6':60272,
@@ -61,10 +61,28 @@ window.EMBEDDED_PRICES = {
   },
 
   equipmentParts: {
-    cathodic: {anode_zn:350000,anode_al:420000,anode_mg:550000},
-    ladder: {price_per_kg:80000,weight_per_m:15,pipe_30x30:4.2,pipe_40x40:6.5,pipe_50x50:9.8},
-    softener: {resin_kg:180000,control_valve_auto:12000000,control_valve_semi:7500000,control_valve_manual:3500000},
-    vessel: {base_pad_price:250000,base_pad_weight_kg:3}
+    cathodic: {anode_zn:350000, anode_al:420000, anode_mg:550000},
+    ladder: {
+      price_per_kg: 80000,
+      weight_per_m: 15,
+      pipe_30x30: 4.2,
+      pipe_40x40: 6.5,
+      pipe_50x50: 9.8
+    },
+    softener: {
+      resin_kg: 180000,
+      control_valve_auto: 12000000,
+      control_valve_semi: 7500000,
+      control_valve_manual: 3500000
+    },
+    expansion: {
+      diaphragm_butyl: 4500000,
+      diaphragm_epdm: 3200000
+    },
+    vessel: {
+      base_pad_price: 250000,
+      base_pad_weight_kg: 3
+    }
   },
 
   dish_markup_pct:35,
