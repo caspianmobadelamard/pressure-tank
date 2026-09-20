@@ -2,6 +2,9 @@
 let PRICES = JSON.parse(JSON.stringify(window.EMBEDDED_PRICES || {}));
 let CATALOG = window.EMBEDDED_CATALOG || {categories:{}};
 
+const HEAD_HISTORY_KEY = 'csp_head_history_v1';
+const SCENARIO_KEY = 'csp_scenarios_v1';
+
 /* ============ SVG Icons ============ */
 const SVG_ICONS = {
   tank:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="10" rx="0.5"/><path d="M2 7 Q6 3 12 3 Q18 3 22 7"/><path d="M2 17 Q6 21 12 21 Q18 21 22 17"/></svg>',
@@ -21,13 +24,12 @@ const SVG_ICONS = {
   diaphragm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6 Q12 12 4 18"/><path d="M20 6 Q12 12 20 18"/></svg>',
   box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8 L12 3 L21 8 L21 20 L12 20 L3 20 Z"/><path d="M3 8 L12 13 L21 8"/></svg>',
   nozzle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9 L18 9 L18 15 L6 15 Z"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>',
-  pipeIn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12 L10 12 L10 8 L18 8 L18 16 L10 16 L10 12"/><circle cx="20" cy="12" r="1.5" fill="currentColor"/></svg>'
+  pipeIn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12 L10 12 L10 8 L18 8 L18 16 L10 16 L10 12"/></svg>'
 };
 
 const MAT_RHO = {'ST37':7850,'S235JR':7850,'A516-70':7850,'Galvanized':7850,'SS304':8000,'SS316':8000};
 const MAT_S = {'ST37':13500,'S235JR':15000,'A516-70':20000,'Galvanized':14000,'SS304':16700,'SS316':16700};
 
-/* قطر خارجی لوله‌ها به میلی‌متر برای محاسبه سطح حرارتی */
 const PIPE_OD = {
   'galv_3_4':26.67,'galv_1':33.40,'galv_1_1_4':42.16,'galv_1_1_2':48.26,
   'galv_2':60.33,'galv_2_1_2':73.03,'galv_3':88.90,'galv_4':114.30,
@@ -38,11 +40,10 @@ const PIPE_OD = {
   'copper_3_4':22.23,'copper_1':28.58,'copper_1_1_4':34.93
 };
 
-/* ============ فرمول‌ها — همه بر مبنای mm ============ */
+/* ============ فرمول‌ها — همه mm ============ */
 const cylVol = (D,H) => Math.PI/4 * D*D * H / 1e6;
 const dishVT = D => 0.0809 * Math.pow(D,3) / 1e6;
 const dishVE = D => Math.PI/24 * Math.pow(D,3) / 1e6;
-const dishAT = D => 1.084 * Math.PI/4 * D*D / 1e6;
 
 function totalVol(D,H,head){
   let v = cylVol(D,H);
@@ -87,32 +88,45 @@ function calcThermalArea(branches, pipeSize){
   return Math.PI * (OD_mm/1000) * L_m;
 }
 
+/* ============ فرمول مکعب انبساط باز (با خم وسط) ============ */
+function calcBoxShellWeight(f){
+  const W_m = f.w/1000, H_m = f.h/1000, L_m = f.l/1000, t_m = f.t/1000;
+  // ورق خمیده: از بالا دور می‌زند، به دو کنار و پایین می‌رسد
+  // طول کل = (2 × عرض) + (2 × ارتفاع) + 2 × همپوشانی
+  const bent_length = 2 * (W_m + H_m) + 0.06;
+  const bent_area = bent_length * L_m;
+  // دو ورق تخت کنار (سرباز)
+  const end_area = 2 * (W_m * H_m);
+  const total_area = bent_area + end_area;
+  return total_area * t_m * MAT_RHO[f.mat || 'ST37'];
+}
+
 /* ============ تعریف تجهیزات ============ */
 const EQUIPMENT_DEFS = {
-  spiral:{name:'منبع اسپیرال',svg:'tank',parts:['shell','head','coil_pipe','manhole','ladder','base','base_pad','cathode','inlet_outlet']},
+  spiral:{name:'منبع اسپیرال',svg:'tank',parts:['shell','head','coil_pipe','manhole','ladder','base','base_pad','inlet_outlet']},
   u_coil:{name:'منبع کوئلی U',svg:'tank',parts:['shell','head','utube','tube_sheet','manhole','base','base_pad','inlet_outlet']},
-  softener:{name:'سختی‌گیر',svg:'tank',parts:['shell','head','resin','control_valve','manhole','ladder','base','base_pad','inlet_outlet']},
+  softener:{name:'سختی‌گیر',svg:'tank',parts:['shell','head','manhole','ladder','base','base_pad','inlet_outlet']},
   sand_filter:{name:'فیلتر شنی',svg:'tank',parts:['shell','head','manhole','ladder','base','base_pad','inlet_outlet']},
   deaerator:{name:'دی‌اریتور',svg:'tower',parts:['shell','head','tower_shell','tower_head','tray','manhole','ladder','base','base_pad']},
-  expansion_closed:{name:'منبع انبساط بسته',svg:'tank',parts:['shell','head','diaphragm','manhole','base','base_pad']},
+  expansion_closed:{name:'منبع انبساط بسته',svg:'tank',parts:['shell','head','manhole','base','base_pad']},
   expansion_open:{name:'منبع انبساط باز',svg:'box',parts:['box_shell','nozzles','base']},
   condensate:{name:'مخزن کندانس',svg:'tank',parts:['shell','head','manhole','base','base_pad','inlet_outlet']}
 };
 
-const COST_ONLY_PARTS = ['flange','bushing','nozzle'];
+const COST_ONLY_PARTS = ['flange','bushing','nozzle','cathode','resin','control_valve','diaphragm'];
 
 const PART_DEFS = {
   shell:{name:'پوسته استوانه',icon:'shell',color:'',defOn:true,fields:[
     {id:'d',label:'قطر داخلی (mm)',def:1600},{id:'h',label:'ارتفاع (mm)',def:3000},
     {id:'t',label:'ضخامت (mm)',def:6},
     {id:'mat',label:'جنس ورق',type:'select',options:[['ST37','ST37'],['S235JR','S235JR'],['A516-70','A516 Gr70'],['Galvanized','گالوانیزه'],['SS304','استیل ۳۰۴'],['SS316','استیل ۳۱۶']],def:'ST37'}]},
-  head:{name:'عدسی‌ها',icon:'head',color:'purple',defOn:true,fields:[
-    {id:'d',label:'قطر داخلی (mm)',def:1600},{id:'h',label:'گودی (mm)',def:240},
+  head:{name:'عدسی‌ها',icon:'head',color:'violet',defOn:true,fields:[
+    {id:'d',label:'قطر داخلی (mm)',def:1600},{id:'h',label:'گودی (mm)',def:107},
     {id:'l',label:'طول لبه (mm)',def:40},{id:'t',label:'ضخامت (mm)',def:8},
     {id:'htype',label:'نوع عدسی',type:'select',options:[['shallow','کم‌عمق'],['torisph','تورسفریکال'],['ellip','بیضوی'],['hemi','نیم‌کره']],def:'shallow'},
     {id:'mat',label:'جنس',type:'select',options:[['ST37','ST37'],['S235JR','S235JR'],['A516-70','A516 Gr70'],['Galvanized','گالوانیزه'],['SS304','استیل ۳۰۴']],def:'ST37'},
     {id:'n',label:'تعداد',def:2}]},
-  coil_pipe:{name:'کویل مارپیچ',icon:'coil',color:'purple',defOn:true,fields:[
+  coil_pipe:{name:'کویل مارپیچ',icon:'coil',color:'violet',defOn:true,fields:[
     {id:'size',label:'سایز لوله',type:'select',options:[
       ['galv_3_4','گالوانیزه ۳/۴'],['galv_1','گالوانیزه ۱'],['galv_1_1_4','گالوانیزه ۱ ۱/۴'],
       ['galv_1_1_2','گالوانیزه ۱ ۱/۲'],['galv_2','گالوانیزه ۲'],['galv_2_1_2','گالوانیزه ۲ ۱/۲'],
@@ -121,9 +135,9 @@ const PART_DEFS = {
       ['SS304_1_1_2','استیل ۳۰۴ ۱ ۱/۲'],['SS304_2','استیل ۳۰۴ ۲'],['SS304_2_1_2','استیل ۳۰۴ ۲ ۱/۲'],
       ['SS304_3','استیل ۳۰۴ ۳'],['SS304_4','استیل ۳۰۴ ۴']
     ],def:'SS304_1'},
-    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:2.5,hint:'۲.۵ شاخه = ۱۵ متر'},
+    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:2.5,hint:'2.5 شاخه = 15 متر'},
     {id:'thermal',label:'سطح حرارتی (m²) — خودکار',def:0,autoCalc:true}]},
-  utube:{name:'کویل U شکل',icon:'utube',color:'purple',defOn:true,fields:[
+  utube:{name:'کویل U شکل',icon:'utube',color:'violet',defOn:true,fields:[
     {id:'mat',label:'جنس',type:'select',options:[['copper','مس'],['SS304','استیل ۳۰۴'],['SS309','استیل ۳۰۹']],def:'copper'},
     {id:'size',label:'سایز لوله',type:'select',options:[
       ['copper_3_4','مسی ۳/۴'],['copper_1','مسی ۱'],
@@ -136,28 +150,24 @@ const PART_DEFS = {
     {id:'n',label:'تعداد لوله U',def:4},
     {id:'len',label:'طول هر لوله (mm)',def:6000},
     {id:'thermal',label:'سطح حرارتی (m²)',def:0,autoCalcU:true}]},
-  tube_sheet:{name:'صفحه لوله',icon:'flange',color:'cyan',defOn:true,fields:[
+  tube_sheet:{name:'صفحه لوله',icon:'flange',color:'',defOn:true,fields:[
     {id:'d',label:'قطر صفحه (mm)',def:1550},{id:'t',label:'ضخامت (mm)',def:20},
     {id:'mat',label:'جنس',type:'select',options:[['ST37','ST37'],['A516-70','A516 Gr70'],['SS304','استیل ۳۰۴']],def:'A516-70'}]},
   manhole:{name:'منهول',icon:'manhole',color:'orange',defOn:true,fields:[
     {id:'size',label:'سایز',type:'select',options:[['16','۱۶ اینچ'],['18','۱۸ اینچ'],['20','۲۰ اینچ']],def:'16'},
     {id:'w',label:'عرض (mm)',def:400},{id:'h',label:'ارتفاع (mm)',def:500},
     {id:'t',label:'ضخامت (mm)',def:20},{id:'n',label:'تعداد',def:1}]},
-  ladder:{name:'نردبان',icon:'ladder',color:'lime',defOn:false,fields:[
+  ladder:{name:'نردبان',icon:'ladder',color:'green',defOn:false,fields:[
     {id:'pipe',label:'سایز قوطی',type:'select',options:[['pipe_30x30','۳۰×۳۰'],['pipe_40x40','۴۰×۴۰'],['pipe_50x50','۵۰×۵۰']],def:'pipe_40x40'},
-    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:1.5,hint:'۱.۵ شاخه = ۹ متر'}]},
-  base:{name:'پایه‌ها',icon:'base',color:'cyan',defOn:true,fields:[
-    {id:'type',label:'نوع',type:'select',options:[['saddle','زانویی'],['leg','عمودی']],def:'saddle'},
+    {id:'branches',label:'مقدار مصرف (شاخه ۶۰۰cm)',def:1.5,hint:'1.5 شاخه = 9 متر'}]},
+  base:{name:'پایه‌ها (ابعاد)',icon:'base',color:'green',defOn:true,fields:[
     {id:'n',label:'تعداد',def:2},{id:'l',label:'طول (mm)',def:1200},
     {id:'w',label:'عرض (mm)',def:400},{id:'h',label:'ارتفاع (mm)',def:500},
     {id:'t',label:'ضخامت (mm)',def:10}]},
-  base_pad:{name:'پد پایه',icon:'pad',color:'cyan',defOn:true,fields:[
+  base_pad:{name:'پد پایه',icon:'pad',color:'green',defOn:true,fields:[
     {id:'n',label:'تعداد',def:2},{id:'l',label:'طول (mm)',def:500},
     {id:'w',label:'عرض (mm)',def:300},{id:'t',label:'ضخامت (mm)',def:8}]},
-  cathode:{name:'حفاظت کاتدی',icon:'cathode',color:'cyan',defOn:false,fields:[
-    {id:'type',label:'نوع آند',type:'select',options:[['zn','آند روی'],['al','آند آلومینیوم'],['mg','آند منیزیم']],def:'zn'},
-    {id:'n',label:'تعداد',def:2}]},
-  inlet_outlet:{name:'لوله ورودی/خروجی',icon:'pipeIn',color:'lime',defOn:true,fields:[
+  inlet_outlet:{name:'لوله ورودی/خروجی',icon:'pipeIn',color:'green',defOn:true,fields:[
     {id:'size',label:'سایز',type:'select',options:[
       ['galv_1','گالوانیزه ۱'],['galv_1_1_2','گالوانیزه ۱ ۱/۲'],['galv_2','گالوانیزه ۲'],
       ['galv_3','گالوانیزه ۳'],['galv_4','گالوانیزه ۴'],
@@ -165,36 +175,40 @@ const PART_DEFS = {
     ],def:'galv_2'},
     {id:'len',label:'طول هر لوله (mm)',def:2000},
     {id:'n',label:'تعداد',def:2}]},
-  resin:{name:'رزین تبادل یونی',icon:'resin',color:'',defOn:true,fields:[
-    {id:'d',label:'قطر بستر (mm)',def:1000},{id:'h',label:'ارتفاع بستر (mm)',def:1200},
-    {id:'fill',label:'ضریب پر شدن',def:0.6}]},
-  control_valve:{name:'شیر کنترل',icon:'valve',color:'orange',defOn:true,fields:[
-    {id:'type',label:'نوع',type:'select',options:[['auto','اتوماتیک'],['semi','نیمه اتوماتیک'],['manual','دستی']],def:'auto'}]},
-  tower_shell:{name:'پوسته برج',icon:'tower',color:'purple',defOn:true,fields:[
+  tower_shell:{name:'پوسته برج',icon:'tower',color:'violet',defOn:true,fields:[
     {id:'d',label:'قطر برج (mm)',def:800},{id:'h',label:'ارتفاع برج (mm)',def:2500},
     {id:'t',label:'ضخامت (mm)',def:4},
     {id:'mat',label:'جنس',type:'select',options:[['SS304','استیل ۳۰۴'],['SS316','استیل ۳۱۶']],def:'SS304'}]},
-  tower_head:{name:'عدسی برج',icon:'head',color:'purple',defOn:true,fields:[
+  tower_head:{name:'عدسی برج',icon:'head',color:'violet',defOn:true,fields:[
     {id:'d',label:'قطر (mm)',def:800},{id:'t',label:'ضخامت (mm)',def:5},
     {id:'mat',label:'جنس',type:'select',options:[['SS304','استیل ۳۰۴'],['SS316','استیل ۳۱۶']],def:'SS304'}]},
   tray:{name:'سینی‌های سوراخ‌دار',icon:'tray',color:'orange',defOn:true,fields:[{id:'n',label:'تعداد سینی',def:5}]},
-  diaphragm:{name:'دیافراگم',icon:'diaphragm',color:'pink',defOn:true,fields:[
-    {id:'d',label:'قطر (mm)',def:600},
-    {id:'type',label:'نوع',type:'select',options:[['butyl','بوتیل'],['epdm','EPDM']],def:'butyl'}]},
-  box_shell:{name:'بدنه مکعبی',icon:'box',color:'',defOn:true,fields:[
+  box_shell:{name:'بدنه مکعبی (ورق خمیده)',icon:'box',color:'',defOn:true,fields:[
     {id:'l',label:'طول (mm)',def:1000},{id:'w',label:'عرض (mm)',def:1000},{id:'h',label:'ارتفاع (mm)',def:1000},
     {id:'t',label:'ضخامت (mm)',def:4},
     {id:'mat',label:'جنس',type:'select',options:[['ST37','ST37'],['Galvanized','گالوانیزه']],def:'ST37'}]},
   nozzles:{name:'نازل‌ها',icon:'nozzle',color:'orange',defOn:true,fields:[
     {id:'size',label:'سایز',type:'select',options:[['1','۱'],['2','۲'],['3','۳'],['4','۴']],def:'2'},
     {id:'n',label:'تعداد',def:4}]},
-  flange:{name:'فلنج',icon:'flange',color:'pink',defOn:false,costOnly:true,fields:[
-    {id:'size',label:'سایز',type:'select',options:[['flange_1','۱ اینچ'],['flange_1_1_2','۱ ۱/۲'],['flange_2','۲ اینچ'],['flange_3','۳ اینچ'],['flange_4','۴ اینچ'],['flange_6','۶ اینچ'],['flange_8','۸ اینچ']],def:'flange_2'},
+  /* === فقط در قیمت === */
+  cathode:{name:'حفاظت کاتدی',icon:'cathode',color:'orange',defOn:true,costOnly:true,fields:[
+    {id:'type',label:'نوع آند',type:'select',options:[['zn','آند روی'],['al','آند آلومینیوم'],['mg','آند منیزیم']],def:'zn'},
+    {id:'n',label:'تعداد',def:2}]},
+  resin:{name:'رزین تبادل یونی',icon:'resin',color:'',defOn:true,costOnly:true,fields:[
+    {id:'d',label:'قطر بستر (mm)',def:1000},{id:'h',label:'ارتفاع بستر (mm)',def:1200},
+    {id:'fill',label:'ضریب پر شدن',def:0.6}]},
+  control_valve:{name:'شیر کنترل',icon:'valve',color:'orange',defOn:true,costOnly:true,fields:[
+    {id:'type',label:'نوع',type:'select',options:[['auto','اتوماتیک'],['semi','نیمه اتوماتیک'],['manual','دستی']],def:'auto'}]},
+  diaphragm:{name:'دیافراگم',icon:'diaphragm',color:'violet',defOn:true,costOnly:true,fields:[
+    {id:'d',label:'قطر (mm)',def:600},
+    {id:'type',label:'نوع',type:'select',options:[['butyl','بوتیل'],['epdm','EPDM']],def:'butyl'}]},
+  flange:{name:'فلنج',icon:'flange',color:'orange',defOn:false,costOnly:true,fields:[
+    {id:'size',label:'سایز',type:'select',options:[['flange_1','۱'],['flange_1_1_2','۱ ۱/۲'],['flange_2','۲'],['flange_3','۳'],['flange_4','۴'],['flange_6','۶'],['flange_8','۸']],def:'flange_2'},
     {id:'n',label:'تعداد',def:4}]},
-  bushing:{name:'بوشن',icon:'nozzle',color:'pink',defOn:false,costOnly:true,fields:[
+  bushing:{name:'بوشن',icon:'nozzle',color:'orange',defOn:false,costOnly:true,fields:[
     {id:'size',label:'سایز',type:'select',options:[['bush_1','۱'],['bush_1_1_2','۱ ۱/۲'],['bush_2','۲'],['bush_3','۳'],['bush_4','۴']],def:'bush_2'},
     {id:'n',label:'تعداد',def:4}]},
-  nozzle:{name:'نازل',icon:'nozzle',color:'pink',defOn:false,costOnly:true,fields:[
+  nozzle:{name:'نازل',icon:'nozzle',color:'orange',defOn:false,costOnly:true,fields:[
     {id:'size',label:'سایز',type:'select',options:[['1','۱'],['1_1_2','۱ ۱/۲'],['2','۲'],['3','۳'],['4','۴']],def:'2'},
     {id:'n',label:'تعداد',def:4}]}
 };
@@ -222,7 +236,14 @@ function initEqState(mode){
           fields[f.id] = Array.isArray(f.options[0]) ? f.options[0][0] : f.options[0];
         } else fields[f.id] = f.def;
       });
-      EQ_STATE[mode][eq][p] = {on: pd.defOn, fields};
+      // برای cost فقط اجزای costOnly یا اجزای اصلی تجهیز
+      if(mode==='cost'){
+        EQ_STATE[mode][eq][p] = {on: pd.costOnly ? false : pd.defOn, fields};
+      } else {
+        // در weight فقط اجزای غیر costOnly
+        if(pd.costOnly) return;
+        EQ_STATE[mode][eq][p] = {on: pd.defOn, fields};
+      }
     });
   }
 }
@@ -241,30 +262,30 @@ function loadEquipment(mode){
     const headerEl = document.getElementById(headerId);
     const state = EQ_STATE[mode][eq];
     const activeCount = Object.values(state).filter(x=>x.on).length;
-    
+
     headerEl.innerHTML = `<div class="eq-header">
       <div class="eq-icon">${SVG_ICONS[def.svg]||SVG_ICONS.tank}</div>
       <div class="eq-info">
         <h3>${def.name}</h3>
-        <p>${def.parts.length} جزء قابل تنظیم — ${activeCount} فعال</p>
-        <span class="badge">${mode==='weight'?'⚖️ وزن‌دهی':'💰 قیمت‌گذاری'}</span>
+        <p>${def.parts.length} part — ${activeCount} active</p>
+        <span class="badge">${mode==='weight'?'⚖️ Weight':'💰 Cost'}</span>
       </div>
     </div>`;
-    
-    let partsList = [...def.parts];
-    if(mode === 'cost') partsList = partsList.concat(COST_ONLY_PARTS);
-    
+
+    let partsList = mode==='cost' ? [...def.parts, ...COST_ONLY_PARTS] : [...def.parts];
+
     let html = '';
     partsList.forEach(pid=>{
       const pd = PART_DEFS[pid];
       if(!pd) return;
+      if(mode==='weight' && pd.costOnly) return;
       const st = state[pid];
       if(!st) return;
       const colorClass = pd.color ? ' ' + pd.color : '';
       html += `<div class="comp${colorClass}${st.on?' on':''}" data-mode="${mode}" data-pid="${pid}">
         <div class="comp-head" onclick="toggleComp('${mode}','${eq}','${pid}')">
           <div class="comp-icon">${SVG_ICONS[pd.icon]||SVG_ICONS.tank}</div>
-          <span class="comp-title">${pd.name}${pd.costOnly?' <span style="font-size:10px;color:var(--pink)">(قیمت)</span>':''}</span>
+          <span class="comp-title">${pd.name}${pd.costOnly?' <span style="font-size:10px;color:var(--orange-2)">(Cost only)</span>':''}</span>
           <span class="comp-badge ${mode==='weight'?'weight':'cost'}" id="badge-${mode}-${pid}"></span>
           <div class="comp-toggle"></div>
         </div>
@@ -277,7 +298,7 @@ function loadEquipment(mode){
 
 function renderFields(mode, eq, pid, pd, st){
   const fields = pd.fields||[];
-  if(fields.length === 0) return '<div class="fld-hint">بدون پارامتر</div>';
+  if(fields.length === 0) return '<div class="fld-hint">No parameters</div>';
   let html = '<div class="grid-2">';
   fields.forEach(f=>{
     const v = st.fields[f.id];
@@ -295,8 +316,8 @@ function renderFields(mode, eq, pid, pd, st){
       const pipeSize = st.fields.size || 'SS304_1';
       const area = calcThermalArea(branches, pipeSize);
       html += `<div class="fld"><label>${f.label}</label>
-        <input type="text" value="${area.toFixed(2)}" readonly style="color:var(--lime);background:rgba(132,204,22,.08);border-color:rgba(132,204,22,.3)">
-        <span class="fld-hint"><b>خودکار:</b> π × ${(PIPE_OD[pipeSize]||33.4).toFixed(1)}mm × ${(branches*6).toFixed(1)}m</span></div>`;
+        <input type="text" value="${area.toFixed(2)}" readonly style="color:var(--green-2);background:#EDF9F1;border-color:#A8DABC">
+        <span class="fld-hint"><b>Auto:</b> π × ${(PIPE_OD[pipeSize]||33.4).toFixed(1)}mm × ${(branches*6).toFixed(1)}m</span></div>`;
     } else if(f.autoCalcU){
       const n = st.fields.n || 0;
       const lenMm = st.fields.len || 0;
@@ -305,12 +326,15 @@ function renderFields(mode, eq, pid, pd, st){
       const OD_mm = PIPE_OD[pipeSize] || 28.58;
       const area = Math.PI * (OD_mm/1000) * L_m;
       html += `<div class="fld"><label>${f.label}</label>
-        <input type="text" value="${area.toFixed(2)}" readonly style="color:var(--lime);background:rgba(132,204,22,.08);border-color:rgba(132,204,22,.3)">
-        <span class="fld-hint"><b>خودکار:</b> π × ${OD_mm.toFixed(1)}mm × ${L_m.toFixed(1)}m × ${n}</span></div>`;
+        <input type="text" value="${area.toFixed(2)}" readonly style="color:var(--green-2);background:#EDF9F1;border-color:#A8DABC">
+        <span class="fld-hint"><b>Auto:</b> π × ${OD_mm.toFixed(1)}mm × ${L_m.toFixed(1)}m × ${n}</span></div>`;
     } else {
+      // برای عدسی، اگر قطر تغییر کرد، پیشنهاد بده
+      const headExtra = (pid === 'head' && f.id === 'd') ? `<span class="fld-hint" id="head-suggest-hint"></span>` : '';
       html += `<div class="fld"><label>${f.label}</label>
         <input type="number" step="any" value="${v}" oninput="updateField('${mode}','${eq}','${pid}','${f.id}',parseFloat(this.value)||0)">
-        ${f.hint?`<span class="fld-hint">${f.hint}</span>`:''}</div>`;
+        ${f.hint?`<span class="fld-hint">${f.hint}</span>`:''}
+        ${headExtra}</div>`;
     }
   });
   html += '</div>';
@@ -328,15 +352,53 @@ function toggleComp(mode, eq, pid){
 
 function updateField(mode, eq, pid, fid, value){
   EQ_STATE[mode][eq][pid].fields[fid] = value;
-  // اگر کویل عوض شد، کل coil_pipe را دوباره رندر کن
   if(pid === 'coil_pipe' || pid === 'utube'){
     const st = EQ_STATE[mode][eq][pid];
     const pd = PART_DEFS[pid];
     const body = document.querySelector(`.comp[data-mode="${mode}"][data-pid="${pid}"] .comp-body`);
     if(body) body.innerHTML = renderFields(mode, eq, pid, pd, st);
   }
+  // برای عدسی: پیشنهاد هوشمند
+  if(pid === 'head' && fid === 'd'){
+    const sugg = getHeadSuggestions(value);
+    const hint = document.getElementById('head-suggest-hint');
+    if(hint){
+      if(sugg && sugg.count >= 2){
+        hint.innerHTML = `<b>Smart:</b> Suggested h=${sugg.h}, L=${sugg.L} (based on ${sugg.count} similar)`;
+        hint.style.color = 'var(--green-2)';
+      } else {
+        hint.innerHTML = '';
+      }
+    }
+  }
   const out = document.getElementById(mode==='weight'?'w-result':'c-result');
   if(out) out.innerHTML = '';
+}
+
+/* ============ Head History ============ */
+function saveHeadToHistory(D, h, L, t, blank, note){
+  try {
+    let list = JSON.parse(localStorage.getItem(HEAD_HISTORY_KEY) || '[]');
+    list.unshift({id:'h_'+Date.now(), D, h, L, t, blank, note:note||'', date:new Date().toISOString().slice(0,10)});
+    if(list.length > 200) list = list.slice(0, 200);
+    localStorage.setItem(HEAD_HISTORY_KEY, JSON.stringify(list));
+    return true;
+  } catch(e) { return false; }
+}
+
+function loadHeadHistory(){
+  try { return JSON.parse(localStorage.getItem(HEAD_HISTORY_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+
+function getHeadSuggestions(D){
+  const list = loadHeadHistory();
+  if(!list.length) return null;
+  const similar = list.filter(x => Math.abs(x.D - D) / D < 0.1);
+  if(!similar.length) return null;
+  const avgH = similar.reduce((s,x)=>s+x.h, 0) / similar.length;
+  const avgL = similar.reduce((s,x)=>s+x.L, 0) / similar.length;
+  return { h: Math.round(avgH), L: Math.round(avgL), count: similar.length };
 }
 
 /* ============ محاسبه وزن ============ */
@@ -354,7 +416,6 @@ function partWeight(part, f){
     }
     case 'tube_sheet': return Math.PI/4*(f.d/1000)*(f.d/1000)*(f.t/1000)*MAT_RHO[f.mat||'ST37'];
     case 'base': {
-      // two vertical plates + bottom plate (approximation)
       const l_m = f.l/1000, w_m = f.w/1000, h_m = f.h/1000, t_m = f.t/1000;
       const area = 2 * l_m * h_m + l_m * w_m;
       return area * t_m * MAT_RHO['ST37'] * (f.n||2);
@@ -370,19 +431,16 @@ function partWeight(part, f){
       return (base + extra) * (f.n||1);
     }
     case 'ladder': return (f.branches||0) * 6 * ((PRICES.equipmentParts?.ladder?.weight_per_m)||15);
-    case 'cathode': return (f.n||1)*5;
     case 'inlet_outlet': return ((f.len||0)/1000) * ((PRICES.pipeWeights||{})[f.size] || 2) * (f.n||2);
-    case 'resin': return Math.PI/4*(f.d/1000)*(f.d/1000)*(f.h/1000)*750*(f.fill||0.6);
-    case 'control_valve': return 15;
     case 'tower_shell': return Math.PI*(f.d/1000)*(f.h/1000)*(f.t/1000)*MAT_RHO[f.mat||'SS304'];
     case 'tower_head': return calcBlank(f.d, f.d*0.15, 30, f.t, 'shallow').W;
     case 'tray': return (f.n||5)*25;
-    case 'diaphragm': return Math.PI/4*Math.pow(f.d/1000,2) * (f.type==='butyl'?2.5:3.5);
-    case 'box_shell': {
-      const l_m = f.l/1000, w_m = f.w/1000, h_m = f.h/1000, t_m = f.t/1000;
-      return 2*(l_m*w_m + w_m*h_m + l_m*h_m) * t_m * MAT_RHO[f.mat||'ST37'];
-    }
+    case 'box_shell': return calcBoxShellWeight(f);
     case 'nozzles': return (f.n||4)*3;
+    case 'cathode': return (f.n||1)*5;
+    case 'resin': return Math.PI/4*(f.d/1000)*(f.d/1000)*(f.h/1000)*750*(f.fill||0.6);
+    case 'control_valve': return 15;
+    case 'diaphragm': return Math.PI/4*Math.pow(f.d/1000,2) * (f.type==='butyl'?2.5:3.5);
     case 'flange': return (f.n||1)*3;
     case 'bushing': return (f.n||1)*1;
     case 'nozzle': return (f.n||1)*3;
@@ -408,45 +466,49 @@ function calcWeight(){
     const def = EQUIPMENT_DEFS[eq];
     const state = EQ_STATE.weight[eq];
     const out = document.getElementById('w-result');
-    if(!def || !state){ out.innerHTML = '<div class="info-box orange"><b>خطا:</b> تجهیز یافت نشد</div>'; return; }
-    
+    if(!def || !state){ out.innerHTML = '<div class="info-box red"><b>Error:</b> Equipment not found</div>'; return; }
+
     let total = 0;
     const details = [];
     def.parts.forEach(pid=>{
       const st = state[pid];
       if(!st || !st.on) return;
       const pd = PART_DEFS[pid];
-      if(!pd) return;
+      if(!pd || pd.costOnly) return;
       const w = partWeight(pid, st.fields);
       total += w;
       details.push({name: pd.name, w});
       const badge = document.getElementById(`badge-weight-${pid}`);
       if(badge) badge.textContent = fmt(w,1)+' kg';
     });
-    
+
     const extras = total * 0.08;
     const grand = total + extras;
     const volume = estimateVolume(eq, state);
-    
+
     let html = `<div class="res-summary">
-      <div class="lbl">وزن خالی کل</div>
+      <div class="lbl">Total Dry Weight</div>
       <div class="val">${fmt(grand,1)}</div>
-      <div class="unit">کیلوگرم (${fmt(grand/1000,3)} تن)</div>
+      <div class="unit">kg (${fmt(grand/1000,3)} ton)</div>
     </div>
     <div class="info-box">`;
     details.forEach(d=>{
       html += `<div class="res-row"><span class="lbl">${d.name}</span><span class="val">${fmt(d.w,1)} kg</span></div>`;
     });
-    html += `<div class="res-row"><span class="lbl">جوش، رنگ، متعلقات (۸٪)</span><span class="val">${fmt(extras,1)} kg</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Weld, paint, misc (8%)</span><span class="val">${fmt(extras,1)} kg</span></div>`;
     if(volume>0){
-      html += `<div class="res-row"><span class="lbl"><b>حجم آب داخل</b></span><span class="val">${fmt(volume,0)} L</span></div>`;
-      html += `<div class="res-row"><span class="lbl"><b>وزن پر از آب</b></span><span class="val" style="font-size:15px">${fmt(grand+volume,0)} kg</span></div>`;
+      html += `<div class="res-row big" style="border-top:2px solid var(--border);margin-top:6px;padding-top:12px">
+        <span class="lbl" style="color:var(--text);font-weight:800">Water Volume</span>
+        <span class="val" style="color:var(--blue)">${fmt(volume,0)} L</span></div>`;
+      html += `<div class="res-row big">
+        <span class="lbl" style="color:var(--text);font-weight:800">Filled Weight</span>
+        <span class="val" style="color:var(--green-2);font-size:16px">${fmt(grand+volume,0)} kg</span></div>`;
     }
     html += `</div>`;
     out.innerHTML = html;
   }catch(e){
     console.error('calcWeight:', e);
-    document.getElementById('w-result').innerHTML = '<div class="info-box orange">خطا: '+e.message+'</div>';
+    document.getElementById('w-result').innerHTML = '<div class="info-box red">Error: '+e.message+'</div>';
   }
 }
 
@@ -515,8 +577,8 @@ function calcCost(){
     const state = EQ_STATE.cost[eq];
     const out = document.getElementById('c-result');
     const pp = parseFloat(document.getElementById('c-profit').value)||25;
-    if(!def || !state){ out.innerHTML = '<div class="info-box orange"><b>خطا:</b> تجهیز یافت نشد</div>'; return; }
-    
+    if(!def || !state){ out.innerHTML = '<div class="info-box red"><b>Error:</b> Equipment not found</div>'; return; }
+
     let total = 0;
     const details = [];
     let partsList = [...def.parts, ...COST_ONLY_PARTS];
@@ -532,7 +594,7 @@ function calcCost(){
       const badge = document.getElementById(`badge-cost-${pid}`);
       if(badge) badge.textContent = fmtT(c);
     });
-    
+
     const totalWeight = details.reduce((s,d)=>s+d.w, 0);
     const weldHours = totalWeight / 20;
     const weldCost = weldHours * (PRICES.welder_hr||280000);
@@ -545,29 +607,29 @@ function calcCost(){
     const transport = totalWeight * (PRICES.transport_per_kg||350);
     const beforeProfit = subtotal + consumables + transport;
     const final = beforeProfit * (1 + pp/100);
-    
-    let html = `<div class="res-summary purple">
-      <div class="lbl">قیمت نهایی</div>
+
+    let html = `<div class="res-summary orange">
+      <div class="lbl">Final Price</div>
       <div class="val">${fmtT(final)}</div>
-      <div class="unit">تومان (شامل ${pp}٪ سود)</div>
+      <div class="unit">Toman (+${pp}% profit)</div>
     </div>
-    <div class="info-box pink">`;
+    <div class="info-box orange">`;
     details.forEach(d=>{
       html += `<div class="res-row cost"><span class="lbl">${d.name}</span><span class="val">${fmtT(d.c)}</span></div>`;
     });
-    html += `<div class="res-row"><span class="lbl">جوشکاری</span><span class="val">${fmtT(weldCost)}</span></div>`;
-    html += `<div class="res-row"><span class="lbl">مونتاژ</span><span class="val">${fmtT(fitterCost)}</span></div>`;
-    html += `<div class="res-row"><span class="lbl">الکترود</span><span class="val">${fmtT(electrode)}</span></div>`;
-    html += `<div class="res-row"><span class="lbl">رنگ</span><span class="val">${fmtT(paintCost)}</span></div>`;
-    html += `<div class="res-row"><span class="lbl">مصرفی</span><span class="val">${fmtT(consumables)}</span></div>`;
-    html += `<div class="res-row"><span class="lbl">حمل</span><span class="val">${fmtT(transport)}</span></div>`;
-    html += `<div class="res-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:8px"><span class="lbl"><b>جمع هزینه</b></span><span class="val">${fmtT(beforeProfit)}</span></div>`;
-    html += `<div class="res-row"><span class="lbl">سود (${pp}٪)</span><span class="val">${fmtT(beforeProfit*pp/100)}</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Welding (${fmt(weldHours,1)} hr)</span><span class="val">${fmtT(weldCost)}</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Fitting</span><span class="val">${fmtT(fitterCost)}</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Electrode</span><span class="val">${fmtT(electrode)}</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Paint</span><span class="val">${fmtT(paintCost)}</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Consumables</span><span class="val">${fmtT(consumables)}</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Transport</span><span class="val">${fmtT(transport)}</span></div>`;
+    html += `<div class="res-row big" style="border-top:2px solid var(--border);margin-top:6px;padding-top:12px"><span class="lbl" style="color:var(--text)"><b>Subtotal</b></span><span class="val">${fmtT(beforeProfit)}</span></div>`;
+    html += `<div class="res-row big"><span class="lbl">Profit (${pp}%)</span><span class="val">${fmtT(beforeProfit*pp/100)}</span></div>`;
     html += `</div>`;
     out.innerHTML = html;
   }catch(e){
     console.error('calcCost:', e);
-    document.getElementById('c-result').innerHTML = '<div class="info-box orange">خطا: '+e.message+'</div>';
+    document.getElementById('c-result').innerHTML = '<div class="info-box red">Error: '+e.message+'</div>';
   }
 }
 
@@ -578,22 +640,21 @@ function exportPDF(type){
   const eq = document.getElementById(eqId).value;
   const def = EQUIPMENT_DEFS[eq];
   const resEl = document.getElementById(resId);
-  if(!def || !resEl.innerHTML){ alert('ابتدا محاسبه کن'); return; }
+  if(!def || !resEl.innerHTML){ alert('Calculate first'); return; }
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>گزارش</title>
+  win.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>Report</title>
     <style>@page{size:A4;margin:15mm}body{font-family:Tahoma;direction:rtl;font-size:12px}
-    h1{color:#006699;text-align:center;font-size:20px;border-bottom:2px solid #00D9FF;padding-bottom:10px}
-    .info{background:#F0F8FF;padding:10px;border-radius:8px;margin:10px 0;font-size:11px}
+    h1{color:#0E6BA8;text-align:center;font-size:20px;border-bottom:2px solid #E76F00;padding-bottom:10px}
+    .info{background:#F0F7FF;padding:10px;border-radius:8px;margin:10px 0;font-size:11px}
     .res-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ccc}
-    .res-row .val{color:#006699;font-weight:700}
-    .res-summary{font-size:16px;font-weight:800;color:#006699;text-align:center;padding:15px;background:#E6F4FB;border-radius:8px;margin-top:15px}
-    .info-box{background:#F0F8FF;padding:12px;border-radius:8px;margin:10px 0}
+    .res-row .val{color:#0E6BA8;font-weight:700}
+    .res-summary{font-size:16px;font-weight:800;color:#0E6BA8;text-align:center;padding:15px;background:#E8F4FB;border-radius:8px;margin-top:15px}
     .footer{margin-top:30px;text-align:center;font-size:10px;color:#666;border-top:1px solid #ccc;padding-top:10px}</style>
     </head><body>
     <h1>Pressure Tank Calculator</h1>
-    <div class="info"><b>تجهیز:</b> ${def.name} — <b>نوع:</b> ${type==='weight'?'وزن‌دهی':'قیمت‌گذاری'} — <b>تاریخ:</b> ${new Date().toLocaleDateString('fa-IR')}</div>
+    <div class="info"><b>Equipment:</b> ${def.name} — <b>Type:</b> ${type==='weight'?'Weight':'Cost'} — <b>Date:</b> ${new Date().toISOString().slice(0,10)}</div>
     ${resEl.innerHTML}
-    <div class="footer">Caspian Mobadel Amard<br>محاسبات پیش‌طراحی است</div>
+    <div class="footer">Caspian Mobadel Amard</div>
     </body></html>`);
   win.document.close();
   setTimeout(()=>win.print(), 500);
@@ -605,30 +666,30 @@ function calcVol(){
   const out = document.getElementById('v-res');
   if(t==='box'){
     const W=val('v-d'), L=val('v-l'), H=val('v-w');
-    if(!(W>0&&L>0&&H>0)){out.innerHTML='<div class="info-box orange"><b>خطا:</b> ابعاد را کامل کنید</div>';return;}
+    if(!(W>0&&L>0&&H>0)){out.innerHTML='<div class="info-box red"><b>Error:</b> Complete all dimensions</div>';return;}
     const V=W*L*H/1e6;
-    out.innerHTML=`<div class="res-summary"><div class="lbl">حجم</div><div class="val">${fmt(V,1)}</div><div class="unit">لیتر</div></div>`;
+    out.innerHTML=`<div class="res-summary"><div class="lbl">Volume</div><div class="val">${fmt(V,1)}</div><div class="unit">Liters</div></div>`;
     return;
   }
   const D=val('v-d'), H=val('v-h');
-  if(!(D>0&&H>0)){out.innerHTML='<div class="info-box orange"><b>خطا:</b> قطر و ارتفاع</div>';return;}
+  if(!(D>0&&H>0)){out.innerHTML='<div class="info-box red"><b>Error:</b> Enter diameter and height</div>';return;}
   const head = t==='cyl-dish'?'torisph':'flat';
   const V = totalVol(D,H,head);
-  out.innerHTML=`<div class="res-summary"><div class="lbl">حجم کل</div><div class="val">${fmt(V,1)}</div><div class="unit">لیتر (${fmt(V/1000,3)} m³)</div></div>`;
+  out.innerHTML=`<div class="res-summary"><div class="lbl">Total Volume</div><div class="val">${fmt(V,1)}</div><div class="unit">L (${fmt(V/1000,3)} m³)</div></div>`;
 }
 
 function calcDim(){
   const V=val('d-v'), D=val('d-d')||0, H=val('d-h')||0;
   const head = document.getElementById('d-type').value==='cyl-dish'?'torisph':'flat';
   const out = document.getElementById('d-res');
-  if(!(V>0)){out.innerHTML='<div class="info-box orange">ظرفیت را وارد کنید</div>';return;}
+  if(!(V>0)){out.innerHTML='<div class="info-box red">Enter capacity</div>';return;}
   let html = '<div class="info-box">';
   if(D>0){
     const Hc = hFromV(V,D,head);
-    html += `<div class="res-row"><span class="lbl"><b>ارتفاع لازم</b></span><span class="val" style="font-size:16px">${fmt(Hc,1)} mm</span></div>`;
+    html += `<div class="res-row"><span class="lbl"><b>Required height</b></span><span class="val" style="font-size:16px">${fmt(Hc,1)} mm</span></div>`;
   } else if(H>0){
     const Dc = diamFromV(V,H,head);
-    html += `<div class="res-row"><span class="lbl"><b>قطر لازم</b></span><span class="val" style="font-size:16px">${fmt(Dc,1)} mm</span></div>`;
+    html += `<div class="res-row"><span class="lbl"><b>Required diameter</b></span><span class="val" style="font-size:16px">${fmt(Dc,1)} mm</span></div>`;
   } else {
     let best=null;
     for(let n=1;n<=10;n++){
@@ -638,17 +699,17 @@ function calcDim(){
       const pct=waste/(n*m*6000)*100;
       if(!best||pct<best.pct) best={n,H:Hf,D:Df,pct};
     }
-    html += `<div class="res-row"><span class="lbl">ارتفاع بهینه</span><span class="val">${fmt(best.H,0)} mm</span></div>`;
-    html += `<div class="res-row"><span class="lbl">قطر بهینه</span><span class="val">${fmt(best.D,1)} mm</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Optimal height</span><span class="val">${fmt(best.H,0)} mm</span></div>`;
+    html += `<div class="res-row"><span class="lbl">Optimal diameter</span><span class="val">${fmt(best.D,1)} mm</span></div>`;
   }
   html += '</div>';
   out.innerHTML = html;
 }
 
 function optSheets(){
-  const V=val('s-v'), wSel=document.getElementById('s-w').value, L=val('s-l')||600, maxN=parseInt(document.getElementById('s-max').value)||10;
+  const V=val('s-v'), wSel=document.getElementById('s-w').value, L=val('s-l')||6000, maxN=parseInt(document.getElementById('s-max').value)||10;
   const out=document.getElementById('s-res');
-  if(!(V>0)){out.innerHTML='<div class="info-box orange">ظرفیت را وارد کنید</div>';return;}
+  if(!(V>0)){out.innerHTML='<div class="info-box red">Enter capacity</div>';return;}
   const widthsCm = wSel==='both'?[150,152]:[parseFloat(wSel)];
   const rows=[];
   for(const wCm of widthsCm){
@@ -657,17 +718,40 @@ function optSheets(){
       const H=n*w;
       const D=diamFromV(V,H,'torisph');
       const C=Math.PI*D;
-      const m=Math.ceil(C/6000);
+      const m=Math.ceil(C/L);
       const sheets=n*m;
-      const waste=n*(m*6000-C);
-      const pct=waste/(sheets*6000)*100;
+      const waste=n*(m*L-C);
+      const pct=waste/(sheets*L)*100;
       rows.push({wCm,n,H,D,C,m,sheets,waste,pct});
     }
   }
   rows.sort((a,b)=>Math.abs(a.pct-b.pct)>0.01?a.pct-b.pct:a.sheets-b.sheets);
-  let html = '<div style="overflow-x:auto"><table><thead><tr><th>عرض</th><th>کورس</th><th>ارتفاع</th><th>قطر</th><th>ورق</th><th>پرت٪</th></tr></thead><tbody>';
+  const best150 = rows.filter(r=>r.wCm===150)[0];
+  const best152 = rows.filter(r=>r.wCm===152)[0];
+  let html = '';
+  if(best150 && best152){
+    html += `<div class="compare-wrap">
+      <div class="compare-col">
+        <h4>Sheet 150 cm</h4>
+        <div class="compare-row"><span class="lbl">Courses</span><span class="val">${best150.n}</span></div>
+        <div class="compare-row"><span class="lbl">Height</span><span class="val">${fmt(best150.H,0)} mm</span></div>
+        <div class="compare-row"><span class="lbl">Diameter</span><span class="val">${fmt(best150.D,1)} mm</span></div>
+        <div class="compare-row"><span class="lbl">Sheets</span><span class="val">${best150.sheets}</span></div>
+        <div class="compare-row"><span class="lbl">Waste</span><span class="val">${fmt(best150.pct,1)}%</span></div>
+      </div>
+      <div class="compare-col alt">
+        <h4>Sheet 152 cm</h4>
+        <div class="compare-row"><span class="lbl">Courses</span><span class="val">${best152.n}</span></div>
+        <div class="compare-row"><span class="lbl">Height</span><span class="val">${fmt(best152.H,0)} mm</span></div>
+        <div class="compare-row"><span class="lbl">Diameter</span><span class="val">${fmt(best152.D,1)} mm</span></div>
+        <div class="compare-row"><span class="lbl">Sheets</span><span class="val">${best152.sheets}</span></div>
+        <div class="compare-row"><span class="lbl">Waste</span><span class="val">${fmt(best152.pct,1)}%</span></div>
+      </div>
+    </div>`;
+  }
+  html += '<div style="overflow-x:auto;margin-top:14px"><table><thead><tr><th>Width</th><th>Course</th><th>Height</th><th>Diameter</th><th>Sheets</th><th>Waste %</th></tr></thead><tbody>';
   rows.slice(0,12).forEach(r=>{
-    html += `<tr><td>${r.wCm} cm</td><td>${r.n}</td><td>${fmt(r.H,0)} mm</td><td>${fmt(r.D,1)} mm</td><td>${r.m}</td><td>${fmt(r.pct,1)}</td></tr>`;
+    html += `<tr><td>${r.wCm} cm</td><td>${r.n}</td><td>${fmt(r.H,0)}</td><td>${fmt(r.D,1)}</td><td>${r.m}</td><td>${fmt(r.pct,1)}</td></tr>`;
   });
   html += '</tbody></table></div>';
   out.innerHTML = html;
@@ -691,23 +775,29 @@ function calcBlankHandler(){
   const type = document.getElementById('h-type').value;
   const mat = document.getElementById('h-mat').value;
   const out = document.getElementById('h-res');
-  if(!(D>0&&h>0)){out.innerHTML='<div class="info-box orange">قطر و گودی</div>';return;}
+  if(!(D>0&&h>0)){out.innerHTML='<div class="info-box red">Enter diameter and depth</div>';return;}
   const res = calcBlank(D,h,L,t,type);
   const price = findSheetPrice(mat, t);
   const cost = res.W * price * 1.35;
-  out.innerHTML = `<div class="info-box lime">
-    <div class="res-row auto"><span class="lbl"><b>قطر گسترده</b></span><span class="val">${fmt(res.Db,1)} mm</span></div>
-    <div class="res-row auto"><span class="lbl"><b>سطح گسترده</b></span><span class="val">${fmt(res.A,3)} m²</span></div>
-    <div class="res-row auto"><span class="lbl"><b>وزن عدسی</b></span><span class="val">${fmt(res.W,1)} kg</span></div>
-    <div class="res-row"><span class="lbl">هزینه ساخت (با ۳۵٪)</span><span class="val">${fmtT(cost)}</span></div>
-  </div>`;
+  // پیشنهاد هوشمند
+  const sugg = getHeadSuggestions(D);
+  let smart = '';
+  if(sugg && sugg.count >= 2){
+    smart = `<div class="info-box green" style="margin-top:10px"><b>Smart suggestion:</b> Based on ${sugg.count} previous similar heads — h=${sugg.h}mm, L=${sugg.L}mm</div>`;
+  }
+  out.innerHTML = `<div class="info-box green">
+    <div class="res-row auto"><span class="lbl"><b>Blank Diameter</b></span><span class="val">${fmt(res.Db,1)} mm</span></div>
+    <div class="res-row auto"><span class="lbl"><b>Blank Area</b></span><span class="val">${fmt(res.A,3)} m²</span></div>
+    <div class="res-row auto"><span class="lbl"><b>Head Weight</b></span><span class="val">${fmt(res.W,1)} kg</span></div>
+    <div class="res-row"><span class="lbl">Production Cost (+35%)</span><span class="val">${fmtT(cost)}</span></div>
+  </div>${smart}`;
 }
 
 /* ============ حافظه ============ */
 function saveCalculation(type, name, inputs, outputs){
   try{
     let list = JSON.parse(localStorage.getItem('csp_calcs')||'[]');
-    list.unshift({id:'c_'+Date.now(), type, name, date: new Date().toLocaleDateString('fa-IR'), inputs, outputs});
+    list.unshift({id:'c_'+Date.now(), type, name, date:new Date().toISOString().slice(0,10), inputs, outputs});
     if(list.length>100) list=list.slice(0,100);
     localStorage.setItem('csp_calcs', JSON.stringify(list));
     return true;
@@ -718,29 +808,52 @@ function renderMemory(){
   const list = loadCalculations();
   const el = document.getElementById('mem-list');
   if(!el) return;
-  if(!list.length){el.innerHTML='<div class="empty-state">محاسبه‌ای ذخیره نشده</div>';return;}
+  const headHist = loadHeadHistory();
   let html = '';
-  list.forEach(c=>{
-    html += `<div class="save-row"><div class="info"><b>${c.name}</b><br>${c.type} — ${c.date}</div>
-      <button onclick="delCalc('${c.id}')">حذف</button></div>`;
-  });
+  // حافظه عدسی
+  if(headHist.length){
+    html += '<div class="section-title">Head History</div>';
+    headHist.slice(0,10).forEach(h=>{
+      html += `<div class="save-row"><div class="info"><b>D=${h.D}mm / h=${h.h}mm / L=${h.L}mm</b><br>Blank: ${h.blank}mm — ${h.date}</div>
+        <button onclick="delHead('${h.id}')">Del</button></div>`;
+    });
+  }
+  if(list.length){
+    html += '<div class="section-title">Saved Calculations</div>';
+    list.forEach(c=>{
+      html += `<div class="save-row"><div class="info"><b>${c.name}</b><br>${c.type} — ${c.date}</div>
+        <button onclick="delCalc('${c.id}')">Del</button></div>`;
+    });
+  }
+  if(!list.length && !headHist.length){
+    html = '<div class="empty-state">No saved calculations</div>';
+  }
   el.innerHTML = html;
 }
 function delCalc(id){
-  if(!confirm('حذف؟'))return;
+  if(!confirm('Delete?'))return;
   let list = loadCalculations().filter(c=>c.id!==id);
   localStorage.setItem('csp_calcs', JSON.stringify(list));
   renderMemory();
 }
+function delHead(id){
+  if(!confirm('Delete?'))return;
+  let list = loadHeadHistory().filter(c=>c.id!==id);
+  localStorage.setItem(HEAD_HISTORY_KEY, JSON.stringify(list));
+  renderMemory();
+}
 function clearMemory(){
-  if(!confirm('همه پاک شوند؟'))return;
+  if(!confirm('Clear all?'))return;
   localStorage.removeItem('csp_calcs');
+  localStorage.removeItem(HEAD_HISTORY_KEY);
   renderMemory();
 }
 function exportMemory(){
   const list = loadCalculations();
-  let csv = 'نام,نوع,تاریخ\n';
-  list.forEach(c=>{csv += `"${c.name}","${c.type}","${c.date}"\n`;});
+  const heads = loadHeadHistory();
+  let csv = 'Type,Name/Model,Date\n';
+  list.forEach(c=>{csv += `"calc","${c.name}","${c.date}"\n`;});
+  heads.forEach(h=>{csv += `"head","D=${h.D}/h=${h.h}/L=${h.L}/blank=${h.blank}","${h.date}"\n`;});
   const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -751,11 +864,10 @@ function saveHeadCalc(){
   const D=val('h-d'), h=val('h-h'), L=val('h-l')||0, t=val('h-t')||6;
   if(!(D>0&&h>0))return;
   const res = calcBlank(D,h,L,t,document.getElementById('h-type').value);
-  const name = prompt('نام:', 'عدسی '+D+'mm');
-  if(!name)return;
-  if(saveCalculation('head', name, {D,h,L,t}, res)){
+  const note = prompt('Note (optional):', '');
+  if(saveHeadToHistory(D, h, L, t, Math.round(res.Db), note)){
     renderMemory();
-    showStatus('success','✅ ذخیره شد');
+    alert('Saved! ('+loadHeadHistory().length+' entries)');
   }
 }
 
@@ -764,13 +876,13 @@ function renderPriceEditor(){
   const c = document.getElementById('price-editor');
   if(!c) return;
   let html = '';
-  html += '<div class="section-title">ورق‌ها (تومان/kg)</div>';
+  html += '<div class="section-title">Sheets (Toman/kg)</div>';
   for(const k in PRICES.sheets) html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="sheets" data-key="${k}" value="${PRICES.sheets[k]}"></div>`;
-  html += '<div class="section-title">لوله‌ها (شاخه ۶ متر)</div>';
+  html += '<div class="section-title">Pipes (Toman/6m)</div>';
   for(const k in PRICES.pipes) html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="pipes" data-key="${k}" value="${PRICES.pipes[k]}"></div>`;
-  html += '<div class="section-title">بوشن</div>';
+  html += '<div class="section-title">Bushings</div>';
   for(const k in PRICES.bushings) html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="bushings" data-key="${k}" value="${PRICES.bushings[k]}"></div>`;
-  html += '<div class="section-title">فلنج</div>';
+  html += '<div class="section-title">Flanges</div>';
   for(const k in PRICES.flanges) html += `<div class="price-row"><label>${k}</label><input type="number" data-cat="flanges" data-key="${k}" value="${PRICES.flanges[k]}"></div>`;
   c.innerHTML = html;
 }
@@ -781,14 +893,14 @@ function savePricesLocal(){
     if(PRICES[cat]) PRICES[cat][key]=v;
   });
   try{localStorage.setItem('csp_prices', JSON.stringify({version:'local_'+Date.now(), data:PRICES}));}catch(e){}
-  showStatus('success','✅ ذخیره شد');
+  showStatus('success','Saved');
 }
 function resetPrices(){
-  if(!confirm('بازگشت؟'))return;
+  if(!confirm('Reset?'))return;
   localStorage.removeItem('csp_prices');
   PRICES = JSON.parse(JSON.stringify(window.EMBEDDED_PRICES));
   renderPriceEditor();
-  showStatus('success','↺ بازگشت');
+  showStatus('success','Reset');
 }
 function exportPrices(){
   const b = new Blob([JSON.stringify(PRICES,null,2)],{type:'application/json'});
@@ -800,7 +912,7 @@ function exportPrices(){
 function showStatus(t,m){
   const s = document.getElementById('price-status');
   if(!s) return;
-  s.innerHTML = `<div class="info-box ${t==='success'?'lime':'orange'}">${m}</div>`;
+  s.innerHTML = `<div class="info-box ${t==='success'?'green':'orange'}">${m}</div>`;
   setTimeout(()=>{ if(s) s.innerHTML=''; }, 3000);
 }
 
@@ -808,7 +920,7 @@ function showStatus(t,m){
 function initCatalog(){
   const sel = document.getElementById('cat-category');
   if(!sel) return;
-  sel.innerHTML = '<option value="">— انتخاب دسته —</option>';
+  sel.innerHTML = '<option value="">— Select category —</option>';
   for(const k in CATALOG.categories){
     const o = document.createElement('option');
     o.value = k;
@@ -822,7 +934,7 @@ function renderCatalog(){
   const search = (document.getElementById('cat-search').value||'').trim();
   const info = document.getElementById('cat-info'), tbl = document.getElementById('cat-table');
   if(!tbl) return;
-  if(!k){tbl.innerHTML='<div class="empty-state">دسته را انتخاب کن</div>'; if(info) info.innerHTML=''; return;}
+  if(!k){tbl.innerHTML='<div class="empty-state">Select a category</div>'; if(info) info.innerHTML=''; return;}
   const cat = CATALOG.categories[k];
   if(!cat) return;
   let rows = cat.rows;
@@ -842,7 +954,7 @@ function renderCatalog(){
   }
   let h = '<div style="overflow-x:auto"><table><thead><tr>';
   cat.columns.forEach(c => h += `<th>${c}</th>`);
-  h += '<th>عملیات</th></tr></thead><tbody>';
+  h += '<th>Action</th></tr></thead><tbody>';
   rows.forEach((r,i)=>{
     const isM = i===mIdx;
     h += `<tr class="${isM?'best':''}">`;
@@ -850,11 +962,11 @@ function renderCatalog(){
     const D = r[cat.mainD] !== undefined ? r[cat.mainD] : '';
     const H = r[cat.mainH] !== undefined ? r[cat.mainH] : '';
     const data = JSON.stringify({model:r[0], D:D, H:H, cat:k}).replace(/"/g,'&quot;');
-    h += `<td><button class="cat-use-btn" onclick="useFromCat(this)" data-info="${data}">استفاده</button></td></tr>`;
+    h += `<td><button class="cat-use-btn" onclick="useFromCat(this)" data-info="${data}">Use</button></td></tr>`;
   });
   h += '</tbody></table></div>';
   tbl.innerHTML = h;
-  if(info) info.innerHTML = `<div class="info-box"><b>${cat.name}</b> — ${rows.length} مدل</div>`;
+  if(info) info.innerHTML = `<div class="info-box"><b>${cat.name}</b> — ${rows.length} models</div>`;
 }
 
 function useFromCat(btn){
@@ -863,8 +975,7 @@ function useFromCat(btn){
     const D = parseFloat(info.D);
     const H = parseFloat(info.H);
     const modelName = info.model || '';
-    
-    // تشخیص نوع تجهیز
+
     let eqType = 'spiral';
     if(modelName.includes('SG-HE-SC-')) eqType = 'spiral';
     else if(modelName.includes('SG-HE-C-')) eqType = 'u_coil';
@@ -874,20 +985,16 @@ function useFromCat(btn){
     else if(modelName.includes('SG-OE-')) eqType = 'expansion_open';
     else if(modelName.includes('SG-CE-')) eqType = 'expansion_closed';
     else if(modelName.includes('SG-CT-')) eqType = 'condensate';
-    
-    // پاک کردن state قبلی
+
     delete EQ_STATE.weight[eqType];
     delete EQ_STATE.cost[eqType];
-    
-    // ست کردن تجهیز
+
     document.getElementById('w-eq').value = eqType;
     document.getElementById('c-eq').value = eqType;
-    
-    // init مجدد
+
     initEqState('weight');
     initEqState('cost');
-    
-    // پر کردن پوسته در هر دو state
+
     ['weight','cost'].forEach(mode=>{
       const st = EQ_STATE[mode][eqType];
       if(!st) return;
@@ -900,45 +1007,46 @@ function useFromCat(btn){
         st.box_shell.fields.h = H;
       }
     });
-    
-    // رندر مجدد
+
     loadEquipment('weight');
     loadEquipment('cost');
-    
-    showStatus('success', `✓ ${modelName} بارگذاری شد`);
-    
-    // سوییچ به تب وزن‌دهی
+
+    showStatus('success', `${modelName} loaded`);
+
     setTimeout(()=>{
       const tab = document.querySelector('[data-tab="t4"]');
       if(tab) tab.click();
     }, 400);
   }catch(e){
     console.error('useFromCat error:', e);
-    alert('خطا در بارگذاری: ' + e.message);
+    alert('Load error: ' + e.message);
   }
 }
 
 /* ============ Firebase ============ */
 async function syncFromFirebase(){
-  if(typeof loadPricesFromFirebase !== 'function'){ alert('Firebase فعال نیست'); return; }
+  if(typeof loadPricesFromFirebase !== 'function'){ alert('Firebase not active'); return; }
   const remote = await loadPricesFromFirebase();
-  if(remote){PRICES = Object.assign({},window.EMBEDDED_PRICES,remote); renderPriceEditor(); showStatus('success','✅ دریافت شد');}
-  else showStatus('warn','داده‌ای نیافتم');
+  if(remote){PRICES = Object.assign({},window.EMBEDDED_PRICES,remote); renderPriceEditor(); showStatus('success','Received');}
+  else showStatus('warn','No data');
 }
 async function syncToFirebase(){
-  if(typeof savePricesToFirebase !== 'function'){ alert('Firebase فعال نیست'); return; }
+  if(typeof savePricesToFirebase !== 'function'){ alert('Firebase not active'); return; }
   PRICES.version = 'cloud_'+Date.now();
   const ok = await savePricesToFirebase(PRICES);
-  showStatus(ok?'success':'warn', ok?'✅ ارسال شد':'❌ خطا');
+  showStatus(ok?'success':'warn', ok?'Sent':'Error');
 }
 
 /* ============ کمک‌کننده ============ */
-function fmt(n,d=2){if(!isFinite(n)||n==null)return'—';return Number(n).toLocaleString('fa-IR',{maximumFractionDigits:d});}
+function fmt(n,d=2){
+  if(!isFinite(n)||n==null)return'—';
+  return Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
+}
 function fmtT(n){
   if(!isFinite(n))return'—';
-  if(n>=1e9)return fmt(n/1e9,3)+' م.ت';
-  if(n>=1e6)return fmt(n/1e6,2)+' م.ت';
-  if(n>=1e3)return fmt(n/1e3,1)+' هزار';
+  if(n>=1e9)return fmt(n/1e9,3)+' B';
+  if(n>=1e6)return fmt(n/1e6,2)+' M';
+  if(n>=1e3)return fmt(n/1e3,1)+' K';
   return fmt(n,0);
 }
 function val(id){const e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
@@ -949,20 +1057,20 @@ function initLogo(){
   img.onerror = function(){
     const parent = img.parentElement;
     if(parent){
-      parent.innerHTML = '<svg viewBox="0 0 100 100" fill="none" style="width:100%;height:100%"><rect x="15" y="35" width="70" height="40" rx="8" fill="#0B1420"/><path d="M15 45 Q50 25 85 45" fill="#00D9FF" opacity="0.3"/><circle cx="50" cy="30" r="4" fill="#A855F7"/><text x="50" y="66" font-family="Arial" font-size="16" font-weight="900" fill="#00D9FF" text-anchor="middle">PT</text></svg>';
+      parent.innerHTML = '<svg viewBox="0 0 100 100" fill="none"><rect x="15" y="38" width="70" height="40" rx="6" stroke="#fff" stroke-width="3"/><path d="M15 48 Q50 28 85 48" stroke="#fff" stroke-width="3"/><text x="50" y="68" font-family="Arial" font-size="16" font-weight="900" fill="#fff" text-anchor="middle">PT</text></svg>';
     }
   };
 }
 
 /* ============ Bootstrap ============ */
 window.addEventListener('load', async () => {
-  console.log('🚀 App starting...');
-  console.log('CATALOG categories:', Object.keys(CATALOG.categories||{}).length);
-  
+  console.log('App starting v5.0...');
+  console.log('CATALOG:', Object.keys(CATALOG.categories||{}).length);
+
   if(typeof initFirebase === 'function'){
     try{ await initFirebase(); }catch(e){ console.warn('Firebase skipped'); }
   }
-  
+
   try{
     const s = localStorage.getItem('csp_prices');
     if(s) PRICES = Object.assign({}, window.EMBEDDED_PRICES, JSON.parse(s).data);
@@ -970,7 +1078,6 @@ window.addEventListener('load', async () => {
 
   initLogo();
 
-  // Tabs
   document.querySelectorAll('.tab').forEach(t=>{
     t.addEventListener('click',()=>{
       document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -982,7 +1089,6 @@ window.addEventListener('load', async () => {
     });
   });
 
-  // v-type toggle
   const vt = document.getElementById('v-type');
   if(vt) vt.addEventListener('change', e=>{
     const b = e.target.value==='box';
@@ -999,15 +1105,10 @@ window.addEventListener('load', async () => {
   renderMemory();
   loadEquipment('weight');
   loadEquipment('cost');
-  
-  // اتصال دکمه محاسبه عدسی به تابع
-  const calcBtn = document.querySelector('button[onclick="calcBlank()"]');
-  if(calcBtn) calcBtn.setAttribute('onclick','calcBlankHandler()');
-  
-  console.log('✅ App ready v4.0');
+
+  console.log('App ready v5.0');
 });
 
-// Expose به window
 window.calcWeight = calcWeight;
 window.calcCost = calcCost;
 window.useFromCat = useFromCat;
@@ -1022,6 +1123,7 @@ window.calcBlankHandler = calcBlankHandler;
 window.saveHeadCalc = saveHeadCalc;
 window.exportPDF = exportPDF;
 window.delCalc = delCalc;
+window.delHead = delHead;
 window.clearMemory = clearMemory;
 window.exportMemory = exportMemory;
 window.savePricesLocal = savePricesLocal;
