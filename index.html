@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0F1B2A">
+<meta name="theme-color" content="#1F1A12">
 <title>Pressure Tank Calculator</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -12,260 +12,660 @@
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
 :root{
-  --bg-main:#D5DEE8;--bg-soft:#E1E8EF;--bg-dark:#0F1B2A;--bg-dark-2:#152238;
-  --card:#FFFFFF;--card-alt:#F4F7FA;--border:#C4D0DC;--border-hi:#A8B8C8;
-  --steel:#0F2A44;--steel-2:#1D3E5E;--blue:#0E6BA8;--blue-2:#0A4F7C;--cyan:#00A8CC;
-  --orange:#E76F00;--orange-2:#C75C00;--green:#0F8B4C;--green-2:#0A6B3A;
-  --red:#C62828;--amber:#D97706;--violet:#5E35B1;
-  --text:#0F1B2A;--text-2:#475569;--text-3:#64748B;--text-light:#FFFFFF;
-  --glow-blue:rgba(14,107,168,.25);--glow-orange:rgba(231,111,0,.25);
-  --glow-green:rgba(15,139,76,.25);--glow-red:rgba(198,40,40,.25);
-  --radius:12px;
+  /* ============ زمینه نخودی ============ */
+  --bg-main:#F5EFE0;
+  --bg-soft:#FAF6EB;
+  --bg-warm:#EDE4CE;
+  --bg-dark:#1F1A12;
+  --bg-dark-2:#3A2F22;
+  --card:#FFFFFF;
+  --card-alt:#FAF7EF;
+  --border:#D4C8B0;
+  --border-soft:#E5DBC4;
+  --border-hi:#8B7D5E;
+
+  /* رنگ‌های صنعتی گرم */
+  --orange:#E85D04;
+  --orange-2:#BF4800;
+  --orange-glow:rgba(232,93,4,.25);
+  --blue:#0369A1;
+  --blue-2:#075985;
+  --blue-glow:rgba(3,105,161,.2);
+  --green:#15803D;
+  --green-2:#166534;
+  --green-glow:rgba(21,128,61,.25);
+  --yellow:#D97706;
+  --yellow-2:#A16207;
+  --red:#C2410C;
+  --red-2:#9A3412;
+  --graphite:#3F3A32;
+  --graphite-2:#2D2820;
+
+  --text:#1F1A12;
+  --text-2:#574B3A;
+  --text-3:#7A6D57;
+  --text-light:#FAF6EB;
+
+  --radius:10px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg-main);color:var(--text);font-size:14px;min-height:100vh;line-height:1.6}
 body{
   background-image:
-    linear-gradient(180deg,var(--bg-soft) 0%,var(--bg-main) 100%),
-    repeating-linear-gradient(0deg,rgba(15,27,42,.025) 0px,rgba(15,27,42,.025) 1px,transparent 1px,transparent 32px),
-    repeating-linear-gradient(90deg,rgba(15,27,42,.025) 0px,rgba(15,27,42,.025) 1px,transparent 1px,transparent 32px);
-  background-attachment:fixed;padding-bottom:60px;
+    linear-gradient(180deg, var(--bg-soft) 0%, var(--bg-main) 100%),
+    repeating-linear-gradient(0deg, rgba(139,125,94,.05) 0px, rgba(139,125,94,.05) 1px, transparent 1px, transparent 40px),
+    repeating-linear-gradient(90deg, rgba(139,125,94,.05) 0px, rgba(139,125,94,.05) 1px, transparent 1px, transparent 40px);
+  background-attachment:fixed;
+  padding-bottom:60px;
 }
 
-/* ============ FONT IMPROVEMENTS ============ */
-/* اعداد پررنگ‌تر و بزرگ‌تر */
-.num,.val,td,th,input[type="number"],.res-row .val,.res-summary .val,
-.compare-row .val,.res-row.big .val,.price-row input,.cat-use-btn{
-  font-weight:700;
+/* ============ اعداد — بزرگ و پررنگ ============ */
+input[type="number"], input[type="text"]{
+  font-family:'Courier New',monospace;
+  font-weight:900;
+  letter-spacing:-0.3px;
+  font-variant-numeric:tabular-nums;
 }
-.res-summary .val{font-weight:900;letter-spacing:-1px}
-.res-row .val{font-size:14.5px;font-weight:800}
-.res-row.big .val{font-size:19px;font-weight:900}
-td{font-size:13.5px;font-weight:700}
-th{font-size:12px;font-weight:800}
 
-/* کاتالوگ خاص */
-#cat-table td{font-size:14.5px !important;font-weight:800 !important;padding:11px 8px}
-#cat-table th{font-size:12.5px !important;font-weight:900 !important;padding:12px 8px}
-#cat-table tr.best td{background:#DCFCE7;color:#166534}
-
-/* قیمت‌ها پررنگ */
-.price-row input{font-size:13.5px !important;font-weight:800 !important;color:var(--blue-2)}
-
-/* ============ STICKY TOP ============ */
-.sticky-top{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,var(--bg-dark) 0%,var(--bg-dark-2) 100%);box-shadow:0 4px 24px rgba(15,27,42,.25);border-bottom:3px solid var(--orange)}
-header{padding:12px 16px;text-align:center;color:var(--text-light);position:relative}
-.logo-mark{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));margin-bottom:6px;box-shadow:0 0 24px rgba(0,168,204,.4);border:2px solid rgba(255,255,255,.15);overflow:hidden}
+/* ============ Sticky Top ============ */
+.sticky-top{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark-2) 100%);
+  box-shadow:0 4px 20px rgba(31,26,18,.35);
+}
+header{padding:14px 16px 10px;text-align:center;color:var(--text-light);position:relative}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
+.logo-mark{
+  width:48px;height:48px;border-radius:10px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-2));
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(255,255,255,.15);
+  box-shadow:0 4px 16px var(--orange-glow);
+  overflow:hidden;
+}
 .logo-mark img{width:100%;height:100%;object-fit:contain}
-.logo-mark svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:1.8}
-h1{margin:0;font-size:16px;font-weight:800;color:#fff;letter-spacing:.4px}
-.sub{margin:2px 0 0;font-size:9px;color:#8AA0B8;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
-.header-line{height:2px;margin-top:10px;background:linear-gradient(90deg,transparent,var(--orange),var(--blue),var(--orange),transparent);border-radius:1px}
-.tabs{display:flex;background:rgba(15,27,42,.7);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;min-width:118px;padding:16px 14px;font-size:13px;font-weight:800;color:#7C8FA8;background:none;border:none;cursor:pointer;font-family:inherit;position:relative;border-bottom:3px solid transparent;transition:.25s;white-space:nowrap}
-.tab:hover{color:#B8C8D8;background:rgba(255,255,255,.03)}
-.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:linear-gradient(180deg,transparent,rgba(0,168,204,.12))}
-.tab.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:48px;height:3px;background:var(--cyan);border-radius:0 0 4px 4px;box-shadow:0 0 12px var(--cyan)}
+.logo-mark svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2}
+.header-text{text-align:right}
+h1{margin:0;font-size:16px;font-weight:800;color:#fff;letter-spacing:.3px}
+.sub{margin:2px 0 0;font-size:9px;color:#B8A78A;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
 
-main{padding:16px;max-width:840px;margin:0 auto}
+/* نوار صنعتی */
+.industrial-stripe{
+  height:6px;
+  background:repeating-linear-gradient(
+    -45deg,
+    var(--yellow) 0, var(--yellow) 12px,
+    var(--bg-dark) 12px, var(--bg-dark) 24px
+  );
+  border-top:1px solid rgba(255,255,255,.1);
+  border-bottom:1px solid rgba(0,0,0,.3);
+}
+
+/* ============ Tabs ============ */
+.tabs{
+  display:flex;
+  background:var(--bg-dark);
+  overflow-x:auto;scrollbar-width:none;
+  border-bottom:3px solid var(--orange);
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:0 0 auto;min-width:118px;padding:15px 14px;
+  font-size:13.5px;font-weight:800;color:#8B7D5E;
+  background:none;border:none;cursor:pointer;font-family:inherit;
+  position:relative;border-bottom:3px solid transparent;transition:.2s;
+  white-space:nowrap;margin-bottom:-3px;
+}
+.tab:hover{color:#B8A78A;background:rgba(255,255,255,.03)}
+.tab.active{
+  color:var(--orange);
+  border-bottom-color:var(--orange);
+  background:linear-gradient(180deg,transparent,rgba(232,93,4,.15));
+}
+
+main{padding:16px;max-width:880px;margin:0 auto}
 .panel{display:none;animation:fadeIn .3s}
 .panel.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
 
-.section-title{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:var(--steel-2);letter-spacing:1px;text-transform:uppercase;margin:22px 0 12px}
-.section-title::before{content:"";width:4px;height:20px;background:linear-gradient(180deg,var(--orange),var(--orange-2));border-radius:2px}
-.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+/* ============ Section Title ============ */
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:800;color:var(--graphite);
+  letter-spacing:1px;text-transform:uppercase;margin:22px 0 12px;
+}
+.section-title::before{
+  content:"";width:4px;height:20px;
+  background:linear-gradient(180deg,var(--orange),var(--orange-2));
+  border-radius:1px;box-shadow:0 0 8px var(--orange-glow);
+}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border-soft),transparent)}
 
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(15,27,42,.06),0 1px 2px rgba(15,27,42,.04);position:relative;overflow:hidden}
-.card::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,var(--blue),var(--cyan))}
+/* ============ Card ============ */
+.card{
+  background:var(--card);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  padding:16px;margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(31,26,18,.06), 0 1px 2px rgba(31,26,18,.04);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;top:0;right:0;width:5px;height:100%;
+  background:linear-gradient(180deg,var(--graphite),var(--graphite-2));
+}
 .card.orange::before{background:linear-gradient(180deg,var(--orange),var(--orange-2))}
+.card.blue::before{background:linear-gradient(180deg,var(--blue),var(--blue-2))}
 .card.green::before{background:linear-gradient(180deg,var(--green),var(--green-2))}
-.card.red::before{background:linear-gradient(180deg,var(--red),#8B0000)}
-.card.violet::before{background:linear-gradient(180deg,var(--violet),#3E2483)}
-.card h2{margin:0 0 14px;font-size:15px;font-weight:800;color:var(--steel);display:flex;align-items:center;gap:8px;padding-right:8px}
-.card h2::before{content:"";width:4px;height:16px;background:var(--orange);border-radius:2px}
+.card.yellow::before{background:linear-gradient(180deg,var(--yellow),var(--yellow-2))}
+.card.red::before{background:linear-gradient(180deg,var(--red),var(--red-2))}
 
+.card h2{
+  margin:0 0 14px;font-size:15px;font-weight:800;
+  color:var(--bg-dark);display:flex;align-items:center;gap:10px;padding-right:8px;
+}
+.card h2::before{content:"";width:4px;height:16px;background:var(--orange);border-radius:1px}
+
+/* ============ Fields ============ */
 .field{margin-bottom:12px}
 .field label{display:block;font-size:11.5px;margin-bottom:6px;color:var(--text-2);font-weight:700;letter-spacing:.3px}
-.field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:var(--text);transition:.2s;-webkit-appearance:none;appearance:none}
-.field input[type="number"]{font-family:'Courier New',monospace;font-weight:700;font-size:15.5px}
-.field select{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E6BA8' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px;padding-left:38px;font-weight:600}
-.field input:focus,.field select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--glow-blue)}
+.field input, .field select{
+  width:100%;padding:13px 14px;
+  border:2px solid var(--border-soft);
+  border-radius:8px;font-family:inherit;
+  background:#FFFDF8;
+  color:var(--text);
+  transition:.2s;
+  -webkit-appearance:none;appearance:none;
+}
+.field input[type="number"]{font-size:17px;font-weight:900;color:#1F1A12}
+.field select{
+  font-size:14.5px;font-weight:700;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF4800' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 12px center;
+  background-size:14px;padding-left:38px;
+}
+.field input:focus, .field select:focus{
+  outline:none;border-color:var(--orange);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(232,93,4,.15);
+}
 
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 @media(max-width:560px){.row,.row3{grid-template-columns:1fr}}
 
-.btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border:none;border-radius:10px;font-size:14.5px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 14px var(--glow-blue)}
-.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--glow-blue)}
+/* ============ Buttons ============ */
+.btn{
+  display:block;width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-2));
+  color:#fff;border:none;border-radius:8px;
+  font-size:15px;font-weight:800;cursor:pointer;
+  margin-top:8px;font-family:inherit;letter-spacing:.3px;
+  transition:.2s;box-shadow:0 4px 12px var(--orange-glow);
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--orange-glow)}
 .btn:active{transform:translateY(0)}
-.btn.orange{background:linear-gradient(135deg,var(--orange),var(--orange-2));box-shadow:0 4px 14px var(--glow-orange)}
-.btn.green{background:linear-gradient(135deg,var(--green),var(--green-2));box-shadow:0 4px 14px var(--glow-green)}
-.btn.red{background:linear-gradient(135deg,var(--red),#8B0000);box-shadow:0 4px 14px var(--glow-red)}
-.btn.gray{background:#F1F5F9;color:var(--text);border:1px solid var(--border);box-shadow:none}
-.btn.violet{background:linear-gradient(135deg,var(--violet),#3E2483);box-shadow:0 4px 14px rgba(94,53,177,.25)}
+.btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue-2));box-shadow:0 4px 12px var(--blue-glow)}
+.btn.green{background:linear-gradient(135deg,var(--green),var(--green-2));box-shadow:0 4px 12px var(--green-glow)}
+.btn.gray{background:#F1ECE0;color:var(--text);border:1px solid var(--border-soft);box-shadow:none}
+.btn.red{background:linear-gradient(135deg,var(--red),var(--red-2));box-shadow:0 4px 12px rgba(194,65,12,.25)}
+.btn.violet{background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 4px 12px rgba(124,58,237,.25)}
 
-.eq-select{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(15,27,42,.06);position:relative;overflow:hidden}
-.eq-select::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,var(--blue),var(--cyan))}
-.eq-select label{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;color:var(--text-2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-right:8px}
-.eq-select select{width:100%;padding:12px 14px 12px 38px;background:#fff;border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;transition:.2s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E6BA8' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px}
-.eq-select select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--glow-blue)}
+/* ============ Equipment Select ============ */
+.eq-select{
+  background:var(--card);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  padding:16px;margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(31,26,18,.06);
+  position:relative;overflow:hidden;
+}
+.eq-select::before{
+  content:"";position:absolute;top:0;right:0;width:5px;height:100%;
+  background:linear-gradient(180deg,var(--orange),var(--orange-2));
+}
+.eq-select label{
+  display:block;font-size:11.5px;font-weight:800;
+  color:var(--text-2);letter-spacing:.5px;
+  margin-bottom:10px;padding-right:8px;text-transform:uppercase;
+}
+.eq-select select{
+  width:100%;padding:13px 14px 13px 38px;
+  background:#FFFDF8;
+  border:2px solid var(--border-soft);
+  border-radius:8px;color:var(--text);
+  font-family:inherit;font-size:14.5px;font-weight:800;
+  cursor:pointer;transition:.2s;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF4800' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 12px center;background-size:14px;
+}
+.eq-select select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 4px rgba(232,93,4,.15)}
 
-.eq-header{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--bg-dark),var(--bg-dark-2));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;margin-top:12px;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
-.eq-header::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,rgba(0,168,204,.15),transparent 60%);pointer-events:none}
-.eq-icon{width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:12px;box-shadow:0 4px 16px rgba(14,107,168,.4);position:relative;z-index:1}
-.eq-icon svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.7}
+/* ============ Equipment Header ============ */
+.eq-header{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg,var(--bg-dark),var(--bg-dark-2));
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:14px;margin-top:12px;
+  position:relative;overflow:hidden;
+}
+.eq-header::before{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,
+    rgba(232,93,4,.05) 0px, rgba(232,93,4,.05) 8px,
+    transparent 8px, transparent 16px);
+  pointer-events:none;
+}
+.eq-icon{
+  width:56px;height:56px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--orange),var(--orange-2));
+  border-radius:10px;
+  box-shadow:0 4px 16px var(--orange-glow);
+  position:relative;z-index:1;
+}
+.eq-icon svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.8}
 .eq-info{flex:1;position:relative;z-index:1}
 .eq-info h3{margin:0 0 3px;font-size:15px;font-weight:800;color:#fff}
-.eq-info p{margin:0;font-size:11px;color:#8AA0B8}
-.eq-info .badge{display:inline-block;padding:3px 10px;margin-top:6px;background:linear-gradient(90deg,var(--orange),var(--orange-2));color:#fff;font-size:10px;font-weight:800;border-radius:5px;letter-spacing:.4px}
+.eq-info p{margin:0;font-size:11px;color:#B8A78A}
+.eq-info .badge{
+  display:inline-block;padding:3px 10px;margin-top:6px;
+  background:linear-gradient(90deg,var(--orange),var(--orange-2));
+  color:#fff;font-size:10px;font-weight:800;
+  border-radius:5px;letter-spacing:.4px;
+}
 
-.comp{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(15,27,42,.05);position:relative;transition:.2s}
-.comp::before{content:"";position:absolute;top:0;right:0;bottom:0;width:4px;background:var(--blue);transition:.2s}
+/* ============ Component Cards ============ */
+.comp{
+  background:#FFFDF8;
+  border:1.5px solid var(--border-soft);
+  border-radius:10px;margin-bottom:10px;
+  overflow:hidden;
+  box-shadow:0 2px 6px rgba(31,26,18,.06);
+  position:relative;
+}
+.comp::before{
+  content:"";position:absolute;
+  top:0;right:0;bottom:0;width:5px;
+  background:var(--graphite);
+}
 .comp.orange::before{background:var(--orange)}
+.comp.blue::before{background:var(--blue)}
 .comp.green::before{background:var(--green)}
-.comp.violet::before{background:var(--violet)}
+.comp.yellow::before{background:var(--yellow)}
 .comp.red::before{background:var(--red)}
-.comp.off::before{background:#CBD5E1}
-.comp.on{box-shadow:0 4px 14px rgba(15,27,42,.08)}
-.comp-head{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;user-select:none;transition:.15s}
-.comp-head:hover{background:var(--card-alt)}
-.comp-icon{width:38px;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#F1F5F9;border:1px solid var(--border);border-radius:9px;transition:.2s}
-.comp-icon svg{width:20px;height:20px;stroke:var(--text-3);fill:none;stroke-width:1.8}
-.comp.on .comp-icon{background:#E8F4FB;border-color:#B8D4EC}
-.comp.on .comp-icon svg{stroke:var(--blue)}
-.comp.orange.on .comp-icon{background:#FFF5EB;border-color:#F8C99A}
-.comp.orange.on .comp-icon svg{stroke:var(--orange)}
-.comp.green.on .comp-icon{background:#EDF9F1;border-color:#A8DABC}
-.comp.green.on .comp-icon svg{stroke:var(--green)}
-.comp.violet.on .comp-icon{background:#F3EFFB;border-color:#C9B8E8}
-.comp.violet.on .comp-icon svg{stroke:var(--violet)}
-.comp-title{flex:1;font-size:13.5px;font-weight:700;color:var(--text-2);transition:.2s}
-.comp.on .comp-title{color:var(--text)}
-.comp-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:900;font-family:'Courier New',monospace;display:none}
+.comp.violet::before{background:#7C3AED}
+.comp.on{box-shadow:0 4px 14px rgba(31,26,18,.1)}
+.comp-head{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;cursor:pointer;
+  background:var(--card-alt);
+  transition:.15s;
+}
+.comp-head:hover{background:#F0E8D2}
+.comp-icon{
+  width:42px;height:42px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;
+  border:2px solid var(--border-soft);
+  border-radius:8px;
+}
+.comp-icon svg{width:22px;height:22px;stroke:var(--graphite);fill:none;stroke-width:2}
+.comp.on .comp-icon{background:#FFF5EB;border-color:var(--orange)}
+.comp.on .comp-icon svg{stroke:var(--orange)}
+.comp-title{flex:1;font-size:14px;font-weight:800;color:var(--bg-dark)}
+.comp-badge{
+  font-family:'Courier New',monospace;
+  font-size:15px;
+  font-weight:900;
+  padding:4px 12px;
+  border-radius:6px;
+  display:none;
+  letter-spacing:-0.3px;
+}
 .comp.on .comp-badge{display:inline-block}
-.comp-badge.weight{background:#FFF5EB;color:var(--orange-2);border:1px solid #F8C99A}
-.comp-badge.cost{background:#FDF2F8;color:#9D174D;border:1px solid #F8B8D0}
-.comp-toggle{position:relative;width:40px;height:22px;background:#E2E8F0;border:1px solid var(--border);border-radius:22px;transition:.2s;cursor:pointer;flex-shrink:0}
-.comp-toggle::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#94A3B8;transition:.2s}
-.comp.on .comp-toggle{background:var(--blue);border-color:var(--blue)}
+.comp-badge.weight{
+  color:var(--orange-2);
+  background:rgba(232,93,4,.1);
+  border:1.5px solid rgba(232,93,4,.3);
+}
+.comp-badge.cost{
+  color:#9D174D;
+  background:#FDF2F8;
+  border:1.5px solid #F8B8D0;
+}
+.comp-toggle{
+  position:relative;width:40px;height:22px;
+  background:#E5DBC4;
+  border:1px solid var(--border);
+  border-radius:22px;transition:.2s;cursor:pointer;flex-shrink:0;
+}
+.comp-toggle::after{
+  content:"";position:absolute;top:2px;right:2px;
+  width:16px;height:16px;border-radius:50%;
+  background:#8B7D5E;transition:.2s;
+}
+.comp.on .comp-toggle{background:var(--orange);border-color:var(--orange)}
 .comp.on .comp-toggle::after{right:20px;background:#fff}
-.comp.orange.on .comp-toggle{background:var(--orange);border-color:var(--orange)}
-.comp.green.on .comp-toggle{background:var(--green);border-color:var(--green)}
-.comp.violet.on .comp-toggle{background:var(--violet);border-color:var(--violet)}
-.comp-body{display:none;padding:14px;border-top:1px solid var(--border);background:var(--card-alt)}
+.comp-body{
+  display:none;padding:14px;
+  border-top:1px solid var(--border-soft);
+  background:#FFFDF8;
+}
 .comp.on .comp-body{display:block}
 
+/* ============ Grid fields ============ */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:560px){.grid-2{grid-template-columns:1fr}}
 .fld{display:flex;flex-direction:column;gap:5px}
 .fld label{font-size:11px;font-weight:700;color:var(--text-2);letter-spacing:.3px}
-.fld input,.fld select{width:100%;padding:10px 12px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'Courier New',monospace;font-size:14px;font-weight:700;transition:.2s;-webkit-appearance:none;appearance:none}
-.fld select{font-family:'Vazirmatn',sans-serif;font-weight:600;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E6BA8' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 10px center;background-size:12px;padding-left:32px}
-.fld input:focus,.fld select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--glow-blue)}
+.fld input, .fld select{
+  width:100%;padding:11px 12px;
+  background:#FFFDF8;
+  border:1.5px solid var(--border-soft);
+  border-radius:8px;color:var(--text);
+  font-family:'Courier New',monospace;
+  font-size:15.5px;font-weight:900;
+  transition:.2s;
+  -webkit-appearance:none;appearance:none;
+}
+.fld select{font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:13.5px;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF4800' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 10px center;background-size:12px;padding-left:32px
+}
+.fld input:focus, .fld select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,93,4,.15)}
 .fld-hint{font-size:10.5px;color:var(--text-3);margin-top:2px;line-height:1.5}
-.fld-hint b{color:var(--green-2);font-weight:700}
+.fld-hint b{color:var(--green);font-weight:800}
 
-.res-summary{background:linear-gradient(135deg,#1B2F4A 0%,#0F1B2A 100%);border:1px solid rgba(0,168,204,.3);border-radius:14px;padding:20px 16px;margin:14px 0;text-align:center;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(15,27,42,.2)}
-.res-summary::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
-.res-summary .lbl{position:relative;z-index:1;font-size:11px;color:#8AA0B8;letter-spacing:2px;text-transform:uppercase;font-weight:700}
-.res-summary .val{position:relative;z-index:1;font-family:'Courier New',monospace;font-size:40px;font-weight:900;color:var(--cyan);text-shadow:0 0 24px rgba(0,168,204,.5);margin:8px 0;line-height:1;direction:ltr;letter-spacing:-1px}
-.res-summary .unit{position:relative;z-index:1;font-size:13px;color:#B8C8D8;font-weight:600}
-.res-summary.orange .val{color:var(--orange);text-shadow:0 0 24px var(--glow-orange)}
-.res-summary.green .val{color:#4ADE80;text-shadow:0 0 24px var(--glow-green)}
+/* ============ Result Summary ============ */
+.res-summary{
+  background:linear-gradient(135deg,var(--bg-dark) 0%,var(--bg-dark-2) 100%);
+  border:2px solid var(--orange);
+  border-radius:12px;padding:22px 16px;margin:14px 0;
+  text-align:center;color:#fff;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 28px rgba(31,26,18,.3);
+}
+.res-summary::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:5px;
+  background:repeating-linear-gradient(
+    -45deg,
+    var(--yellow) 0, var(--yellow) 10px,
+    var(--bg-dark) 10px, var(--bg-dark) 20px
+  );
+}
+.res-summary .lbl{
+  position:relative;z-index:1;
+  font-size:11.5px;color:#B8A78A;
+  letter-spacing:2.5px;text-transform:uppercase;font-weight:800;
+  margin-top:10px;
+}
+.res-summary .val{
+  position:relative;z-index:1;
+  font-family:'Courier New',monospace;
+  font-size:48px;
+  font-weight:900;
+  color:var(--orange);
+  text-shadow:0 0 30px var(--orange-glow);
+  margin:12px 0;line-height:1;direction:ltr;
+  letter-spacing:-2px;
+  font-variant-numeric:tabular-nums;
+}
+.res-summary .unit{
+  position:relative;z-index:1;
+  font-size:14px;color:#E0D5BC;font-weight:700;
+}
+.res-summary.blue{border-color:var(--blue)}
+.res-summary.blue .val{color:#38BDF8;text-shadow:0 0 30px var(--blue-glow)}
+.res-summary.green{border-color:var(--green)}
+.res-summary.green .val{color:#4ADE80;text-shadow:0 0 30px var(--green-glow)}
 
-.res-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;gap:12px;font-size:13px;border-bottom:1px solid var(--border)}
+/* ============ Result Rows ============ */
+.res-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;gap:12px;font-size:13px;
+  border-bottom:1px dashed var(--border-soft);
+}
 .res-row:last-child{border-bottom:none}
 .res-row .lbl{color:var(--text-2);flex:1;font-weight:600}
-.res-row .val{color:var(--steel);font-weight:800;font-family:'Courier New',monospace;font-size:14.5px}
+.res-row .val{
+  color:var(--graphite-2);
+  font-weight:900;
+  font-family:'Courier New',monospace;
+  font-size:15.5px;
+  letter-spacing:-0.3px;
+}
 .res-row.cost .val{color:var(--orange-2)}
-.res-row.auto .val{color:var(--green)}
+.res-row.auto .val{color:var(--green-2)}
 .res-row.big{padding:14px 0;font-size:14.5px}
-.res-row.big .val{font-size:19px;font-weight:900}
+.res-row.big .val{font-size:20px;font-weight:900}
 
-.info-box{background:#F0F7FF;border:1px solid #B8D4EC;border-right:4px solid var(--blue);border-radius:9px;padding:12px 14px;font-size:12.5px;line-height:1.9;color:var(--text);margin-top:12px}
-.info-box b{color:var(--blue);font-weight:800}
-.info-box.orange{background:#FFF5EB;border-color:#F8C99A;border-right-color:var(--orange)}
+/* ============ Info Banners ============ */
+.info-box{
+  background:#EFF6FF;
+  border:1.5px solid #BFDBFE;
+  border-right:5px solid var(--blue);
+  border-radius:8px;padding:12px 14px;
+  color:var(--blue-2);font-size:12.5px;
+  line-height:1.9;margin-top:12px;
+}
+.info-box b{color:var(--blue);font-weight:900}
+.info-box.orange{background:#FFF5EB;border-color:#F5D5B0;border-right-color:var(--orange)}
 .info-box.orange b{color:var(--orange-2)}
-.info-box.green{background:#EDF9F1;border-color:#A8DABC;border-right-color:var(--green)}
-.info-box.green b{color:var(--green-2)}
-.info-box.red{background:#FEF2F2;border-color:#F8B8B8;border-right-color:var(--red)}
+.info-box.green{background:#F0FDF4;border-color:#BBF7D0;border-right-color:var(--green)}
+.info-box.green b{color:var(--green)}
+.info-box.red{background:#FEF2F2;border-color:#FECACA;border-right-color:var(--red)}
 .info-box.red b{color:var(--red)}
+.info-box.yellow{
+  background:repeating-linear-gradient(
+    -45deg,
+    rgba(217,119,6,.15) 0, rgba(217,119,6,.15) 10px,
+    rgba(217,119,6,.05) 10px, rgba(217,119,6,.05) 20px
+  );
+  border-color:var(--yellow);border-right-color:var(--yellow-2);
+}
+.info-box.yellow b{color:var(--yellow-2)}
 
-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;background:#fff;border-radius:8px;overflow:hidden}
-th,td{padding:11px 8px;text-align:center;border-bottom:1px solid var(--border)}
-th{background:var(--card-alt);color:var(--steel);font-weight:900;font-size:12.5px}
-td{color:var(--text);font-family:'Courier New',monospace;font-weight:800;font-size:14px}
+/* ============ Tables ============ */
+table{
+  width:100%;border-collapse:collapse;
+  font-size:13.5px;
+  background:#FFFDF8;
+  border-radius:8px;overflow:hidden;
+  border:1.5px solid var(--border-soft);
+}
+th,td{padding:12px 8px;text-align:center;border-bottom:1px solid var(--border-soft)}
+th{
+  background:var(--graphite);color:#fff;
+  font-weight:800;font-size:12.5px;letter-spacing:.3px;
+}
+td{
+  color:#1F1A12;
+  font-family:'Courier New',monospace;
+  font-weight:900;font-size:15px;
+  letter-spacing:-0.3px;
+}
+tr:nth-child(even) td{background:#FAF7EF}
 tr.best td{background:#DCFCE7;color:#166534;font-weight:900}
 tr:last-child td{border-bottom:none}
 
-.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+/* ============ Comparison Grid ============ */
+.compare-wrap{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;
+}
 .compare-wrap.three{grid-template-columns:1fr 1fr 1fr}
-@media(max-width:900px){.compare-wrap.three{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.compare-wrap,.compare-wrap.three{grid-template-columns:1fr}}
-.compare-col{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;overflow:hidden}
-.compare-col::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
-.compare-col.alt::before{background:linear-gradient(90deg,var(--orange),#FF9F45)}
-.compare-col.violet::before{background:linear-gradient(90deg,var(--violet),#8B5CF6)}
-.compare-col h4{margin:0 0 10px;font-size:13px;font-weight:800;color:var(--steel);text-align:center;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.compare-col.best-col{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-color:#86EFAC}
-.compare-col.best-col::before{background:linear-gradient(90deg,var(--green),var(--green-2))}
-.compare-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px}
-.compare-row .lbl{color:var(--text-3)}
-.compare-row .val{font-family:'Courier New',monospace;font-weight:800;color:var(--steel);font-size:13.5px}
-.compare-col.alt .compare-row .val{color:var(--orange-2)}
-.compare-col.violet .compare-row .val{color:var(--violet)}
+.compare-wrap.four{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.compare-wrap.four{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.compare-wrap.three,.compare-wrap.four{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.compare-wrap,.compare-wrap.three,.compare-wrap.four{grid-template-columns:1fr}}
 
-.price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);gap:10px}
+.compare-col{
+  background:#FFFDF8;
+  border:1.5px solid var(--border-soft);
+  border-radius:10px;padding:14px;
+  position:relative;overflow:hidden;
+}
+.compare-col::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--graphite);
+}
+.compare-col.best-col::before{background:var(--green)}
+.compare-col.best-col{
+  border:2px solid var(--green);
+  background:linear-gradient(135deg,#F0FDF4,#E0F7E6);
+  box-shadow:0 4px 16px rgba(21,128,61,.15);
+}
+.compare-col h4{
+  margin:0 0 10px;font-size:13px;font-weight:800;
+  color:var(--bg-dark);text-align:center;
+  padding-bottom:8px;border-bottom:1.5px solid var(--border-soft);
+}
+.compare-row{
+  display:flex;justify-content:space-between;
+  padding:7px 0;font-size:12.5px;
+  border-bottom:1px dashed var(--border-soft);
+}
+.compare-row:last-child{border-bottom:none}
+.compare-row .lbl{color:var(--text-3);font-weight:600}
+.compare-row .val{
+  font-family:'Courier New',monospace;
+  font-weight:900;
+  color:var(--graphite-2);
+  font-size:14.5px;
+  letter-spacing:-0.3px;
+}
+.compare-col.best-col .compare-row .val{color:var(--green-2)}
+
+/* ============ Price Rows ============ */
+.price-section-title{
+  color:var(--orange-2);font-size:13px;
+  margin:16px 0 8px;font-weight:800;
+  padding-bottom:6px;border-bottom:2px solid var(--border-soft);
+}
+.price-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px dashed var(--border-soft);gap:10px;
+}
 .price-row:last-child{border-bottom:none}
-.price-row label{font-size:12px;color:var(--text-2);flex:1;font-weight:600}
-.price-row input{width:140px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;text-align:left;direction:ltr;background:#fff;color:var(--blue-2);font-weight:800;font-family:'Courier New',monospace}
-.price-row input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--glow-blue)}
+.price-row label{font-size:12.5px;color:var(--text-2);flex:1;font-weight:600}
+.price-row input{
+  width:150px;padding:9px 11px;
+  border:1.5px solid var(--border-soft);border-radius:8px;
+  font-size:15px;text-align:left;direction:ltr;
+  background:#FFFDF8;color:var(--blue-2);
+  font-weight:900;font-family:'Courier New',monospace;
+}
+.price-row input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,93,4,.15)}
 
-.cat-use-btn{padding:6px 12px;border-radius:7px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border:none;font-family:inherit;font-weight:800;font-size:11.5px;cursor:pointer;transition:.2s}
-.cat-use-btn:hover{transform:scale(1.05)}
+/* ============ Buttons in tables ============ */
+.cat-use-btn{
+  padding:6px 14px;border-radius:7px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-2));
+  color:#fff;border:none;font-family:inherit;
+  font-weight:800;font-size:11.5px;cursor:pointer;transition:.2s;
+}
+.cat-use-btn:hover{transform:scale(1.05);box-shadow:0 3px 10px var(--orange-glow)}
 
-.save-row{display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+/* ============ Save rows (memory) ============ */
+.save-row{
+  display:flex;gap:8px;align-items:center;
+  padding:10px 0;border-bottom:1px dashed var(--border-soft);
+}
 .save-row:last-child{border-bottom:none}
 .save-row .info{flex:1;font-size:12.5px;line-height:1.7}
-.save-row .info b{color:var(--blue);font-weight:800;font-family:'Courier New',monospace}
-.save-row button{padding:6px 12px;border-radius:7px;border:1px solid #F8B8B8;font-family:inherit;font-weight:700;cursor:pointer;font-size:11px;background:#FEF2F2;color:var(--red);transition:.2s}
+.save-row .info b{color:var(--orange-2);font-weight:800;font-family:'Courier New',monospace}
+.save-row button{
+  padding:6px 12px;border-radius:7px;
+  border:1.5px solid #FECACA;
+  font-family:inherit;font-weight:700;cursor:pointer;
+  font-size:11px;background:#FEF2F2;color:var(--red);
+  transition:.2s;
+}
 .save-row button:hover{background:#FEE;transform:scale(1.05)}
 
-.empty-state{text-align:center;padding:30px 16px;color:var(--text-3);font-size:13px}
+/* ============ Empty state ============ */
+.empty-state{
+  text-align:center;padding:30px 16px;
+  color:var(--text-3);font-size:13px;
+}
 .empty-state::before{content:"📭";display:block;font-size:38px;margin-bottom:10px;opacity:.5}
 
-.footnote{font-size:11px;color:var(--text-3);text-align:center;margin-top:24px;line-height:1.9;padding:0 10px}
-
-.mode-tabs{display:flex;gap:6px;background:var(--card-alt);border:1px solid var(--border);border-radius:10px;padding:5px;margin-bottom:14px}
-.mode-tab{flex:1;padding:11px 8px;border:none;background:transparent;border-radius:7px;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--text-2);cursor:pointer;transition:.2s;white-space:nowrap}
-.mode-tab.active{background:#fff;color:var(--blue);box-shadow:0 2px 6px rgba(15,27,42,.08);border:1px solid var(--blue)}
-.mode-tab:hover:not(.active){color:var(--text)}
-@media(max-width:600px){
-  .mode-tabs{flex-direction:column}
-  .mode-tab{width:100%;text-align:center}
+/* ============ Schematic SVG ============ */
+.schematic{
+  background:#FFFDF8;
+  border:1.5px solid var(--border-soft);
+  border-radius:10px;
+  padding:16px;margin:12px 0;text-align:center;
 }
+.schematic svg{max-width:100%;height:auto}
+
+/* ============ Mode tabs ============ */
+.mode-tabs{
+  display:flex;gap:6px;
+  background:var(--card-alt);
+  border:1.5px solid var(--border-soft);
+  border-radius:10px;padding:5px;margin-bottom:14px;
+}
+.mode-tab{
+  flex:1;padding:11px 8px;border:none;
+  background:transparent;border-radius:7px;
+  font-family:inherit;font-size:12.5px;font-weight:800;
+  color:var(--text-2);cursor:pointer;transition:.2s;
+  white-space:nowrap;
+}
+.mode-tab.active{
+  background:#fff;color:var(--orange-2);
+  box-shadow:0 2px 6px rgba(31,26,18,.08);
+  border:1.5px solid var(--orange);
+}
+.mode-tab:hover:not(.active){color:var(--text)}
+@media(max-width:600px){.mode-tabs{flex-direction:column}.mode-tab{width:100%;text-align:center}}
 .mode-body{display:none}
 .mode-body.active{display:block}
 
+/* ============ Warnings ============ */
+.warn-strip{
+  background:repeating-linear-gradient(
+    -45deg,
+    rgba(217,119,6,.15) 0, rgba(217,119,6,.15) 10px,
+    rgba(217,119,6,.05) 10px, rgba(217,119,6,.05) 20px
+  );
+  border:2px solid var(--yellow);
+  border-right:5px solid var(--yellow-2);
+  border-radius:8px;padding:12px 14px;
+  color:var(--yellow-2);font-weight:800;
+  font-size:12.5px;margin-top:12px;
+}
+
+/* ============ Footnote ============ */
+.footnote{
+  font-size:11px;color:var(--text-3);text-align:center;
+  margin-top:24px;line-height:1.9;padding:0 10px;
+}
+
+/* ============ Scrollbar ============ */
 ::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--blue)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--orange)}
 </style>
 </head>
 <body>
 
 <div class="sticky-top">
   <header>
-    <div class="logo-mark">
-      <img id="logo-img" alt="Logo" src="icon-192.png">
+    <div class="logo-row">
+      <div class="logo-mark">
+        <img id="logo-img" alt="Logo" src="icon-192.png">
+      </div>
+      <div class="header-text">
+        <h1>Pressure Tank Calculator</h1>
+        <p class="sub">Caspian Mobadel Amard</p>
+      </div>
     </div>
-    <h1>Pressure Tank Calculator</h1>
-    <p class="sub">Caspian Mobadel Amard</p>
-    <div class="header-line"></div>
   </header>
-
+  <div class="industrial-stripe"></div>
   <div class="tabs">
     <button class="tab active" data-tab="t1">حجم</button>
     <button class="tab" data-tab="t2">ابعاد</button>
@@ -282,15 +682,16 @@ tr:last-child td{border-bottom:none}
 
 <main>
 
-<!-- تب ۱: حجم -->
+<!-- ============ تب ۱: حجم ============ -->
 <div id="t1" class="panel active">
-  <div class="card">
+  <div class="card orange">
     <h2>محاسبه حجم از ابعاد</h2>
-    <div class="field"><label>نوع مخزن</label>
+    <div class="field">
+      <label>نوع مخزن</label>
       <select id="v-type">
         <option value="cyl-dish">استوانه با دو عدسی</option>
         <option value="cyl-flat">استوانه سر تخت</option>
-        <option value="box">مکعبی (انبساط باز)</option>
+        <option value="box">مکعبی (خم وسط)</option>
       </select>
     </div>
     <div class="row">
@@ -299,14 +700,18 @@ tr:last-child td{border-bottom:none}
       <div class="field" id="f-v-l" style="display:none"><label>طول (mm)</label><input type="number" id="v-l" step="1"></div>
       <div class="field" id="f-v-w" style="display:none"><label>عرض (mm)</label><input type="number" id="v-w" step="1"></div>
     </div>
+
+    <div id="v-schematic"></div>
+
     <button class="btn" onclick="calcVol()">محاسبه</button>
+    <button class="btn green" onclick="saveLastVolume()" style="margin-top:8px">💾 ذخیره سریع در حافظه</button>
     <div id="v-res"></div>
   </div>
 </div>
 
-<!-- تب ۲: ابعاد (با اضافه شدن مکعبی) -->
+<!-- ============ تب ۲: ابعاد ============ -->
 <div id="t2" class="panel">
-  <div class="card">
+  <div class="card blue">
     <h2>ابعاد از حجم</h2>
     <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="d-v" step="1"></div>
     <div class="field"><label>نوع مخزن</label>
@@ -325,25 +730,25 @@ tr:last-child td{border-bottom:none}
     </div>
 
     <div id="dim-box-fields" style="display:none">
-      <div class="fld-hint" style="margin-bottom:10px;padding:10px;background:#F0F7FF;border-radius:8px;border-right:3px solid var(--blue)">
-        <b>مکعب با خم وسط:</b> یک ورق دور تا دور (L+W+L+W) خم می‌شود + ۲ عدد کلاف کناری.<br>
-        یکی از ابعاد را وارد کن، بقیه خودکار محاسبه می‌شود. اگر هیچ‌کدام وارد نشود، مکعب منتظم در نظر گرفته می‌شود.
+      <div class="info-box" style="margin-bottom:10px">
+        <b>مکعبی با خم وسط:</b> یک ورق دور تا دور خم می‌شود + ۲ کلاف کناری.
+        یکی از ابعاد را وارد کن، بقیه محاسبه می‌شود. اگر هیچ‌کدام وارد نشود، مکعب منتظم.
       </div>
       <div class="row">
-        <div class="field"><label>طول (mm) — اختیاری</label><input type="number" id="d-box-l" step="10" placeholder="خالی بگذار"></div>
-        <div class="field"><label>عرض (mm) — اختیاری</label><input type="number" id="d-box-w" step="10" placeholder="خالی بگذار"></div>
+        <div class="field"><label>طول (mm) — اختیاری</label><input type="number" id="d-box-l" step="10" placeholder="خالی"></div>
+        <div class="field"><label>عرض (mm) — اختیاری</label><input type="number" id="d-box-w" step="10" placeholder="خالی"></div>
       </div>
-      <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-box-h" step="10" placeholder="خالی بگذار"></div>
+      <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-box-h" step="10" placeholder="خالی"></div>
     </div>
 
-    <button class="btn" onclick="calcDim()">محاسبه</button>
+    <button class="btn blue" onclick="calcDim()">محاسبه</button>
     <div id="d-res"></div>
   </div>
 </div>
 
-<!-- تب ۳: ورق -->
+<!-- ============ تب ۳: ورق ============ -->
 <div id="t3" class="panel">
-  <div class="card">
+  <div class="card green">
     <h2>بهینه‌سازی ورق</h2>
     <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="s-v" step="1"></div>
     <div class="row">
@@ -358,34 +763,35 @@ tr:last-child td{border-bottom:none}
       <div class="field" id="s-custom-wrap" style="display:none"><label>عرض دستی (cm)</label><input type="number" id="s-w-custom" step="1" value="150"></div>
       <div class="field"><label>طول ورق (mm)</label><input type="number" id="s-l" value="6000" step="100"></div>
     </div>
-    <div class="field"><label>حداکثر تعداد کورس</label><input type="number" id="s-max" value="10" min="1" max="20" step="1"></div>
-    <button class="btn" onclick="optSheets()">محاسبه</button>
-    <button class="btn green" onclick="compareThreeScenarios()" style="margin-top:8px">مقایسه ۳ سناریو</button>
+    <div class="row">
+      <div class="field"><label>حداکثر کورس</label><input type="number" id="s-max" value="10" min="1" max="20" step="1"></div>
+      <div class="field"><label>ارتفاع اجباری (mm) — اختیاری</label><input type="number" id="s-forced-h" step="10" placeholder="خالی"></div>
+    </div>
+    <button class="btn green" onclick="optSheets()">محاسبه</button>
+    <button class="btn blue" onclick="compareFourScenarios()" style="margin-top:8px">مقایسه ۴ سناریو</button>
     <div id="s-res"></div>
     <div id="cs-res"></div>
   </div>
 </div>
 
-<!-- تب ۴: وزن‌دهی -->
+<!-- ============ تب ۴: وزن‌دهی ============ -->
 <div id="t4" class="panel">
-  <div class="card">
-    <h2>⚖️ محاسبه‌گر وزن</h2>
-    <div class="field"><label>نوع تجهیز</label>
-      <select id="w-eq" onchange="loadEquipment('weight')">
-        <option value="spiral">منبع اسپیرال</option>
-        <option value="u_coil">منبع کوئلی U شکل</option>
-        <option value="softener">سختی‌گیر</option>
-        <option value="sand_filter">فیلتر شنی / کربنی</option>
-        <option value="deaerator">دی‌اریتور</option>
-        <option value="expansion_closed">منبع انبساط بسته</option>
-        <option value="expansion_open">منبع انبساط باز</option>
-        <option value="condensate">مخزن کندانس</option>
-      </select>
-    </div>
+  <div class="eq-select">
+    <label>نوع تجهیز</label>
+    <select id="w-eq" onchange="loadEquipment('weight')">
+      <option value="spiral">منبع اسپیرال</option>
+      <option value="u_coil">منبع کوئلی U شکل</option>
+      <option value="softener">سختی‌گیر</option>
+      <option value="sand_filter">فیلتر شنی / کربنی</option>
+      <option value="deaerator">دی‌اریتور</option>
+      <option value="expansion_closed">منبع انبساط بسته</option>
+      <option value="expansion_open">منبع انبساط باز</option>
+      <option value="condensate">مخزن کندانس</option>
+    </select>
     <div id="w-eq-header"></div>
   </div>
   <div id="w-components"></div>
-  <div class="card">
+  <div class="card orange">
     <button class="btn orange" onclick="calcWeight()">⚖️ محاسبه وزن کل</button>
     <button class="btn gray" onclick="exportPDF('weight')" style="margin-top:8px">📄 PDF</button>
     <button class="btn green" onclick="exportToExcel('weight')" style="margin-top:8px">📊 Excel (BOM)</button>
@@ -393,35 +799,33 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- تب ۵: قیمت‌گذاری -->
+<!-- ============ تب ۵: قیمت‌گذاری ============ -->
 <div id="t5" class="panel">
-  <div class="card">
-    <h2>💰 محاسبه‌گر قیمت</h2>
-    <div class="field"><label>نوع تجهیز</label>
-      <select id="c-eq" onchange="loadEquipment('cost')">
-        <option value="spiral">منبع اسپیرال</option>
-        <option value="u_coil">منبع کوئلی U شکل</option>
-        <option value="softener">سختی‌گیر</option>
-        <option value="sand_filter">فیلتر شنی / کربنی</option>
-        <option value="deaerator">دی‌اریتور</option>
-        <option value="expansion_closed">منبع انبساط بسته</option>
-        <option value="expansion_open">منبع انبساط باز</option>
-        <option value="condensate">مخزن کندانس</option>
-      </select>
-    </div>
+  <div class="eq-select">
+    <label>نوع تجهیز</label>
+    <select id="c-eq" onchange="loadEquipment('cost')">
+      <option value="spiral">منبع اسپیرال</option>
+      <option value="u_coil">منبع کوئلی U شکل</option>
+      <option value="softener">سختی‌گیر</option>
+      <option value="sand_filter">فیلتر شنی / کربنی</option>
+      <option value="deaerator">دی‌اریتور</option>
+      <option value="expansion_closed">منبع انبساط بسته</option>
+      <option value="expansion_open">منبع انبساط باز</option>
+      <option value="condensate">مخزن کندانس</option>
+    </select>
     <div id="c-eq-header"></div>
   </div>
   <div id="c-components"></div>
-  <div class="card">
+  <div class="card yellow">
     <div class="field"><label>درصد سود و مالیات</label><input type="number" id="c-profit" value="25" step="1"></div>
-    <button class="btn orange" onclick="calcCost()">💰 محاسبه قیمت</button>
+    <button class="btn" onclick="calcCost()">💰 محاسبه قیمت</button>
     <button class="btn gray" onclick="exportPDF('cost')" style="margin-top:8px">📄 PDF</button>
     <button class="btn green" onclick="exportToExcel('cost')" style="margin-top:8px">📊 Excel (BOM + قیمت)</button>
     <div id="c-result"></div>
   </div>
 </div>
 
-<!-- تب ۶: عدسی -->
+<!-- ============ تب ۶: عدسی ============ -->
 <div id="t6" class="panel">
   <div class="card violet">
     <h2>📐 سطح گسترده عدسی</h2>
@@ -452,31 +856,39 @@ tr:last-child td{border-bottom:none}
         <option value="SS316">استیل ۳۱۶</option>
       </select>
     </div>
-    <div class="fld-hint" style="margin-bottom:10px">💡 مثال: قطر ۷۵۰mm، لبه ۴۰mm → گسترده ۹۲۵mm</div>
-    <button class="btn" onclick="calcBlankHandler()">محاسبه</button>
+    <div class="info-box" style="margin-bottom:10px">💡 مثال: قطر 750mm، لبه 40mm → گسترده 925mm</div>
+    <button class="btn violet" onclick="calcBlankHandler()">محاسبه</button>
     <button class="btn green" onclick="saveHeadCalc()" style="margin-top:8px">💾 ذخیره در حافظه</button>
     <div id="h-res"></div>
   </div>
-  <div class="card">
+  <div class="card blue">
     <h2>محاسبه‌گر ارتفاع عدسی‌دار</h2>
-    <div class="fld-hint" style="margin-bottom:10px">مشتری می‌گوید «ارتفاع کل ۳۰۰۰mm می‌خواهم شامل عدسی‌ها» — اینجا حساب کن ارتفاع بدنه چقدر باشد.</div>
+    <div class="info-box" style="margin-bottom:10px">
+      مشتری «ارتفاع کل 3000mm شامل عدسی‌ها» می‌خواهد → ارتفاع بدنه چقدر؟
+    </div>
     <div class="row">
       <div class="field"><label>ارتفاع کل (mm)</label><input type="number" id="ht-total" step="10" value="3000"></div>
       <div class="field"><label>گودی هر عدسی (mm)</label><input type="number" id="ht-dish" step="5" value="107"></div>
     </div>
     <div class="field"><label>تعداد عدسی</label>
-      <select id="ht-ndish"><option value="2" selected>۲ عدد (بالا و پایین)</option><option value="1">۱ عدد</option><option value="0">بدون عدسی</option></select>
+      <select id="ht-ndish">
+        <option value="2" selected>۲ عدد (بالا و پایین)</option>
+        <option value="1">۱ عدد</option>
+        <option value="0">بدون عدسی</option>
+      </select>
     </div>
-    <button class="btn violet" onclick="calcBodyHeightFromTotal()">محاسبه ارتفاع بدنه</button>
+    <button class="btn blue" onclick="calcBodyHeightFromTotal()">محاسبه ارتفاع بدنه</button>
     <div id="ht-res"></div>
   </div>
 </div>
 
-<!-- تب ۷: سفارش مشتری -->
+<!-- ============ تب ۷: سفارش مشتری ============ -->
 <div id="t7" class="panel">
   <div class="card green">
     <h2>🎯 محاسبه‌گر سفارش مشتری</h2>
-    <div class="fld-hint" style="margin-bottom:14px;font-size:12px">مشتری یکی از سه مورد را می‌داند — انتخاب کن و بقیه را بگیر.</div>
+    <div class="info-box" style="margin-bottom:14px">
+      مشتری یکی از سه مورد را می‌داند — انتخاب کن و بقیه را بگیر.
+    </div>
 
     <div class="mode-tabs">
       <button class="mode-tab active" data-mode="A" onclick="setOrderMode('A')">ظرفیت → قطر و ارتفاع</button>
@@ -484,7 +896,7 @@ tr:last-child td{border-bottom:none}
       <button class="mode-tab" data-mode="C" onclick="setOrderMode('C')">قطر → ارتفاع</button>
     </div>
 
-    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="ro-v" step="1" placeholder="مثلاً 7000"></div>
+    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="ro-v" step="1" placeholder="7000"></div>
 
     <div id="ro-fields-A" class="mode-body active">
       <div class="row">
@@ -501,7 +913,7 @@ tr:last-child td{border-bottom:none}
 
     <div id="ro-fields-B" class="mode-body">
       <div class="row">
-        <div class="field"><label>ارتفاع درخواستی مشتری (mm)</label><input type="number" id="ro-h" step="10" placeholder="مثلاً 3000"></div>
+        <div class="field"><label>ارتفاع درخواستی (mm)</label><input type="number" id="ro-h" step="10" placeholder="3000"></div>
         <div class="field"><label>عرض ورق (cm)</label>
           <select id="ro-w-b">
             <option value="150">۱۵۰</option>
@@ -515,7 +927,7 @@ tr:last-child td{border-bottom:none}
 
     <div id="ro-fields-C" class="mode-body">
       <div class="row">
-        <div class="field"><label>قطر درخواستی مشتری (mm)</label><input type="number" id="ro-d" step="10" placeholder="مثلاً 1600"></div>
+        <div class="field"><label>قطر درخواستی (mm)</label><input type="number" id="ro-d" step="10" placeholder="1600"></div>
         <div class="field"><label>عرض ورق (cm)</label>
           <select id="ro-w-c">
             <option value="150">۱۵۰</option>
@@ -532,7 +944,7 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- تب ۸: حافظه -->
+<!-- ============ تب ۸: حافظه ============ -->
 <div id="t8" class="panel">
   <div class="card">
     <h2>💾 حافظه محاسبات</h2>
@@ -542,12 +954,12 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- تب ۹: قیمت‌ها -->
+<!-- ============ تب ۹: قیمت‌ها ============ -->
 <div id="t9" class="panel">
-  <div class="card orange">
+  <div class="card yellow">
     <h2>📊 ویرایش قیمت‌ها</h2>
     <div class="row">
-      <button class="btn" onclick="syncFromFirebase()">📥 دریافت از سرور</button>
+      <button class="btn blue" onclick="syncFromFirebase()">📥 دریافت از سرور</button>
       <button class="btn orange" onclick="syncToFirebase()">📤 ارسال به سرور</button>
     </div>
     <div id="price-status"></div>
@@ -558,9 +970,9 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- تب ۱۰: کاتالوگ -->
+<!-- ============ تب ۱۰: کاتالوگ ============ -->
 <div id="t10" class="panel">
-  <div class="card">
+  <div class="card orange">
     <h2>📚 کاتالوگ محصولات</h2>
     <div class="field"><label>دسته‌بندی</label><select id="cat-category" onchange="renderCatalog()"></select></div>
     <div class="field"><label>🔍 جستجو</label><input type="text" id="cat-search" placeholder="مثلاً 3000" oninput="renderCatalog()"></div>
