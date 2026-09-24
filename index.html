@@ -10,6 +10,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
 <style>
 :root{
   --bg-main:#F5EFE0;--bg-soft:#FAF6EB;--bg-warm:#EDE4CE;
@@ -22,6 +23,7 @@
   --yellow:#D97706;--yellow-2:#A16207;
   --red:#C2410C;--red-2:#9A3412;
   --graphite:#3F3A32;--graphite-2:#2D2820;
+  --violet:#7C3AED;--violet-2:#5B21B6;
   --text:#1F1A12;--text-2:#574B3A;--text-3:#7A6D57;--text-light:#FAF6EB;
   --radius:10px;
 }
@@ -62,14 +64,14 @@ main{padding:16px;max-width:880px;margin:0 auto}
 .section-title::before{content:"";width:4px;height:20px;background:linear-gradient(180deg,var(--orange),var(--orange-2));border-radius:1px;box-shadow:0 0 8px var(--orange-glow)}
 .section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border-soft),transparent)}
 
-.card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(31,26,18,.06),0 1px 2px rgba(31,26,18,.04);position:relative;overflow:hidden}
+.card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(31,26,18,.06);position:relative;overflow:hidden}
 .card::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,var(--graphite),var(--graphite-2))}
 .card.orange::before{background:linear-gradient(180deg,var(--orange),var(--orange-2))}
 .card.blue::before{background:linear-gradient(180deg,var(--blue),var(--blue-2))}
 .card.green::before{background:linear-gradient(180deg,var(--green),var(--green-2))}
 .card.yellow::before{background:linear-gradient(180deg,var(--yellow),var(--yellow-2))}
 .card.red::before{background:linear-gradient(180deg,var(--red),var(--red-2))}
-.card.violet::before{background:linear-gradient(180deg,#7C3AED,#5B21B6)}
+.card.violet::before{background:linear-gradient(180deg,var(--violet),var(--violet-2))}
 .card h2{margin:0 0 14px;font-size:15px;font-weight:800;color:var(--bg-dark);display:flex;align-items:center;gap:10px;padding-right:8px}
 .card h2::before{content:"";width:4px;height:16px;background:var(--orange);border-radius:1px}
 
@@ -82,16 +84,18 @@ main{padding:16px;max-width:880px;margin:0 auto}
 
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-@media(max-width:560px){.row,.row3{grid-template-columns:1fr}}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.row3,.row4{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.row,.row3,.row4{grid-template-columns:1fr}}
 
 .btn{display:block;width:100%;padding:15px;background:linear-gradient(135deg,var(--orange),var(--orange-2));color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 12px var(--orange-glow)}
 .btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--orange-glow)}
-.btn:active{transform:translateY(0)}
 .btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue-2));box-shadow:0 4px 12px var(--blue-glow)}
 .btn.green{background:linear-gradient(135deg,var(--green),var(--green-2));box-shadow:0 4px 12px var(--green-glow)}
 .btn.gray{background:#F1ECE0;color:var(--text);border:1px solid var(--border-soft);box-shadow:none}
 .btn.red{background:linear-gradient(135deg,var(--red),var(--red-2));box-shadow:0 4px 12px rgba(194,65,12,.25)}
-.btn.violet{background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 4px 12px rgba(124,58,237,.25)}
+.btn.violet{background:linear-gradient(135deg,var(--violet),var(--violet-2));box-shadow:0 4px 12px rgba(124,58,237,.25)}
+.btn.small{padding:10px;font-size:12.5px;margin-top:6px}
 
 .eq-select{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(31,26,18,.06);position:relative;overflow:hidden}
 .eq-select::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,var(--orange),var(--orange-2))}
@@ -114,7 +118,7 @@ main{padding:16px;max-width:880px;margin:0 auto}
 .comp.blue::before{background:var(--blue)}
 .comp.green::before{background:var(--green)}
 .comp.yellow::before{background:var(--yellow)}
-.comp.violet::before{background:#7C3AED}
+.comp.violet::before{background:var(--violet)}
 .comp.on{box-shadow:0 4px 14px rgba(31,26,18,.1)}
 .comp-head{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;background:var(--card-alt);transition:.15s}
 .comp-head:hover{background:#F0E8D2}
@@ -127,7 +131,6 @@ main{padding:16px;max-width:880px;margin:0 auto}
 .comp.on .comp-badge{display:inline-block}
 .comp-badge.weight{color:var(--orange-2);background:rgba(232,93,4,.1);border:1.5px solid rgba(232,93,4,.3)}
 .comp-badge.cost{color:#9D174D;background:#FDF2F8;border:1.5px solid #F8B8D0}
-.comp-badge.qty{color:var(--blue-2);background:#EFF6FF;border:1.5px solid #BFDBFE}
 .comp-toggle{position:relative;width:40px;height:22px;background:#E5DBC4;border:1px solid var(--border);border-radius:22px;transition:.2s;cursor:pointer;flex-shrink:0}
 .comp-toggle::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#8B7D5E;transition:.2s}
 .comp.on .comp-toggle{background:var(--orange);border-color:var(--orange)}
@@ -148,7 +151,7 @@ main{padding:16px;max-width:880px;margin:0 auto}
 .res-summary{background:linear-gradient(135deg,var(--bg-dark) 0%,var(--bg-dark-2) 100%);border:2px solid var(--orange);border-radius:12px;padding:22px 16px;margin:14px 0;text-align:center;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(31,26,18,.3)}
 .res-summary::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(-45deg,var(--yellow) 0,var(--yellow) 10px,var(--bg-dark) 10px,var(--bg-dark) 20px)}
 .res-summary .lbl{position:relative;z-index:1;font-size:11.5px;color:#B8A78A;letter-spacing:2.5px;text-transform:uppercase;font-weight:800;margin-top:10px}
-.res-summary .val{position:relative;z-index:1;font-family:'Courier New',monospace;font-size:48px;font-weight:900;color:var(--orange);text-shadow:0 0 30px var(--orange-glow);margin:12px 0;line-height:1;direction:ltr;letter-spacing:-2px}
+.res-summary .val{position:relative;z-index:1;font-family:'Courier New',monospace;font-size:46px;font-weight:900;color:var(--orange);text-shadow:0 0 30px var(--orange-glow);margin:12px 0;line-height:1;direction:ltr;letter-spacing:-2px}
 .res-summary .unit{position:relative;z-index:1;font-size:14px;color:#E0D5BC;font-weight:700}
 .res-summary.blue{border-color:var(--blue)}
 .res-summary.blue .val{color:#38BDF8;text-shadow:0 0 30px var(--blue-glow)}
@@ -173,6 +176,8 @@ main{padding:16px;max-width:880px;margin:0 auto}
 .info-box.green b{color:var(--green)}
 .info-box.red{background:#FEF2F2;border-color:#FECACA;border-right-color:var(--red)}
 .info-box.red b{color:var(--red)}
+.info-box.violet{background:#F5F3FF;border-color:#DDD6FE;border-right-color:var(--violet)}
+.info-box.violet b{color:var(--violet-2)}
 .info-box.yellow{background:repeating-linear-gradient(-45deg,rgba(217,119,6,.15) 0,rgba(217,119,6,.15) 10px,rgba(217,119,6,.05) 10px,rgba(217,119,6,.05) 20px);border-color:var(--yellow);border-right-color:var(--yellow-2)}
 .info-box.yellow b{color:var(--yellow-2)}
 
@@ -190,7 +195,6 @@ tr:last-child td{border-bottom:none}
 @media(max-width:900px){.compare-wrap.four{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.compare-wrap.three,.compare-wrap.four{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.compare-wrap,.compare-wrap.three,.compare-wrap.four{grid-template-columns:1fr}}
-
 .compare-col{background:#FFFDF8;border:1.5px solid var(--border-soft);border-radius:10px;padding:14px;position:relative;overflow:hidden}
 .compare-col::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--graphite)}
 .compare-col.best-col::before{background:var(--green)}
@@ -233,6 +237,25 @@ tr:last-child td{border-bottom:none}
 .mode-body{display:none}
 .mode-body.active{display:block}
 
+.qr-box{
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;border:1.5px solid var(--border-soft);
+  border-radius:10px;padding:16px;margin:12px 0;
+  flex-direction:column;gap:10px;
+}
+.qr-box canvas, .qr-box img{max-width:200px}
+
+.auto-save-badge{
+  position:fixed;bottom:16px;left:16px;
+  background:linear-gradient(135deg,var(--green),var(--green-2));
+  color:#fff;padding:8px 14px;border-radius:20px;
+  font-size:11px;font-weight:800;
+  box-shadow:0 4px 12px var(--green-glow);
+  opacity:0;transition:opacity .3s;
+  z-index:99;pointer-events:none;
+}
+.auto-save-badge.show{opacity:1}
+
 .footnote{font-size:11px;color:var(--text-3);text-align:center;margin-top:24px;line-height:1.9;padding:0 10px}
 
 ::-webkit-scrollbar{width:8px;height:8px}
@@ -257,12 +280,12 @@ tr:last-child td{border-bottom:none}
   <div class="industrial-stripe"></div>
   <div class="tabs">
     <button class="tab active" data-tab="t1">حجم</button>
-    <button class="tab" data-tab="t2">ابعاد</button>
+    <button class="tab" data-tab="t2">ابعاد و حجم</button>
     <button class="tab" data-tab="t3">ورق</button>
     <button class="tab" data-tab="t4">⚖️ وزن‌دهی</button>
     <button class="tab" data-tab="t5">💰 قیمت‌گذاری</button>
     <button class="tab" data-tab="t6">📐 عدسی</button>
-    <button class="tab" data-tab="t7">🌀 طراحی کویل</button>
+    <button class="tab" data-tab="t7">🌀 کویل</button>
     <button class="tab" data-tab="t8">🎯 سفارش مشتری</button>
     <button class="tab" data-tab="t9">💾 حافظه</button>
     <button class="tab" data-tab="t10">📊 قیمت‌ها</button>
@@ -278,7 +301,7 @@ tr:last-child td{border-bottom:none}
     <h2>محاسبه حجم از ابعاد</h2>
     <div class="field">
       <label>نوع مخزن</label>
-      <select id="v-type">
+      <select id="v-type" onchange="onVolumeTypeChange()">
         <option value="cyl-dish">استوانه با دو عدسی</option>
         <option value="cyl-flat">استوانه سر تخت</option>
         <option value="box">مکعبی (خم وسط)</option>
@@ -286,7 +309,7 @@ tr:last-child td{border-bottom:none}
     </div>
     <div class="row">
       <div class="field"><label>قطر / عرض (mm)</label><input type="number" id="v-d" step="1"></div>
-      <div class="field" id="f-v-h"><label>ارتفاع (mm)</label><input type="number" id="v-h" step="1"></div>
+      <div class="field" id="f-v-h"><label>ارتفاع جوش تا جوش (mm)</label><input type="number" id="v-h" step="1"></div>
       <div class="field" id="f-v-l" style="display:none"><label>طول (mm)</label><input type="number" id="v-l" step="1"></div>
       <div class="field" id="f-v-w" style="display:none"><label>عرض (mm)</label><input type="number" id="v-w" step="1"></div>
     </div>
@@ -297,34 +320,75 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- ============ تب ۲: ابعاد ============ -->
+<!-- ============ تب ۲: ابعاد و حجم (دوگانه) ============ -->
 <div id="t2" class="panel">
   <div class="card blue">
-    <h2>ابعاد از حجم</h2>
-    <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="d-v" step="1"></div>
-    <div class="field"><label>نوع مخزن</label>
-      <select id="d-type" onchange="toggleDimMode()">
-        <option value="cyl-dish">استوانه با عدسی</option>
-        <option value="cyl-flat">استوانه سر تخت</option>
-        <option value="box">مکعبی (خم وسط)</option>
-      </select>
+    <h2>ابعاد و حجم (دوگانه)</h2>
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="A" onclick="setDimMode('A')">ظرفیت → ابعاد</button>
+      <button class="mode-tab" data-mode="B" onclick="setDimMode('B')">ابعاد → ظرفیت</button>
     </div>
-    <div id="dim-cyl-fields">
-      <div class="row">
-        <div class="field"><label>قطر (mm) — اختیاری</label><input type="number" id="d-d" step="1"></div>
-        <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-h" step="1"></div>
+
+    <!-- حالت A: ظرفیت → ابعاد -->
+    <div id="dim-fields-A" class="mode-body active">
+      <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="d-v" step="1"></div>
+      <div class="field"><label>نوع مخزن</label>
+        <select id="d-type" onchange="toggleDimMode()">
+          <option value="cyl-dish">استوانه با عدسی</option>
+          <option value="cyl-flat">استوانه سر تخت</option>
+          <option value="box">مکعبی (خم وسط)</option>
+        </select>
       </div>
-    </div>
-    <div id="dim-box-fields" style="display:none">
-      <div class="info-box" style="margin-bottom:10px"><b>مکعبی با خم وسط:</b> یک ورق دور تا دور + ۲ کلاف کناری.</div>
-      <div class="row">
-        <div class="field"><label>طول (mm) — اختیاری</label><input type="number" id="d-box-l" step="10" placeholder="خالی"></div>
-        <div class="field"><label>عرض (mm) — اختیاری</label><input type="number" id="d-box-w" step="10" placeholder="خالی"></div>
+      <div id="dim-cyl-fields">
+        <div class="row">
+          <div class="field"><label>قطر (mm) — اختیاری</label><input type="number" id="d-d" step="1"></div>
+          <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-h" step="1"></div>
+        </div>
       </div>
-      <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-box-h" step="10" placeholder="خالی"></div>
+      <div id="dim-box-fields" style="display:none">
+        <div class="info-box" style="margin-bottom:10px"><b>مکعبی با خم وسط:</b> یک ورق دور تا دور + ۲ کلاف کناری.</div>
+        <div class="row">
+          <div class="field"><label>طول (mm) — اختیاری</label><input type="number" id="d-box-l" step="10" placeholder="خالی"></div>
+          <div class="field"><label>عرض (mm) — اختیاری</label><input type="number" id="d-box-w" step="10" placeholder="خالی"></div>
+        </div>
+        <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-box-h" step="10" placeholder="خالی"></div>
+      </div>
+      <button class="btn blue" onclick="calcDim()">محاسبه ابعاد</button>
+      <div id="d-res"></div>
     </div>
-    <button class="btn blue" onclick="calcDim()">محاسبه</button>
-    <div id="d-res"></div>
+
+    <!-- حالت B: ابعاد → ظرفیت -->
+    <div id="dim-fields-B" class="mode-body">
+      <div class="info-box" style="margin-bottom:12px">
+        <b>🆕 حالت جدید:</b> قطر و ارتفاع جوش تا جوش را وارد کن، برنامه لیتر می‌دهد.
+        این برای سختی‌گیر، فیلتر شنی، دی‌اریتور و هر تجهیزی که ابعادش را می‌دانی کاربرد دارد.
+      </div>
+      <div class="field"><label>نوع مخزن</label>
+        <select id="d2-type" onchange="toggleDimMode2()">
+          <option value="cyl-dish">استوانه با دو عدسی</option>
+          <option value="cyl-flat">استوانه سر تخت</option>
+          <option value="box">مکعبی (خم وسط)</option>
+        </select>
+      </div>
+      <div id="dim2-cyl-fields">
+        <div class="row">
+          <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="d2-d" step="1"></div>
+          <div class="field"><label>ارتفاع جوش تا جوش (mm)</label><input type="number" id="d2-h" step="1"></div>
+        </div>
+      </div>
+      <div id="dim2-box-fields" style="display:none">
+        <div class="row3">
+          <div class="field"><label>طول (mm)</label><input type="number" id="d2-l" step="10"></div>
+          <div class="field"><label>عرض (mm)</label><input type="number" id="d2-w" step="10"></div>
+          <div class="field"><label>ارتفاع (mm)</label><input type="number" id="d2-h-box" step="10"></div>
+        </div>
+      </div>
+      <button class="btn green" onclick="calcVolFromDims()">محاسبه حجم</button>
+      <button class="btn small" onclick="transferVolToDim()" style="margin-top:6px">⬆️ انتقال به حالت A</button>
+      <div id="d2-res"></div>
+      <div id="d2-schematic"></div>
+    </div>
   </div>
 </div>
 
@@ -375,8 +439,10 @@ tr:last-child td{border-bottom:none}
   <div id="w-components"></div>
   <div class="card orange">
     <button class="btn orange" onclick="calcWeight()">⚖️ محاسبه وزن کل</button>
-    <button class="btn gray" onclick="exportPDF('weight')" style="margin-top:8px">📄 PDF</button>
-    <button class="btn green" onclick="exportToExcel('weight')" style="margin-top:8px">📊 Excel (BOM)</button>
+    <div class="row" style="margin-top:8px">
+      <button class="btn gray" onclick="exportPDF('weight')" style="margin-top:0">📄 PDF</button>
+      <button class="btn green" onclick="exportToExcel('weight')" style="margin-top:0">📊 Excel</button>
+    </div>
     <div id="w-result"></div>
   </div>
 </div>
@@ -401,8 +467,10 @@ tr:last-child td{border-bottom:none}
   <div class="card yellow">
     <div class="field"><label>درصد سود و مالیات</label><input type="number" id="c-profit" value="25" step="1"></div>
     <button class="btn" onclick="calcCost()">💰 محاسبه قیمت</button>
-    <button class="btn gray" onclick="exportPDF('cost')" style="margin-top:8px">📄 PDF</button>
-    <button class="btn green" onclick="exportToExcel('cost')" style="margin-top:8px">📊 Excel (BOM + قیمت)</button>
+    <div class="row" style="margin-top:8px">
+      <button class="btn gray" onclick="exportPDF('cost')" style="margin-top:0">📄 PDF</button>
+      <button class="btn green" onclick="exportToExcel('cost')" style="margin-top:0">📊 Excel</button>
+    </div>
     <div id="c-result"></div>
   </div>
 </div>
@@ -411,37 +479,118 @@ tr:last-child td{border-bottom:none}
 <div id="t6" class="panel">
   <div class="card violet">
     <h2>📐 سطح گسترده عدسی</h2>
-    <div class="field"><label>نوع عدسی (پیش‌فرض گودی)</label>
-      <select id="h-type" onchange="applyHeadPreset()">
-        <option value="shallow">کم‌عمق صنعتی (D/15)</option>
-        <option value="torisph">تورسفریکال (0.194D)</option>
-        <option value="ellip">بیضوی (0.25D)</option>
-        <option value="hemi">نیم‌کره (0.5D)</option>
-        <option value="custom">دستی</option>
-      </select>
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="simple" onclick="setHeadMode('simple')">ساده</button>
+      <button class="mode-tab" data-mode="pro" onclick="setHeadMode('pro')">Plate & Sheet</button>
     </div>
-    <div class="row">
-      <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="h-d" step="1" oninput="applyHeadPreset()" placeholder="750"></div>
-      <div class="field"><label>طول لبه (mm)</label><input type="number" id="h-l" step="1" value="40"></div>
+
+    <!-- حالت ساده -->
+    <div id="head-fields-simple" class="mode-body active">
+      <div class="field"><label>نوع عدسی (پیش‌فرض گودی)</label>
+        <select id="h-type" onchange="applyHeadPreset()">
+          <option value="shallow">کم‌عمق صنعتی (D/15)</option>
+          <option value="torisph">تورسفریکال (0.194D)</option>
+          <option value="ellip">بیضوی (0.25D)</option>
+          <option value="hemi">نیم‌کره (0.5D)</option>
+          <option value="custom">دستی</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="h-d" step="1" oninput="applyHeadPreset()" placeholder="750"></div>
+        <div class="field"><label>طول لبه (mm)</label><input type="number" id="h-l" step="1" value="40"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>گودی h (mm)</label><input type="number" id="h-h" step="1"></div>
+        <div class="field"><label>ضخامت (mm)</label><input type="number" id="h-t" step="0.1" value="6"></div>
+      </div>
+      <div class="field"><label>جنس ورق</label>
+        <select id="h-mat">
+          <option value="ST37">ST37</option>
+          <option value="S235JR">S235JR</option>
+          <option value="A516-70">A516 Gr70</option>
+          <option value="Galvanized">گالوانیزه</option>
+          <option value="SS304">استیل ۳۰۴</option>
+          <option value="SS316">استیل ۳۱۶</option>
+        </select>
+      </div>
+      <button class="btn violet" onclick="calcBlankHandler()">محاسبه</button>
+      <button class="btn green small" onclick="saveHeadCalc()" style="margin-top:6px">💾 ذخیره</button>
+      <div id="h-res"></div>
     </div>
-    <div class="row">
-      <div class="field"><label>گودی h (mm)</label><input type="number" id="h-h" step="1"></div>
-      <div class="field"><label>ضخامت (mm)</label><input type="number" id="h-t" step="0.1" value="6"></div>
+
+    <!-- حالت Plate & Sheet -->
+    <div id="head-fields-pro" class="mode-body">
+      <div class="info-box violet" style="margin-bottom:12px">
+        <b>🆕 حالت Plate & Sheet:</b> با محاسبه Springback، تعداد مرحله پرس، و Nesting روی ورق.
+      </div>
+      <div class="row">
+        <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="hp-d" step="1"></div>
+        <div class="field"><label>گودی h (mm)</label><input type="number" id="hp-h" step="1"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label>ضخامت (mm)</label><input type="number" id="hp-t" step="0.1" value="6"></div>
+        <div class="field"><label>جنس</label>
+          <select id="hp-mat">
+            <option value="ST37">ST37</option>
+            <option value="S235JR">S235JR</option>
+            <option value="A516-70">A516 Gr70</option>
+            <option value="SS304">استیل ۳۰۴</option>
+            <option value="SS316">استیل ۳۱۶</option>
+          </select>
+        </div>
+        <div class="field"><label>نوع عدسی</label>
+          <select id="hp-type">
+            <option value="torisph">تورسفریکال</option>
+            <option value="ellip">بیضوی 2:1</option>
+            <option value="hemi">نیم‌کره</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>طول لبه (mm)</label><input type="number" id="hp-l" step="1" value="40"></div>
+        <div class="field"><label>عرض ورق (mm)</label><input type="number" id="hp-sheet-w" value="1500" step="100"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>طول ورق (mm)</label><input type="number" id="hp-sheet-l" value="6000" step="100"></div>
+        <div class="field"><label>شعاع قالب (mm)</label><input type="number" id="hp-tool-r" step="1" placeholder="خالی = D"></div>
+      </div>
+      <button class="btn violet" onclick="calcHeadPlateSheet()">محاسبه Plate & Sheet</button>
+      <div id="hp-res"></div>
     </div>
-    <div class="field"><label>جنس ورق</label>
-      <select id="h-mat">
-        <option value="ST37">ST37</option>
-        <option value="S235JR">S235JR</option>
-        <option value="A516-70">A516 Gr70</option>
-        <option value="Galvanized">گالوانیزه</option>
-        <option value="SS304">استیل ۳۰۴</option>
-        <option value="SS316">استیل ۳۱۶</option>
-      </select>
-    </div>
-    <button class="btn violet" onclick="calcBlankHandler()">محاسبه</button>
-    <button class="btn green" onclick="saveHeadCalc()" style="margin-top:8px">💾 ذخیره در حافظه</button>
-    <div id="h-res"></div>
   </div>
+
+  <!-- بخش عدسی قاچ‌قاچ -->
+  <div class="card blue">
+    <h2>🥧 عدسی قاچ‌قاچ (Segmented Head)</h2>
+    <div class="info-box" style="margin-bottom:12px">
+      <b>کاربرد:</b> وقتی عدسی خیلی بزرگ است و نمی‌شود یکجا پرس کرد، آن را به صورت قاچ‌قاچ می‌سازند.
+    </div>
+    <div class="row">
+      <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="sh-d" step="1" placeholder="3000"></div>
+      <div class="field"><label>گودی h (mm)</label><input type="number" id="sh-h" step="1" placeholder="400"></div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>تعداد قاچ</label>
+        <select id="sh-n">
+          <option value="4">۴ قاچ</option>
+          <option value="6">۶ قاچ</option>
+          <option value="8" selected>۸ قاچ</option>
+          <option value="12">۱۲ قاچ</option>
+          <option value="16">۱۶ قاچ</option>
+          <option value="24">۲۴ قاچ</option>
+          <option value="32">۳۲ قاچ</option>
+        </select>
+      </div>
+      <div class="field"><label>طول لبه (mm)</label><input type="number" id="sh-l" value="40" step="1"></div>
+      <div class="field"><label>ضخامت (mm)</label><input type="number" id="sh-t" value="8" step="0.1"></div>
+    </div>
+    <button class="btn blue" onclick="calcSegmentedHead()">محاسبه قاچ‌قاچ</button>
+    <button class="btn small" onclick="exportSegmentedSVG()" style="margin-top:6px">⬇️ دانلود SVG</button>
+    <div id="sh-res"></div>
+    <div id="sh-schematic"></div>
+  </div>
+
   <div class="card blue">
     <h2>محاسبه‌گر ارتفاع عدسی‌دار</h2>
     <div class="row">
@@ -455,21 +604,19 @@ tr:last-child td{border-bottom:none}
         <option value="0">بدون عدسی</option>
       </select>
     </div>
-    <button class="btn blue" onclick="calcBodyHeightFromTotal()">محاسبه ارتفاع بدنه</button>
+    <button class="btn blue" onclick="calcBodyHeightFromTotal()">محاسبه</button>
     <div id="ht-res"></div>
   </div>
 </div>
 
-<!-- ============ تب ۷: طراحی کویل ============ -->
+<!-- ============ تب ۷: کویل ============ -->
 <div id="t7" class="panel">
   <div class="card green">
     <h2>🌀 طراحی کویل فنری داخل مخزن</h2>
-    <div class="info-box" style="margin-bottom:14px">
-      کویل فنری پیوسته — دورها چسبیده — فاصله از جوش مشخص
-    </div>
+    <div class="info-box" style="margin-bottom:14px">کویل فنری پیوسته — دورها چسبیده — فاصله از جوش مشخص</div>
     <div class="row">
       <div class="field"><label>قطر مخزن (mm)</label><input type="number" id="coil-Dtank" value="1400" step="50"></div>
-      <div class="field"><label>ارتفاع بدنه مخزن (mm)</label><input type="number" id="coil-Htank" value="2000" step="50"></div>
+      <div class="field"><label>ارتفاع بدنه (mm)</label><input type="number" id="coil-Htank" value="2000" step="50"></div>
     </div>
     <div class="row">
       <div class="field"><label>گودی هر عدسی (mm)</label><input type="number" id="coil-dish" value="100" step="5"></div>
@@ -491,8 +638,8 @@ tr:last-child td{border-bottom:none}
       <div class="field"><label>تعداد شاخه</label><input type="number" id="coil-branches" value="4" step="1" min="1"></div>
       <div class="field"><label>گام (mm) — 0=چسبیده</label><input type="number" id="coil-gap" value="0" step="1" min="0"></div>
     </div>
-    <button class="btn green" onclick="updateCoilDesign()">محاسبه طراحی کویل</button>
-    <button class="btn orange" onclick="saveCoilDesign()" style="margin-top:8px">💾 ذخیره طراحی</button>
+    <button class="btn green" onclick="updateCoilDesign()">محاسبه کویل</button>
+    <button class="btn small" onclick="saveCoilDesign()" style="margin-top:6px">💾 ذخیره</button>
     <div class="schematic" id="coil-schematic"></div>
     <div id="coil-info"></div>
     <div id="coil-warning"></div>
@@ -504,7 +651,7 @@ tr:last-child td{border-bottom:none}
   <div class="card green">
     <h2>🎯 محاسبه‌گر سفارش مشتری</h2>
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="A" onclick="setOrderMode('A')">ظرفیت → قطر و ارتفاع</button>
+      <button class="mode-tab active" data-mode="A" onclick="setOrderMode('A')">ظرفیت → ابعاد</button>
       <button class="mode-tab" data-mode="B" onclick="setOrderMode('B')">ارتفاع → قطر</button>
       <button class="mode-tab" data-mode="C" onclick="setOrderMode('C')">قطر → ارتفاع</button>
     </div>
@@ -543,8 +690,10 @@ tr:last-child td{border-bottom:none}
   <div class="card">
     <h2>💾 حافظه محاسبات</h2>
     <div id="mem-list"></div>
-    <button class="btn gray" onclick="exportMemory()" style="margin-top:10px">⬇ خروجی CSV</button>
-    <button class="btn red" onclick="clearMemory()" style="margin-top:8px">🗑 پاک کردن همه</button>
+    <div class="row" style="margin-top:10px">
+      <button class="btn gray" onclick="exportMemory()" style="margin-top:0">⬇️ CSV</button>
+      <button class="btn red" onclick="clearMemory()" style="margin-top:0">🗑 پاک</button>
+    </div>
   </div>
 </div>
 
@@ -558,9 +707,10 @@ tr:last-child td{border-bottom:none}
     </div>
     <div id="price-status"></div>
     <div id="price-editor"></div>
-    <button class="btn green" onclick="savePricesLocal(true)" style="margin-top:10px">💾 ذخیره محلی</button>
-    <button class="btn gray" onclick="resetPrices()" style="margin-top:8px">↺ بازگشت</button>
-    <button class="btn gray" onclick="exportPrices()" style="margin-top:8px">⬇ JSON</button>
+    <div class="row" style="margin-top:10px">
+      <button class="btn green" onclick="savePricesLocal(true)" style="margin-top:0">💾 ذخیره</button>
+      <button class="btn gray" onclick="resetPrices()" style="margin-top:0">↺ بازگشت</button>
+    </div>
   </div>
 </div>
 
@@ -580,6 +730,8 @@ tr:last-child td{border-bottom:none}
   محاسبات پیش‌طراحی است؛ نقشه مهندسی الزامی است.
 </p>
 </main>
+
+<div class="auto-save-badge" id="autoSaveBadge">💾 ذخیره خودکار</div>
 
 <script src="firebase-config.js"></script>
 <script src="prices.js"></script>
