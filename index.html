@@ -1,292 +1,695 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#1F1A12">
-<title>Pressure Tank Calculator</title>
+<title>Pressure Tank Calculator v7</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
 <style>
+/* ============================================================
+   Pressure Tank Calculator v7 — Modern Industrial Theme
+   ============================================================ */
 :root{
-  --bg-main:#F5EFE0;--bg-soft:#FAF6EB;--bg-warm:#EDE4CE;
-  --bg-dark:#1F1A12;--bg-dark-2:#3A2F22;
-  --card:#FFFFFF;--card-alt:#FAF7EF;
-  --border:#D4C8B0;--border-soft:#E5DBC4;--border-hi:#8B7D5E;
-  --orange:#E85D04;--orange-2:#BF4800;--orange-glow:rgba(232,93,4,.25);
-  --blue:#0369A1;--blue-2:#075985;--blue-glow:rgba(3,105,161,.2);
-  --green:#15803D;--green-2:#166534;--green-glow:rgba(21,128,61,.25);
-  --yellow:#D97706;--yellow-2:#A16207;
-  --red:#C2410C;--red-2:#9A3412;
-  --graphite:#3F3A32;--graphite-2:#2D2820;
-  --violet:#7C3AED;--violet-2:#5B21B6;
-  --text:#1F1A12;--text-2:#574B3A;--text-3:#7A6D57;--text-light:#FAF6EB;
-  --radius:10px;
+  --bg-0:#F2EFE9;--bg-1:#FAF8F4;--bg-2:#FFFFFF;
+  --surface:#FFFFFF;--surface-2:#FAF7F1;--surface-3:#F0ECE4;
+  --ink-0:#0F0D0A;--ink-1:#2A241C;--ink-2:#5A4E3E;--ink-3:#8A7D6A;--ink-4:#B8A892;
+  --line-soft:#E8E2D5;--line:#D8D0BE;--line-hi:#A89B80;
+  --accent:#FF6B1A;--accent-2:#E04E00;--accent-glow:rgba(255,107,26,.28);
+  --accent-2-c:#3B82F6;--accent-2-glow:rgba(59,130,246,.25);
+  --ok:#10B981;--ok-2:#059669;--ok-glow:rgba(16,185,129,.25);
+  --warn:#F59E0B;--warn-2:#D97706;
+  --err:#EF4444;--err-2:#DC2626;
+  --info:#8B5CF6;--info-2:#7C3AED;
+  --r-sm:6px;--r:10px;--r-lg:16px;--r-xl:22px;
+  --shadow-1:0 1px 2px rgba(15,13,10,.06), 0 2px 8px rgba(15,13,10,.04);
+  --shadow-2:0 2px 8px rgba(15,13,10,.08), 0 8px 24px rgba(15,13,10,.06);
+  --shadow-3:0 8px 24px rgba(15,13,10,.12), 0 24px 48px rgba(15,13,10,.08);
+  --glass:rgba(255,255,255,.72);
+  --glass-border:rgba(255,255,255,.6);
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+  --font: 'Vazirmatn', Tahoma, sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-bounce:cubic-bezier(.34,1.56,.64,1);
+  --transition:all .28s var(--ease);
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg-main);color:var(--text);font-size:14px;min-height:100vh;line-height:1.6}
+[data-theme="dark"]{
+  --bg-0:#0A0906;--bg-1:#12100C;--bg-2:#1A1712;
+  --surface:#1F1B14;--surface-2:#262219;--surface-3:#2E2A20;
+  --ink-0:#F5EFE0;--ink-1:#E8DFCC;--ink-2:#B8A78A;--ink-3:#7A6D57;--ink-4:#5A4E3E;
+  --line-soft:#2A2520;--line:#3A3228;--line-hi:#5A4E3E;
+  --accent:#FF8A3D;--accent-2:#FF6B1A;--accent-glow:rgba(255,138,61,.35);
+  --accent-2-c:#60A5FA;--accent-2-glow:rgba(96,165,250,.3);
+  --ok:#34D399;--ok-2:#10B981;--ok-glow:rgba(52,211,153,.3);
+  --warn:#FBBF24;--warn-2:#F59E0B;
+  --err:#F87171;--err-2:#EF4444;
+  --info:#A78BFA;--info-2:#8B5CF6;
+  --shadow-1:0 1px 2px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.2);
+  --shadow-2:0 2px 8px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  --shadow-3:0 8px 24px rgba(0,0,0,.5), 0 24px 48px rgba(0,0,0,.35);
+  --glass:rgba(31,27,20,.72);
+  --glass-border:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
+  font-family:var(--font);background:var(--bg-0);color:var(--ink-1);
+  font-size:14px;line-height:1.65;min-height:100vh;padding-bottom:80px;
+  transition:background .4s var(--ease), color .4s var(--ease);
   background-image:
-    linear-gradient(180deg,var(--bg-soft) 0%,var(--bg-main) 100%),
-    repeating-linear-gradient(0deg,rgba(139,125,94,.05) 0px,rgba(139,125,94,.05) 1px,transparent 1px,transparent 40px),
-    repeating-linear-gradient(90deg,rgba(139,125,94,.05) 0px,rgba(139,125,94,.05) 1px,transparent 1px,transparent 40px);
-  background-attachment:fixed;padding-bottom:60px;
+    radial-gradient(circle at 20% 0%, color-mix(in srgb,var(--accent) 8%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 80% 100%, color-mix(in srgb,var(--accent-2-c) 6%, transparent) 0%, transparent 40%),
+    repeating-linear-gradient(0deg, color-mix(in srgb,var(--ink-0) 3%, transparent) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(90deg, color-mix(in srgb,var(--ink-0) 3%, transparent) 0 1px, transparent 1px 48px);
+  background-attachment:fixed;
 }
-input[type="number"],input[type="text"]{font-family:'Courier New',monospace;font-weight:900;letter-spacing:-0.3px;font-variant-numeric:tabular-nums}
+input[type=number],input[type=text]{
+  font-family:var(--font-mono);font-weight:600;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+}
 
-/* ============ Sticky Top ============ */
-.sticky-top{position:sticky;top:0;z-index:100;background:linear-gradient(180deg,var(--bg-dark) 0%,var(--bg-dark-2) 100%);box-shadow:0 4px 20px rgba(31,26,18,.35)}
-header{padding:14px 16px 10px;text-align:center;color:var(--text-light);position:relative}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
-.logo-mark{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--orange-2));display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.15);box-shadow:0 4px 16px var(--orange-glow);overflow:hidden}
-.logo-mark img{width:100%;height:100%;object-fit:contain}
-.logo-mark svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2}
-.header-text{text-align:right}
-h1{margin:0;font-size:16px;font-weight:800;color:#fff;letter-spacing:.3px}
-.sub{margin:2px 0 0;font-size:9px;color:#B8A78A;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
-.industrial-stripe{height:6px;background:repeating-linear-gradient(-45deg,var(--yellow) 0,var(--yellow) 12px,var(--bg-dark) 12px,var(--bg-dark) 24px);border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(0,0,0,.3)}
-.tabs{display:flex;background:var(--bg-dark);overflow-x:auto;scrollbar-width:none;border-bottom:3px solid var(--orange)}
+/* ============ Sticky Header ============ */
+.sticky-top{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(180deg,var(--bg-0) 0%, color-mix(in srgb,var(--bg-0) 92%, transparent) 100%);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--line-soft);
+  box-shadow:0 4px 24px -8px color-mix(in srgb,var(--ink-0) 15%, transparent);
+}
+header{
+  padding:18px 20px 12px;
+  display:flex;justify-content:space-between;align-items:center;
+  max-width:1180px;margin:0 auto;gap:16px;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.logo-mark{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,.25);
+  position:relative;overflow:hidden;
+}
+.logo-mark::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);
+  animation:shine 4s ease-in-out infinite;
+}
+@keyframes shine{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.logo-mark svg,.logo-mark img{width:32px;height:32px;position:relative;z-index:1}
+.brand-text h1{
+  font-size:16px;font-weight:800;color:var(--ink-0);letter-spacing:-.01em;
+  background:linear-gradient(90deg,var(--ink-0),var(--accent-2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.brand-text .sub{
+  font-size:9.5px;color:var(--ink-3);letter-spacing:3px;
+  text-transform:uppercase;font-weight:700;margin-top:2px;
+}
+.header-actions{display:flex;gap:8px}
+.icon-btn{
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:var(--transition);
+}
+.icon-btn:hover{background:var(--surface-2);border-color:var(--line-hi);transform:translateY(-1px)}
+
+/* ============ Tabs ============ */
+.tabs{
+  display:flex;overflow-x:auto;scrollbar-width:none;
+  padding:8px 16px 0;gap:4px;max-width:1180px;margin:0 auto;
+}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;min-width:115px;padding:15px 13px;font-size:13px;font-weight:800;color:#8B7D5E;background:none;border:none;cursor:pointer;font-family:inherit;position:relative;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap;margin-bottom:-3px}
-.tab:hover{color:#B8A78A;background:rgba(255,255,255,.03)}
-.tab.active{color:var(--orange);border-bottom-color:var(--orange);background:linear-gradient(180deg,transparent,rgba(232,93,4,.15))}
+.tab{
+  flex:0 0 auto;padding:10px 16px;font-size:12.5px;font-weight:700;
+  color:var(--ink-3);background:transparent;border:none;cursor:pointer;
+  font-family:inherit;border-radius:10px 10px 0 0;position:relative;
+  transition:var(--transition);white-space:nowrap;letter-spacing:.2px;
+}
+.tab::after{
+  content:'';position:absolute;left:16px;right:16px;bottom:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  border-radius:3px 3px 0 0;transform:scaleX(0);transform-origin:center;
+  transition:transform .3s var(--ease-bounce);
+}
+.tab:hover{color:var(--ink-1);background:color-mix(in srgb,var(--accent) 4%, transparent)}
+.tab.active{color:var(--accent-2);background:color-mix(in srgb,var(--accent) 8%, transparent)}
+.tab.active::after{transform:scaleX(1)}
 
-main{padding:16px;max-width:880px;margin:0 auto}
-.panel{display:none;animation:fadeIn .3s}
+/* ============ Main ============ */
+main{padding:20px;max-width:1180px;margin:0 auto}
+.panel{display:none;animation:panelIn .4s var(--ease)}
 .panel.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(12px) scale(.99)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
 
-.section-title{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800;color:var(--graphite);letter-spacing:1px;text-transform:uppercase;margin:22px 0 12px}
-.section-title::before{content:"";width:4px;height:20px;background:linear-gradient(180deg,var(--orange),var(--orange-2));border-radius:1px;box-shadow:0 0 8px var(--orange-glow)}
-.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border-soft),transparent)}
+/* ============ Section Title ============ */
+.section-title{
+  display:flex;align-items:center;gap:12px;
+  font-size:11.5px;font-weight:800;color:var(--ink-2);
+  letter-spacing:1.4px;text-transform:uppercase;
+  margin:26px 0 14px;
+}
+.section-title::before{
+  content:'';width:4px;height:22px;border-radius:2px;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  box-shadow:0 0 12px var(--accent-glow);
+}
+.section-title::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--line),transparent);
+}
 
-.card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(31,26,18,.06);position:relative;overflow:hidden}
-.card::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,var(--graphite),var(--graphite-2))}
-.card.orange::before{background:linear-gradient(180deg,var(--orange),var(--orange-2))}
-.card.blue::before{background:linear-gradient(180deg,var(--blue),var(--blue-2))}
-.card.green::before{background:linear-gradient(180deg,var(--green),var(--green-2))}
-.card.yellow::before{background:linear-gradient(180deg,var(--yellow),var(--yellow-2))}
-.card.red::before{background:linear-gradient(180deg,var(--red),var(--red-2))}
-.card.violet::before{background:linear-gradient(180deg,var(--violet),var(--violet-2))}
-.card h2{margin:0 0 14px;font-size:15px;font-weight:800;color:var(--bg-dark);display:flex;align-items:center;gap:10px;padding-right:8px}
-.card h2::before{content:"";width:4px;height:16px;background:var(--orange);border-radius:1px}
+/* ============ Card ============ */
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r-lg);
+  padding:20px;margin-bottom:16px;
+  box-shadow:var(--shadow-2);
+  position:relative;overflow:hidden;
+  transition:var(--transition);
+}
+.card:hover{box-shadow:var(--shadow-3);transform:translateY(-1px)}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--ink-2),var(--ink-3));
+  opacity:.5;
+}
+.card.orange::before{background:linear-gradient(90deg,var(--accent),var(--accent-2));opacity:1}
+.card.blue::before{background:linear-gradient(90deg,var(--accent-2-c),#1E40AF);opacity:1}
+.card.green::before{background:linear-gradient(90deg,var(--ok),var(--ok-2));opacity:1}
+.card.violet::before{background:linear-gradient(90deg,var(--info),var(--info-2));opacity:1}
+.card.yellow::before{background:linear-gradient(90deg,var(--warn),var(--warn-2));opacity:1}
+.card.red::before{background:linear-gradient(90deg,var(--err),var(--err-2));opacity:1}
+.card h2{
+  margin:0 0 18px;font-size:16px;font-weight:800;color:var(--ink-0);
+  display:flex;align-items:center;gap:12px;
+}
+.card h2::before{
+  content:'';width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 4px 12px var(--accent-glow);
+  flex-shrink:0;
+}
 
-.field{margin-bottom:12px}
-.field label{display:block;font-size:11.5px;margin-bottom:6px;color:var(--text-2);font-weight:700;letter-spacing:.3px}
-.field input,.field select{width:100%;padding:13px 14px;border:2px solid var(--border-soft);border-radius:8px;font-family:inherit;background:#FFFDF8;color:var(--text);transition:.2s;-webkit-appearance:none;appearance:none}
-.field input[type="number"]{font-size:17px;font-weight:900;color:#1F1A12}
-.field select{font-size:14.5px;font-weight:700;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF4800' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px;padding-left:38px}
-.field input:focus,.field select:focus{outline:none;border-color:var(--orange);background:#fff;box-shadow:0 0 0 4px rgba(232,93,4,.15)}
+/* ============ Field / Input ============ */
+.field{margin-bottom:16px;position:relative}
+.field label{
+  display:block;font-size:11px;margin-bottom:8px;
+  color:var(--ink-2);font-weight:700;letter-spacing:.3px;
+}
+.field input,.field select{
+  width:100%;padding:14px 16px;
+  border:1.5px solid var(--line);border-radius:10px;
+  font-family:inherit;background:var(--surface);color:var(--ink-0);
+  transition:var(--transition);-webkit-appearance:none;appearance:none;
+  font-size:14px;
+}
+.field input[type=number]{
+  font-family:var(--font-mono);font-size:17px;font-weight:700;
+  letter-spacing:-.02em;
+}
+.field select{
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E04E00' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 14px center;background-size:14px;
+  padding-left:42px;font-weight:700;cursor:pointer;
+}
+.field input:focus,.field select:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-glow);
+  background:var(--surface-2);
+}
 
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
-@media(max-width:700px){.row3,.row4{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.row,.row3,.row4{grid-template-columns:1fr}}
+/* ============ Rows ============ */
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:800px){.row3,.row4{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.row,.row2,.row3,.row4{grid-template-columns:1fr}}
 
-.btn{display:block;width:100%;padding:15px;background:linear-gradient(135deg,var(--orange),var(--orange-2));color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;font-family:inherit;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 12px var(--orange-glow)}
-.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--orange-glow)}
-.btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue-2));box-shadow:0 4px 12px var(--blue-glow)}
-.btn.green{background:linear-gradient(135deg,var(--green),var(--green-2));box-shadow:0 4px 12px var(--green-glow)}
-.btn.gray{background:#F1ECE0;color:var(--text);border:1px solid var(--border-soft);box-shadow:none}
-.btn.red{background:linear-gradient(135deg,var(--red),var(--red-2));box-shadow:0 4px 12px rgba(194,65,12,.25)}
-.btn.violet{background:linear-gradient(135deg,var(--violet),var(--violet-2));box-shadow:0 4px 12px rgba(124,58,237,.25)}
-.btn.small{padding:10px;font-size:12.5px;margin-top:6px}
+/* ============ Buttons ============ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px 20px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;border:none;border-radius:10px;
+  font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit;
+  letter-spacing:.3px;transition:var(--transition);
+  box-shadow:0 4px 16px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,.2);
+  position:relative;overflow:hidden;margin-top:8px;
+}
+.btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  transform:translateX(-100%);transition:transform .6s var(--ease);
+}
+.btn:hover::before{transform:translateX(100%)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:active{transform:translateY(0)}
+.btn.blue{background:linear-gradient(135deg,var(--accent-2-c),#1E40AF);box-shadow:0 4px 16px var(--accent-2-glow), inset 0 1px 0 rgba(255,255,255,.2)}
+.btn.green{background:linear-gradient(135deg,var(--ok),var(--ok-2));box-shadow:0 4px 16px var(--ok-glow), inset 0 1px 0 rgba(255,255,255,.2)}
+.btn.violet{background:linear-gradient(135deg,var(--info),var(--info-2));box-shadow:0 4px 16px rgba(139,92,246,.28), inset 0 1px 0 rgba(255,255,255,.2)}
+.btn.gray{
+  background:var(--surface-2);color:var(--ink-1);
+  border:1.5px solid var(--line);box-shadow:none;
+}
+.btn.gray:hover{background:var(--surface-3);border-color:var(--line-hi);box-shadow:none}
+.btn.small{padding:10px 14px;font-size:12.5px;margin-top:6px}
+.btn.red{background:linear-gradient(135deg,var(--err),var(--err-2));box-shadow:0 4px 16px rgba(239,68,68,.28)}
 
-.eq-select{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(31,26,18,.06);position:relative;overflow:hidden}
-.eq-select::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,var(--orange),var(--orange-2))}
-.eq-select label{display:block;font-size:11.5px;font-weight:800;color:var(--text-2);letter-spacing:.5px;margin-bottom:10px;padding-right:8px;text-transform:uppercase}
-.eq-select select{width:100%;padding:13px 14px 13px 38px;background:#FFFDF8;border:2px solid var(--border-soft);border-radius:8px;color:var(--text);font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;transition:.2s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF4800' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 12px center;background-size:14px}
-.eq-select select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 4px rgba(232,93,4,.15)}
+/* ============ Result Summary ============ */
+.res-summary{
+  background:linear-gradient(135deg,var(--ink-0),color-mix(in srgb,var(--ink-0) 85%, var(--accent)));
+  border-radius:var(--r-lg);padding:24px;text-align:center;color:#fff;
+  position:relative;overflow:hidden;margin:18px 0;
+  box-shadow:var(--shadow-3);
+}
+.res-summary::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 0% 100%, var(--accent-glow) 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, var(--accent-2-glow) 0%, transparent 50%);
+  opacity:.8;
+}
+.res-summary::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2-c),var(--ok),var(--accent));
+  background-size:200% 100%;animation:slide 4s linear infinite;
+}
+@keyframes slide{from{background-position:0% 0}to{background-position:200% 0}}
+.res-summary .lbl{
+  position:relative;font-size:10.5px;color:rgba(255,255,255,.65);
+  letter-spacing:3px;text-transform:uppercase;font-weight:800;margin-bottom:8px;
+}
+.res-summary .val{
+  position:relative;font-family:var(--font-mono);
+  font-size:52px;font-weight:800;line-height:1;direction:ltr;
+  background:linear-gradient(135deg,#fff,var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;letter-spacing:-.03em;margin:12px 0;
+}
+.res-summary .unit{position:relative;font-size:13px;color:rgba(255,255,255,.7);font-weight:600}
+.res-summary.blue{border-color:var(--accent-2-c)}
+.res-summary.blue::after{background:linear-gradient(90deg,var(--accent-2-c),var(--info),var(--accent-2-c));background-size:200% 100%}
+.res-summary.green{border-color:var(--ok)}
+.res-summary.green::after{background:linear-gradient(90deg,var(--ok),#4ADE80,var(--ok));background-size:200% 100%}
+.res-summary.violet{border-color:var(--info)}
+.res-summary.violet::after{background:linear-gradient(90deg,var(--info),#A78BFA,var(--info));background-size:200% 100%}
 
-.eq-header{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--bg-dark),var(--bg-dark-2));border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin-top:12px;position:relative;overflow:hidden}
-.eq-header::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(232,93,4,.05) 0px,rgba(232,93,4,.05) 8px,transparent 8px,transparent 16px);pointer-events:none}
-.eq-icon{width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--orange),var(--orange-2));border-radius:10px;box-shadow:0 4px 16px var(--orange-glow);position:relative;z-index:1}
+/* ============ Result Rows ============ */
+.res-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;gap:16px;font-size:13.5px;
+  border-bottom:1px dashed var(--line-soft);
+}
+.res-row:last-child{border-bottom:none}
+.res-row .lbl{color:var(--ink-2);flex:1;font-weight:600}
+.res-row .val{
+  color:var(--ink-0);font-weight:800;
+  font-family:var(--font-mono);font-size:15.5px;letter-spacing:-.02em;
+}
+.res-row.cost .val{color:var(--accent-2)}
+.res-row.auto .val{color:var(--ok-2)}
+.res-row.qty .val{color:var(--accent-2-c)}
+.res-row.big{padding:16px 0;font-size:15px}
+.res-row.big .val{font-size:22px;font-weight:800}
+[data-theme="dark"] .res-row.cost .val{color:var(--accent)}
+[data-theme="dark"] .res-row.auto .val{color:var(--ok)}
+[data-theme="dark"] .res-row.qty .val{color:var(--accent-2-c)}
+
+/* ============ Info Box ============ */
+.info-box{
+  background:color-mix(in srgb,var(--accent-2-c) 6%, transparent);
+  border:1.5px solid color-mix(in srgb,var(--accent-2-c) 25%, transparent);
+  border-left:4px solid var(--accent-2-c);
+  border-radius:12px;padding:14px 16px;color:var(--ink-1);
+  font-size:12.5px;line-height:1.9;margin-top:14px;
+}
+.info-box b{color:var(--accent-2-c);font-weight:800}
+.info-box.orange{background:color-mix(in srgb,var(--accent) 6%, transparent);border-color:color-mix(in srgb,var(--accent) 25%, transparent);border-left-color:var(--accent)}
+.info-box.orange b{color:var(--accent-2)}
+.info-box.green{background:color-mix(in srgb,var(--ok) 6%, transparent);border-color:color-mix(in srgb,var(--ok) 25%, transparent);border-left-color:var(--ok)}
+.info-box.green b{color:var(--ok-2)}
+.info-box.red{background:color-mix(in srgb,var(--err) 6%, transparent);border-color:color-mix(in srgb,var(--err) 25%, transparent);border-left-color:var(--err)}
+.info-box.red b{color:var(--err-2)}
+.info-box.violet{background:color-mix(in srgb,var(--info) 6%, transparent);border-color:color-mix(in srgb,var(--info) 25%, transparent);border-left-color:var(--info)}
+.info-box.violet b{color:var(--info-2)}
+.info-box.yellow{background:color-mix(in srgb,var(--warn) 8%, transparent);border-color:color-mix(in srgb,var(--warn) 35%, transparent);border-left-color:var(--warn)}
+.info-box.yellow b{color:var(--warn-2)}
+
+/* ============ Schematic ============ */
+.schematic{
+  background:var(--surface-2);
+  border:1.5px solid var(--line);
+  border-radius:var(--r-lg);padding:20px;margin:16px 0;
+  text-align:center;overflow:hidden;
+  position:relative;
+}
+.schematic::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size:20px 20px;opacity:.4;pointer-events:none;
+}
+.schematic svg{max-width:100%;height:auto;position:relative;z-index:1}
+
+/* ============ Mode Tabs ============ */
+.mode-tabs{
+  display:flex;flex-wrap:wrap;gap:4px;background:var(--surface-2);
+  border:1.5px solid var(--line);border-radius:12px;padding:4px;
+  margin-bottom:16px;
+}
+.mode-tab{
+  flex:1;min-width:100px;padding:10px 18px;border:none;background:transparent;border-radius:8px;
+  font-family:inherit;font-size:12.5px;font-weight:700;
+  color:var(--ink-3);cursor:pointer;transition:var(--transition);white-space:nowrap;
+}
+.mode-tab.active{
+  background:var(--surface);color:var(--accent-2);
+  box-shadow:var(--shadow-1);
+  border:1px solid color-mix(in srgb,var(--accent) 30%, transparent);
+}
+.mode-tab:hover:not(.active){color:var(--ink-1);background:color-mix(in srgb,var(--accent) 6%, transparent)}
+.mode-body{display:none}
+.mode-body.active{display:block;animation:panelIn .3s var(--ease)}
+
+/* ============ Table ============ */
+table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  font-size:13px;background:var(--surface);
+  border-radius:12px;overflow:hidden;
+  border:1.5px solid var(--line);
+}
+th,td{padding:12px 10px;text-align:center;border-bottom:1px solid var(--line-soft)}
+th{
+  background:linear-gradient(180deg,var(--surface-2),var(--surface-3));
+  color:var(--ink-2);font-weight:800;font-size:11px;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+td{color:var(--ink-1);font-family:var(--font-mono);font-weight:700;font-size:14px}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--ink-0) 2%, transparent)}
+tr.best td{background:color-mix(in srgb,var(--ok) 12%, transparent) !important;color:var(--ok-2)}
+
+/* ============ Equipment Select ============ */
+.eq-select{
+  background:var(--surface);border:1.5px solid var(--line);
+  border-radius:var(--r-lg);padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow-1);
+}
+.eq-select label{
+  display:block;font-size:11.5px;font-weight:800;color:var(--ink-2);
+  letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;
+}
+.eq-select select{
+  width:100%;padding:13px 42px 13px 14px;
+  background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;
+  color:var(--ink-0);font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E04E00' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 14px center;background-size:14px;
+}
+.eq-select select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-glow)}
+
+.eq-header{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg,var(--ink-0),color-mix(in srgb,var(--ink-0) 80%,var(--accent)));
+  border-radius:12px;padding:16px;margin-top:12px;
+  position:relative;overflow:hidden;
+}
+.eq-header::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,rgba(255,107,26,.05) 0px,rgba(255,107,26,.05) 8px,transparent 8px,transparent 16px);
+  pointer-events:none;
+}
+.eq-icon{
+  width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:12px;
+  box-shadow:0 4px 16px var(--accent-glow);position:relative;z-index:1;
+}
 .eq-icon svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.8}
 .eq-info{flex:1;position:relative;z-index:1}
 .eq-info h3{margin:0 0 3px;font-size:15px;font-weight:800;color:#fff}
-.eq-info p{margin:0;font-size:11px;color:#B8A78A}
-.eq-info .badge{display:inline-block;padding:3px 10px;margin-top:6px;background:linear-gradient(90deg,var(--orange),var(--orange-2));color:#fff;font-size:10px;font-weight:800;border-radius:5px;letter-spacing:.4px}
+.eq-info p{margin:0;font-size:11.5px;color:rgba(255,255,255,.6)}
+.eq-info .badge{
+  display:inline-block;padding:3px 10px;margin-top:6px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:#fff;font-size:10px;font-weight:800;border-radius:5px;letter-spacing:.4px;
+}
 
-.comp{background:#FFFDF8;border:1.5px solid var(--border-soft);border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 6px rgba(31,26,18,.06);position:relative}
-.comp::before{content:"";position:absolute;top:0;right:0;bottom:0;width:5px;background:var(--graphite)}
-.comp.orange::before{background:var(--orange)}
-.comp.blue::before{background:var(--blue)}
-.comp.green::before{background:var(--green)}
-.comp.yellow::before{background:var(--yellow)}
-.comp.violet::before{background:var(--violet)}
-.comp.on{box-shadow:0 4px 14px rgba(31,26,18,.1)}
-.comp-head{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;background:var(--card-alt);transition:.15s}
-.comp-head:hover{background:#F0E8D2}
-.comp-icon{width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--border-soft);border-radius:8px}
-.comp-icon svg{width:22px;height:22px;stroke:var(--graphite);fill:none;stroke-width:2}
-.comp.on .comp-icon{background:#FFF5EB;border-color:var(--orange)}
-.comp.on .comp-icon svg{stroke:var(--orange)}
-.comp-title{flex:1;font-size:14px;font-weight:800;color:var(--bg-dark)}
-.comp-badge{font-family:'Courier New',monospace;font-size:15px;font-weight:900;padding:4px 12px;border-radius:6px;display:none;letter-spacing:-0.3px}
+/* ============ Component Cards ============ */
+.comp{
+  background:var(--surface);
+  border:1.5px solid var(--line);border-radius:14px;
+  margin-bottom:12px;overflow:hidden;
+  box-shadow:var(--shadow-1);position:relative;
+  transition:var(--transition);
+}
+.comp::before{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:4px;
+  background:var(--ink-3);transition:var(--transition);
+}
+.comp.orange::before{background:var(--accent)}
+.comp.blue::before{background:var(--accent-2-c)}
+.comp.green::before{background:var(--ok)}
+.comp.yellow::before{background:var(--warn)}
+.comp.violet::before{background:var(--info)}
+.comp.on{box-shadow:var(--shadow-2);border-color:color-mix(in srgb,var(--accent) 30%, transparent)}
+.comp-head{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  cursor:pointer;transition:var(--transition);
+}
+.comp-head:hover{background:var(--surface-2)}
+.comp-icon{
+  width:44px;height:44px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface-2);border:1.5px solid var(--line);
+  border-radius:10px;transition:var(--transition);
+}
+.comp-icon svg{width:22px;height:22px;stroke:var(--ink-2);fill:none;stroke-width:2;transition:var(--transition)}
+.comp.on .comp-icon{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent;box-shadow:0 4px 12px var(--accent-glow)}
+.comp.on .comp-icon svg{stroke:#fff}
+.comp-title{flex:1;font-size:14px;font-weight:800;color:var(--ink-0)}
+.comp-badge{
+  font-family:var(--font-mono);font-size:14px;font-weight:800;
+  padding:5px 12px;border-radius:8px;display:none;
+}
 .comp.on .comp-badge{display:inline-block}
-.comp-badge.weight{color:var(--orange-2);background:rgba(232,93,4,.1);border:1.5px solid rgba(232,93,4,.3)}
-.comp-badge.cost{color:#9D174D;background:#FDF2F8;border:1.5px solid #F8B8D0}
-.comp-toggle{position:relative;width:40px;height:22px;background:#E5DBC4;border:1px solid var(--border);border-radius:22px;transition:.2s;cursor:pointer;flex-shrink:0}
-.comp-toggle::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#8B7D5E;transition:.2s}
-.comp.on .comp-toggle{background:var(--orange);border-color:var(--orange)}
-.comp.on .comp-toggle::after{right:20px;background:#fff}
-.comp-body{display:none;padding:14px;border-top:1px solid var(--border-soft);background:#FFFDF8}
-.comp.on .comp-body{display:block}
+.comp-badge.weight{
+  color:var(--accent-2);background:color-mix(in srgb,var(--accent) 12%, transparent);
+  border:1.5px solid color-mix(in srgb,var(--accent) 30%, transparent);
+}
+.comp-badge.cost{
+  color:#DB2777;background:#FDF2F8;border:1.5px solid #FBCFE8;
+}
+.comp-toggle{
+  position:relative;width:44px;height:24px;
+  background:var(--line);border-radius:24px;transition:var(--transition);
+  cursor:pointer;flex-shrink:0;
+}
+.comp-toggle::after{
+  content:'';position:absolute;top:2px;right:2px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--surface);box-shadow:var(--shadow-1);
+  transition:var(--transition);
+}
+.comp.on .comp-toggle{background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.comp.on .comp-toggle::after{right:22px}
+.comp-body{display:none;padding:16px;border-top:1px solid var(--line-soft);background:var(--surface-2)}
+.comp.on .comp-body{display:block;animation:panelIn .3s var(--ease)}
 
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:560px){.grid-2{grid-template-columns:1fr}}
-.fld{display:flex;flex-direction:column;gap:5px}
-.fld label{font-size:11px;font-weight:700;color:var(--text-2);letter-spacing:.3px}
-.fld input,.fld select{width:100%;padding:11px 12px;background:#FFFDF8;border:1.5px solid var(--border-soft);border-radius:8px;color:var(--text);font-family:'Courier New',monospace;font-size:15.5px;font-weight:900;transition:.2s;-webkit-appearance:none;appearance:none}
-.fld select{font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:13.5px;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF4800' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:left 10px center;background-size:12px;padding-left:32px}
-.fld input:focus,.fld select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,93,4,.15)}
-.fld-hint{font-size:10.5px;color:var(--text-3);margin-top:2px;line-height:1.5}
-.fld-hint b{color:var(--green);font-weight:800}
+/* ============ Fields Grid ============ */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:11px;font-weight:700;color:var(--ink-2);letter-spacing:.3px}
+.fld input,.fld select{
+  width:100%;padding:11px 12px;
+  background:var(--surface);border:1.5px solid var(--line);
+  border-radius:9px;color:var(--ink-0);
+  font-family:var(--font-mono);font-size:15px;font-weight:700;
+  transition:var(--transition);-webkit-appearance:none;appearance:none;
+}
+.fld select{font-family:var(--font);font-size:13px;font-weight:700;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E04E00' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 12px center;background-size:12px;
+  padding-left:34px;cursor:pointer;
+}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.fld-hint{font-size:10.5px;color:var(--ink-3);line-height:1.5}
+.fld-hint b{color:var(--ok-2)}
 
-.res-summary{background:linear-gradient(135deg,var(--bg-dark) 0%,var(--bg-dark-2) 100%);border:2px solid var(--orange);border-radius:12px;padding:22px 16px;margin:14px 0;text-align:center;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(31,26,18,.3)}
-.res-summary::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(-45deg,var(--yellow) 0,var(--yellow) 10px,var(--bg-dark) 10px,var(--bg-dark) 20px)}
-.res-summary .lbl{position:relative;z-index:1;font-size:11.5px;color:#B8A78A;letter-spacing:2.5px;text-transform:uppercase;font-weight:800;margin-top:10px}
-.res-summary .val{position:relative;z-index:1;font-family:'Courier New',monospace;font-size:46px;font-weight:900;color:var(--orange);text-shadow:0 0 30px var(--orange-glow);margin:12px 0;line-height:1;direction:ltr;letter-spacing:-2px}
-.res-summary .unit{position:relative;z-index:1;font-size:14px;color:#E0D5BC;font-weight:700}
-.res-summary.blue{border-color:var(--blue)}
-.res-summary.blue .val{color:#38BDF8;text-shadow:0 0 30px var(--blue-glow)}
-.res-summary.green{border-color:var(--green)}
-.res-summary.green .val{color:#4ADE80;text-shadow:0 0 30px var(--green-glow)}
-
-.res-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;gap:12px;font-size:13px;border-bottom:1px dashed var(--border-soft)}
-.res-row:last-child{border-bottom:none}
-.res-row .lbl{color:var(--text-2);flex:1;font-weight:600}
-.res-row .val{color:var(--graphite-2);font-weight:900;font-family:'Courier New',monospace;font-size:15.5px;letter-spacing:-0.3px}
-.res-row.cost .val{color:var(--orange-2)}
-.res-row.auto .val{color:var(--green-2)}
-.res-row.qty .val{color:var(--blue-2)}
-.res-row.big{padding:14px 0;font-size:14.5px}
-.res-row.big .val{font-size:20px;font-weight:900}
-
-.info-box{background:#EFF6FF;border:1.5px solid #BFDBFE;border-right:5px solid var(--blue);border-radius:8px;padding:12px 14px;color:var(--blue-2);font-size:12.5px;line-height:1.9;margin-top:12px}
-.info-box b{color:var(--blue);font-weight:900}
-.info-box.orange{background:#FFF5EB;border-color:#F5D5B0;border-right-color:var(--orange)}
-.info-box.orange b{color:var(--orange-2)}
-.info-box.green{background:#F0FDF4;border-color:#BBF7D0;border-right-color:var(--green)}
-.info-box.green b{color:var(--green)}
-.info-box.red{background:#FEF2F2;border-color:#FECACA;border-right-color:var(--red)}
-.info-box.red b{color:var(--red)}
-.info-box.violet{background:#F5F3FF;border-color:#DDD6FE;border-right-color:var(--violet)}
-.info-box.violet b{color:var(--violet-2)}
-.info-box.yellow{background:repeating-linear-gradient(-45deg,rgba(217,119,6,.15) 0,rgba(217,119,6,.15) 10px,rgba(217,119,6,.05) 10px,rgba(217,119,6,.05) 20px);border-color:var(--yellow);border-right-color:var(--yellow-2)}
-.info-box.yellow b{color:var(--yellow-2)}
-
-table{width:100%;border-collapse:collapse;font-size:13.5px;background:#FFFDF8;border-radius:8px;overflow:hidden;border:1.5px solid var(--border-soft)}
-th,td{padding:12px 8px;text-align:center;border-bottom:1px solid var(--border-soft)}
-th{background:var(--graphite);color:#fff;font-weight:800;font-size:12.5px;letter-spacing:.3px}
-td{color:#1F1A12;font-family:'Courier New',monospace;font-weight:900;font-size:15px;letter-spacing:-0.3px}
-tr:nth-child(even) td{background:#FAF7EF}
-tr.best td{background:#DCFCE7;color:#166534;font-weight:900}
-tr:last-child td{border-bottom:none}
-
-.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.compare-wrap.three{grid-template-columns:1fr 1fr 1fr}
-.compare-wrap.four{grid-template-columns:repeat(4,1fr)}
-@media(max-width:900px){.compare-wrap.four{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.compare-wrap.three,.compare-wrap.four{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.compare-wrap,.compare-wrap.three,.compare-wrap.four{grid-template-columns:1fr}}
-.compare-col{background:#FFFDF8;border:1.5px solid var(--border-soft);border-radius:10px;padding:14px;position:relative;overflow:hidden}
-.compare-col::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--graphite)}
-.compare-col.best-col::before{background:var(--green)}
-.compare-col.best-col{border:2px solid var(--green);background:linear-gradient(135deg,#F0FDF4,#E0F7E6);box-shadow:0 4px 16px rgba(21,128,61,.15)}
-.compare-col h4{margin:0 0 10px;font-size:13px;font-weight:800;color:var(--bg-dark);text-align:center;padding-bottom:8px;border-bottom:1.5px solid var(--border-soft)}
-.compare-row{display:flex;justify-content:space-between;padding:7px 0;font-size:12.5px;border-bottom:1px dashed var(--border-soft)}
+/* ============ Compare ============ */
+.compare-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}
+.compare-col{
+  background:var(--surface);border:1.5px solid var(--line);
+  border-radius:14px;padding:16px;position:relative;overflow:hidden;
+  transition:var(--transition);
+}
+.compare-col::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--ink-3);
+}
+.compare-col.best-col::before{background:linear-gradient(90deg,var(--ok),var(--ok-2))}
+.compare-col.best-col{
+  border:2px solid var(--ok);
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--ok) 8%, var(--surface)),
+    color-mix(in srgb,var(--ok) 4%, var(--surface)));
+  box-shadow:0 8px 24px var(--ok-glow);
+}
+.compare-col h4{
+  margin:0 0 12px;font-size:13px;font-weight:800;color:var(--ink-0);
+  text-align:center;padding-bottom:10px;border-bottom:1.5px solid var(--line-soft);
+}
+.compare-row{
+  display:flex;justify-content:space-between;padding:8px 0;font-size:12.5px;
+  border-bottom:1px dashed var(--line-soft);
+}
 .compare-row:last-child{border-bottom:none}
-.compare-row .lbl{color:var(--text-3);font-weight:600}
-.compare-row .val{font-family:'Courier New',monospace;font-weight:900;color:var(--graphite-2);font-size:14.5px;letter-spacing:-0.3px}
-.compare-col.best-col .compare-row .val{color:var(--green-2)}
+.compare-row .lbl{color:var(--ink-3);font-weight:600}
+.compare-row .val{font-family:var(--font-mono);font-weight:800;color:var(--ink-0);font-size:14px}
+.compare-col.best-col .compare-row .val{color:var(--ok-2)}
 
-.price-section-title{color:var(--orange-2);font-size:13px;margin:16px 0 8px;font-weight:800;padding-bottom:6px;border-bottom:2px solid var(--border-soft)}
-.price-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--border-soft);gap:10px}
+/* ============ Auto-Save Badge ============ */
+.auto-save-badge{
+  position:fixed;bottom:24px;left:24px;z-index:99;
+  background:linear-gradient(135deg,var(--ok),var(--ok-2));
+  color:#fff;padding:10px 18px;border-radius:24px;
+  font-size:11.5px;font-weight:800;letter-spacing:.3px;
+  box-shadow:0 8px 24px var(--ok-glow), inset 0 1px 0 rgba(255,255,255,.25);
+  opacity:0;transform:translateY(20px) scale(.9);pointer-events:none;
+  transition:all .4s var(--ease-bounce);
+}
+.auto-save-badge.show{opacity:1;transform:translateY(0) scale(1)}
+
+/* ============ Empty State ============ */
+.empty-state{
+  text-align:center;padding:48px 20px;color:var(--ink-3);font-size:13px;
+}
+.empty-state::before{
+  content:"📭";display:block;font-size:48px;margin-bottom:14px;opacity:.4;
+}
+
+/* ============ Price Editor ============ */
+.price-section-title{
+  color:var(--accent-2);font-size:13px;margin:20px 0 10px;font-weight:800;
+  padding-bottom:8px;border-bottom:2px solid var(--line-soft);
+  display:flex;align-items:center;gap:8px;
+}
+.price-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px dashed var(--line-soft);gap:12px;
+}
 .price-row:last-child{border-bottom:none}
-.price-row label{font-size:12.5px;color:var(--text-2);flex:1;font-weight:600}
-.price-row input{width:150px;padding:9px 11px;border:1.5px solid var(--border-soft);border-radius:8px;font-size:15px;text-align:left;direction:ltr;background:#FFFDF8;color:var(--blue-2);font-weight:900;font-family:'Courier New',monospace}
-.price-row input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,93,4,.15)}
+.price-row label{font-size:12.5px;color:var(--ink-2);flex:1;font-weight:600}
+.price-row input{
+  width:160px;padding:9px 12px;
+  border:1.5px solid var(--line);border-radius:9px;
+  font-size:14px;text-align:left;direction:ltr;
+  background:var(--surface);color:var(--ink-0);
+  font-weight:800;font-family:var(--font-mono);
+}
+.price-row input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
 
-.cat-use-btn{padding:6px 14px;border-radius:7px;background:linear-gradient(135deg,var(--orange),var(--orange-2));color:#fff;border:none;font-family:inherit;font-weight:800;font-size:11.5px;cursor:pointer;transition:.2s}
-.cat-use-btn:hover{transform:scale(1.05);box-shadow:0 3px 10px var(--orange-glow)}
-
-.save-row{display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border-soft)}
+/* ============ Save Row ============ */
+.save-row{
+  display:flex;gap:10px;align-items:center;padding:12px 0;
+  border-bottom:1px dashed var(--line-soft);
+}
 .save-row:last-child{border-bottom:none}
 .save-row .info{flex:1;font-size:12.5px;line-height:1.7}
-.save-row .info b{color:var(--orange-2);font-weight:800;font-family:'Courier New',monospace}
-.save-row button{padding:6px 12px;border-radius:7px;border:1.5px solid #FECACA;font-family:inherit;font-weight:700;cursor:pointer;font-size:11px;background:#FEF2F2;color:var(--red);transition:.2s}
-.save-row button:hover{background:#FEE;transform:scale(1.05)}
+.save-row .info b{color:var(--accent-2);font-family:var(--font-mono)}
+.save-row button{
+  padding:7px 14px;border-radius:8px;
+  border:1.5px solid color-mix(in srgb,var(--err) 30%, transparent);
+  font-family:inherit;font-weight:700;cursor:pointer;font-size:11.5px;
+  background:color-mix(in srgb,var(--err) 8%, transparent);
+  color:var(--err-2);transition:var(--transition);
+}
+.save-row button:hover{background:color-mix(in srgb,var(--err) 16%, transparent);transform:scale(1.05)}
 
-.empty-state{text-align:center;padding:30px 16px;color:var(--text-3);font-size:13px}
-.empty-state::before{content:"📭";display:block;font-size:38px;margin-bottom:10px;opacity:.5}
-
-.schematic{background:#FFFDF8;border:1.5px solid var(--border-soft);border-radius:10px;padding:16px;margin:12px 0;text-align:center;overflow:hidden}
-.schematic svg{max-width:100%;height:auto}
-
-.mode-tabs{display:flex;gap:6px;background:var(--card-alt);border:1.5px solid var(--border-soft);border-radius:10px;padding:5px;margin-bottom:14px}
-.mode-tab{flex:1;padding:11px 8px;border:none;background:transparent;border-radius:7px;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--text-2);cursor:pointer;transition:.2s;white-space:nowrap}
-.mode-tab.active{background:#fff;color:var(--orange-2);box-shadow:0 2px 6px rgba(31,26,18,.08);border:1.5px solid var(--orange)}
-.mode-tab:hover:not(.active){color:var(--text)}
-@media(max-width:600px){.mode-tabs{flex-direction:column}.mode-tab{width:100%;text-align:center}}
-.mode-body{display:none}
-.mode-body.active{display:block}
-
+/* ============ QR Box ============ */
 .qr-box{
   display:flex;align-items:center;justify-content:center;
-  background:#fff;border:1.5px solid var(--border-soft);
-  border-radius:10px;padding:16px;margin:12px 0;
+  background:#fff;border:1.5px solid var(--line);
+  border-radius:12px;padding:16px;margin:12px 0;
   flex-direction:column;gap:10px;
 }
-.qr-box canvas, .qr-box img{max-width:200px}
+.qr-box svg,.qr-box img{max-width:200px}
 
-.auto-save-badge{
-  position:fixed;bottom:16px;left:16px;
-  background:linear-gradient(135deg,var(--green),var(--green-2));
-  color:#fff;padding:8px 14px;border-radius:20px;
-  font-size:11px;font-weight:800;
-  box-shadow:0 4px 12px var(--green-glow);
-  opacity:0;transition:opacity .3s;
-  z-index:99;pointer-events:none;
+/* ============ Footnote ============ */
+.footnote{
+  font-size:11px;color:var(--ink-3);text-align:center;
+  margin-top:32px;line-height:1.9;padding:24px 16px;
+  border-top:1px solid var(--line-soft);max-width:1180px;margin-left:auto;margin-right:auto;
 }
-.auto-save-badge.show{opacity:1}
 
-.footnote{font-size:11px;color:var(--text-3);text-align:center;margin-top:24px;line-height:1.9;padding:0 10px}
+/* ============ Scrollbar ============ */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px;border:2px solid var(--bg-0)}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--orange)}
+/* ============ Range Slider ============ */
+input[type=range]{
+  width:100%;height:6px;border-radius:3px;
+  background:var(--line);outline:none;
+  -webkit-appearance:none;appearance:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 2px 8px var(--accent-glow);cursor:pointer;
+}
 </style>
 </head>
 <body>
 
 <div class="sticky-top">
   <header>
-    <div class="logo-row">
+    <div class="brand">
       <div class="logo-mark">
         <img id="logo-img" alt="Logo" src="icon-192.png">
       </div>
-      <div class="header-text">
+      <div class="brand-text">
         <h1>Pressure Tank Calculator</h1>
-        <p class="sub">Caspian Mobadel Amard</p>
+        <p class="sub">Caspian Mobadel Amard — v7</p>
       </div>
     </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="تغییر تم">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path id="themeIcon" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
   </header>
-  <div class="industrial-stripe"></div>
   <div class="tabs">
-    <button class="tab active" data-tab="t1">حجم</button>
-    <button class="tab" data-tab="t2">ابعاد و حجم</button>
-    <button class="tab" data-tab="t3">ورق</button>
+    <button class="tab active" data-tab="t1">📦 حجم</button>
+    <button class="tab" data-tab="t2">📐 ابعاد و حجم</button>
+    <button class="tab" data-tab="t3">📄 ورق</button>
     <button class="tab" data-tab="t4">⚖️ وزن‌دهی</button>
     <button class="tab" data-tab="t5">💰 قیمت‌گذاری</button>
-    <button class="tab" data-tab="t6">📐 عدسی</button>
+    <button class="tab" data-tab="t6">🔵 عدسی</button>
     <button class="tab" data-tab="t7">🌀 کویل</button>
     <button class="tab" data-tab="t8">🎯 سفارش مشتری</button>
+    <button class="tab" data-tab="t12">🔬 ASME</button>
+    <button class="tab" data-tab="t13">⚙️ کارگاه</button>
+    <button class="tab" data-tab="t14">👁 بصری</button>
     <button class="tab" data-tab="t9">💾 حافظه</button>
     <button class="tab" data-tab="t10">📊 قیمت‌ها</button>
     <button class="tab" data-tab="t11">📚 کاتالوگ</button>
@@ -298,20 +701,20 @@ tr:last-child td{border-bottom:none}
 <!-- ============ تب ۱: حجم ============ -->
 <div id="t1" class="panel active">
   <div class="card orange">
-    <h2>محاسبه حجم از ابعاد</h2>
+    <h2>محاسبه حجم</h2>
     <div class="field">
       <label>نوع مخزن</label>
       <select id="v-type" onchange="onVolumeTypeChange()">
         <option value="cyl-dish">استوانه با دو عدسی</option>
         <option value="cyl-flat">استوانه سر تخت</option>
-        <option value="box">مکعبی (خم وسط)</option>
+        <option value="box">مکعبی ساده</option>
       </select>
     </div>
     <div class="row">
-      <div class="field"><label>قطر / عرض (mm)</label><input type="number" id="v-d" step="1"></div>
+      <div class="field"><label>قطر (mm)</label><input type="number" id="v-d" step="1"></div>
       <div class="field" id="f-v-h"><label>ارتفاع جوش تا جوش (mm)</label><input type="number" id="v-h" step="1"></div>
-      <div class="field" id="f-v-l" style="display:none"><label>طول (mm)</label><input type="number" id="v-l" step="1"></div>
-      <div class="field" id="f-v-w" style="display:none"><label>عرض (mm)</label><input type="number" id="v-w" step="1"></div>
+      <div class="field" id="f-v-l" style="display:none"><label>طول (mm)</label><input type="number" id="v-l" step="10"></div>
+      <div class="field" id="f-v-w" style="display:none"><label>عرض (mm)</label><input type="number" id="v-w" step="10"></div>
     </div>
     <div id="v-schematic"></div>
     <button class="btn" onclick="calcVol()">محاسبه</button>
@@ -320,7 +723,7 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- ============ تب ۲: ابعاد و حجم (دوگانه) ============ -->
+<!-- ============ تب ۲: ابعاد و حجم دوگانه ============ -->
 <div id="t2" class="panel">
   <div class="card blue">
     <h2>ابعاد و حجم (دوگانه)</h2>
@@ -330,14 +733,14 @@ tr:last-child td{border-bottom:none}
       <button class="mode-tab" data-mode="B" onclick="setDimMode('B')">ابعاد → ظرفیت</button>
     </div>
 
-    <!-- حالت A: ظرفیت → ابعاد -->
+    <!-- حالت A -->
     <div id="dim-fields-A" class="mode-body active">
       <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="d-v" step="1"></div>
       <div class="field"><label>نوع مخزن</label>
         <select id="d-type" onchange="toggleDimMode()">
           <option value="cyl-dish">استوانه با عدسی</option>
           <option value="cyl-flat">استوانه سر تخت</option>
-          <option value="box">مکعبی (خم وسط)</option>
+          <option value="box">مکعبی ساده</option>
         </select>
       </div>
       <div id="dim-cyl-fields">
@@ -347,9 +750,11 @@ tr:last-child td{border-bottom:none}
         </div>
       </div>
       <div id="dim-box-fields" style="display:none">
-        <div class="info-box" style="margin-bottom:10px"><b>مکعبی با خم وسط:</b> یک ورق دور تا دور + ۲ کلاف کناری.</div>
+        <div class="info-box" style="margin-bottom:10px">
+          <b>مکعبی ساده:</b> طول × عرض × ارتفاع — بدون خم وسط. اگر خالی بگذاری، نسبت بهینه ۱:۱:۱.۵ پیشنهاد می‌شود.
+        </div>
         <div class="row">
-          <div class="field"><label>طول (mm) — اختیاری</label><input type="number" id="d-box-l" step="10" placeholder="خالی"></div>
+          <div class="field"><label>طول (mm) — اختیاری</label><input type="number" id="d-box-l" step="10" placeholder="خالی = هوشمند"></div>
           <div class="field"><label>عرض (mm) — اختیاری</label><input type="number" id="d-box-w" step="10" placeholder="خالی"></div>
         </div>
         <div class="field"><label>ارتفاع (mm) — اختیاری</label><input type="number" id="d-box-h" step="10" placeholder="خالی"></div>
@@ -358,17 +763,16 @@ tr:last-child td{border-bottom:none}
       <div id="d-res"></div>
     </div>
 
-    <!-- حالت B: ابعاد → ظرفیت -->
+    <!-- حالت B -->
     <div id="dim-fields-B" class="mode-body">
       <div class="info-box" style="margin-bottom:12px">
-        <b>🆕 حالت جدید:</b> قطر و ارتفاع جوش تا جوش را وارد کن، برنامه لیتر می‌دهد.
-        این برای سختی‌گیر، فیلتر شنی، دی‌اریتور و هر تجهیزی که ابعادش را می‌دانی کاربرد دارد.
+        <b>🆕 ابعاد دادی → لیتر بگیر</b> — برای سختی‌گیر، فیلتر شنی، دی‌اریتور و هر تجهیزی که ابعادش را می‌دانی.
       </div>
       <div class="field"><label>نوع مخزن</label>
         <select id="d2-type" onchange="toggleDimMode2()">
           <option value="cyl-dish">استوانه با دو عدسی</option>
           <option value="cyl-flat">استوانه سر تخت</option>
-          <option value="box">مکعبی (خم وسط)</option>
+          <option value="box">مکعبی ساده</option>
         </select>
       </div>
       <div id="dim2-cyl-fields">
@@ -392,7 +796,7 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- ============ تب ۳: ورق ============ -->
+<!-- ============ تب ۳: بهینه‌سازی ورق ============ -->
 <div id="t3" class="panel">
   <div class="card green">
     <h2>بهینه‌سازی ورق</h2>
@@ -438,7 +842,7 @@ tr:last-child td{border-bottom:none}
   </div>
   <div id="w-components"></div>
   <div class="card orange">
-    <button class="btn orange" onclick="calcWeight()">⚖️ محاسبه وزن کل</button>
+    <button class="btn" onclick="calcWeight()">⚖️ محاسبه وزن کل</button>
     <div class="row" style="margin-top:8px">
       <button class="btn gray" onclick="exportPDF('weight')" style="margin-top:0">📄 PDF</button>
       <button class="btn green" onclick="exportToExcel('weight')" style="margin-top:0">📊 Excel</button>
@@ -483,11 +887,12 @@ tr:last-child td{border-bottom:none}
     <div class="mode-tabs">
       <button class="mode-tab active" data-mode="simple" onclick="setHeadMode('simple')">ساده</button>
       <button class="mode-tab" data-mode="pro" onclick="setHeadMode('pro')">Plate & Sheet</button>
+      <button class="mode-tab" data-mode="real" onclick="setHeadMode('real')">ابعاد واقعی پرس</button>
     </div>
 
     <!-- حالت ساده -->
     <div id="head-fields-simple" class="mode-body active">
-      <div class="field"><label>نوع عدسی (پیش‌فرض گودی)</label>
+      <div class="field"><label>نوع عدسی</label>
         <select id="h-type" onchange="applyHeadPreset()">
           <option value="shallow">کم‌عمق صنعتی (D/15)</option>
           <option value="torisph">تورسفریکال (0.194D)</option>
@@ -522,7 +927,7 @@ tr:last-child td{border-bottom:none}
     <!-- حالت Plate & Sheet -->
     <div id="head-fields-pro" class="mode-body">
       <div class="info-box violet" style="margin-bottom:12px">
-        <b>🆕 حالت Plate & Sheet:</b> با محاسبه Springback، تعداد مرحله پرس، و Nesting روی ورق.
+        <b>Plate & Sheet:</b> Blank + Springback + تعداد مرحله پرس + Nesting + DXF
       </div>
       <div class="row">
         <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="hp-d" step="1"></div>
@@ -551,20 +956,40 @@ tr:last-child td{border-bottom:none}
         <div class="field"><label>طول لبه (mm)</label><input type="number" id="hp-l" step="1" value="40"></div>
         <div class="field"><label>عرض ورق (mm)</label><input type="number" id="hp-sheet-w" value="1500" step="100"></div>
       </div>
-      <div class="row">
-        <div class="field"><label>طول ورق (mm)</label><input type="number" id="hp-sheet-l" value="6000" step="100"></div>
-        <div class="field"><label>شعاع قالب (mm)</label><input type="number" id="hp-tool-r" step="1" placeholder="خالی = D"></div>
-      </div>
+      <div class="field"><label>طول ورق (mm)</label><input type="number" id="hp-sheet-l" value="6000" step="100"></div>
       <button class="btn violet" onclick="calcHeadPlateSheet()">محاسبه Plate & Sheet</button>
       <div id="hp-res"></div>
     </div>
+
+    <!-- حالت ابعاد واقعی -->
+    <div id="head-fields-real" class="mode-body">
+      <div class="info-box violet" style="margin-bottom:12px">
+        <b>📌 ثبت ابعاد پس از پرس دستی</b> — طراحی + واقعی، Springback خودکار محاسبه و در حافظه ذخیره می‌شود
+      </div>
+      <div class="section-title">اطلاعات طراحی</div>
+      <div class="row">
+        <div class="field"><label>D طراحی (mm)</label><input type="number" id="rh-d-design" value="1600"></div>
+        <div class="field"><label>h طراحی (mm)</label><input type="number" id="rh-h-design" value="107"></div>
+      </div>
+      <div class="section-title">اطلاعات واقعی پس از پرس</div>
+      <div class="row">
+        <div class="field"><label>D واقعی (mm)</label><input type="number" id="rh-d-actual" placeholder="1597"></div>
+        <div class="field"><label>h واقعی (mm)</label><input type="number" id="rh-h-actual" placeholder="112"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>طول لبه واقعی (mm)</label><input type="number" id="rh-l-actual" value="40"></div>
+        <div class="field"><label>ضخامت واقعی (mm)</label><input type="number" id="rh-t-actual" value="8" step="0.1"></div>
+      </div>
+      <button class="btn violet" onclick="calcRealHead()">محاسبه Springback واقعی</button>
+      <div id="rh-res"></div>
+    </div>
   </div>
 
-  <!-- بخش عدسی قاچ‌قاچ -->
+  <!-- Segmented Head -->
   <div class="card blue">
-    <h2>🥧 عدسی قاچ‌قاچ (Segmented Head)</h2>
+    <h2>🥧 عدسی قاچ‌قاچ (Segmented)</h2>
     <div class="info-box" style="margin-bottom:12px">
-      <b>کاربرد:</b> وقتی عدسی خیلی بزرگ است و نمی‌شود یکجا پرس کرد، آن را به صورت قاچ‌قاچ می‌سازند.
+      <b>کاربرد:</b> وقتی عدسی خیلی بزرگ است و یکجا پرس نمی‌شود.
     </div>
     <div class="row">
       <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="sh-d" step="1" placeholder="3000"></div>
@@ -591,8 +1016,9 @@ tr:last-child td{border-bottom:none}
     <div id="sh-schematic"></div>
   </div>
 
+  <!-- Body Height -->
   <div class="card blue">
-    <h2>محاسبه‌گر ارتفاع عدسی‌دار</h2>
+    <h2>محاسبه‌گر ارتفاع بدنه</h2>
     <div class="row">
       <div class="field"><label>ارتفاع کل (mm)</label><input type="number" id="ht-total" step="10" value="3000"></div>
       <div class="field"><label>گودی هر عدسی (mm)</label><input type="number" id="ht-dish" step="5" value="107"></div>
@@ -609,37 +1035,56 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- ============ تب ۷: کویل ============ -->
+<!-- ============ تب ۷: کویل پیشرفته ============ -->
 <div id="t7" class="panel">
   <div class="card green">
-    <h2>🌀 طراحی کویل فنری داخل مخزن</h2>
-    <div class="info-box" style="margin-bottom:14px">کویل فنری پیوسته — دورها چسبیده — فاصله از جوش مشخص</div>
+    <h2>🌀 طراحی کویل پیشرفته</h2>
+
+    <div class="field"><label>نوع کویل</label>
+      <select id="coil-type" onchange="updateCoilDesign()">
+        <option value="helical">هلیکال پیوسته</option>
+        <option value="multi_start">مولتی‌استارت (چند راه)</option>
+        <option value="double_helix">دابل هلیکس</option>
+      </select>
+    </div>
+
+    <div class="section-title">هندسه</div>
     <div class="row">
       <div class="field"><label>قطر مخزن (mm)</label><input type="number" id="coil-Dtank" value="1400" step="50"></div>
       <div class="field"><label>ارتفاع بدنه (mm)</label><input type="number" id="coil-Htank" value="2000" step="50"></div>
     </div>
     <div class="row">
-      <div class="field"><label>گودی هر عدسی (mm)</label><input type="number" id="coil-dish" value="100" step="5"></div>
+      <div class="field"><label>گودی عدسی (mm)</label><input type="number" id="coil-dish" value="100" step="5"></div>
       <div class="field"><label>فاصله از جوش (mm)</label><input type="number" id="coil-clear" value="100" step="10"></div>
     </div>
     <div class="row">
       <div class="field"><label>قطر کویل (mm)</label><input type="number" id="coil-Dcoil" value="1200" step="50"></div>
       <div class="field"><label>سایز لوله</label>
         <select id="coil-pipe">
-          <option value="26.67">استیل ۳۰۴ ۳/۴" (26.67)</option>
-          <option value="33.40" selected>استیل ۳۰۴ ۱" (33.40)</option>
-          <option value="42.16">استیل ۳۰۴ ۱ ۱/۴" (42.16)</option>
-          <option value="48.26">استیل ۳۰۴ ۱ ۱/۲" (48.26)</option>
-          <option value="60.33">استیل ۳۰۴ ۲" (60.33)</option>
+          <option value="26.67">۳/۴" (26.67)</option>
+          <option value="33.40" selected>۱" (33.40)</option>
+          <option value="42.16">۱ ۱/۴" (42.16)</option>
+          <option value="48.26">۱ ۱/۲" (48.26)</option>
+          <option value="60.33">۲" (60.33)</option>
         </select>
       </div>
     </div>
-    <div class="row">
+    <div class="row3">
       <div class="field"><label>تعداد شاخه</label><input type="number" id="coil-branches" value="4" step="1" min="1"></div>
-      <div class="field"><label>گام (mm) — 0=چسبیده</label><input type="number" id="coil-gap" value="0" step="1" min="0"></div>
+      <div class="field"><label>گام (mm) — ۰=چسبیده</label><input type="number" id="coil-gap" value="0" step="1" min="0"></div>
+      <div class="field"><label>تعداد استارت</label>
+        <select id="coil-starts">
+          <option value="1">۱ (تک راه)</option>
+          <option value="2">۲</option>
+          <option value="3">۳</option>
+          <option value="4">۴</option>
+        </select>
+      </div>
     </div>
+
     <button class="btn green" onclick="updateCoilDesign()">محاسبه کویل</button>
     <button class="btn small" onclick="saveCoilDesign()" style="margin-top:6px">💾 ذخیره</button>
+
     <div class="schematic" id="coil-schematic"></div>
     <div id="coil-info"></div>
     <div id="coil-warning"></div>
@@ -656,12 +1101,14 @@ tr:last-child td{border-bottom:none}
       <button class="mode-tab" data-mode="C" onclick="setOrderMode('C')">قطر → ارتفاع</button>
     </div>
     <div class="field"><label>ظرفیت (لیتر)</label><input type="number" id="ro-v" step="1" placeholder="7000"></div>
+
     <div id="ro-fields-A" class="mode-body active">
       <div class="field"><label>عرض ورق (cm)</label>
         <select id="ro-w-a"><option value="150">۱۵۰</option><option value="152">۱۵۲</option><option value="custom">دستی</option></select>
       </div>
       <div class="field" id="ro-w-a-custom-wrap" style="display:none"><label>عرض دستی (cm)</label><input type="number" id="ro-w-a-custom" value="150" step="1"></div>
     </div>
+
     <div id="ro-fields-B" class="mode-body">
       <div class="row">
         <div class="field"><label>ارتفاع درخواستی (mm)</label><input type="number" id="ro-h" step="10" placeholder="3000"></div>
@@ -671,6 +1118,7 @@ tr:last-child td{border-bottom:none}
       </div>
       <div class="field" id="ro-w-b-custom-wrap" style="display:none"><label>عرض دستی (cm)</label><input type="number" id="ro-w-b-custom" value="150" step="1"></div>
     </div>
+
     <div id="ro-fields-C" class="mode-body">
       <div class="row">
         <div class="field"><label>قطر درخواستی (mm)</label><input type="number" id="ro-d" step="10" placeholder="1600"></div>
@@ -680,8 +1128,118 @@ tr:last-child td{border-bottom:none}
       </div>
       <div class="field" id="ro-w-c-custom-wrap" style="display:none"><label>عرض دستی (cm)</label><input type="number" id="ro-w-c-custom" value="150" step="1"></div>
     </div>
+
     <button class="btn green" onclick="calcOrderReverse()">محاسبه</button>
     <div id="ro-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۱۲: ASME ============ -->
+<div id="t12" class="panel">
+  <div class="card violet">
+    <h2>🔬 محاسبات ASME VIII Div.1</h2>
+    <div class="info-box violet" style="margin-bottom:14px">
+      محاسبه ضخامت پوسته (UG-27)، ضخامت عدسی (UG-32)، MAWP و Hydrotest
+    </div>
+    <div class="row">
+      <div class="field"><label>فشار طراحی (bar)</label><input type="number" id="asme-p" value="6" step="0.5"></div>
+      <div class="field"><label>قطر داخلی (mm)</label><input type="number" id="asme-d" value="1600" step="10"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>ضخامت فعلی (mm)</label><input type="number" id="asme-t" value="6" step="0.5"></div>
+      <div class="field"><label>خوردگی (mm)</label><input type="number" id="asme-ca" value="1.5" step="0.5"></div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>جنس</label>
+        <select id="asme-mat">
+          <option value="ST37">ST37</option>
+          <option value="S235JR">S235JR</option>
+          <option value="A516-70">A516 Gr70</option>
+          <option value="SS304">SS304</option>
+          <option value="SS316">SS316</option>
+        </select>
+      </div>
+      <div class="field"><label>راندمان جوش E</label>
+        <select id="asme-e">
+          <option value="1.0">۱.۰ (RT کامل)</option>
+          <option value="0.85" selected>۰.۸۵ (نمونه‌ای)</option>
+          <option value="0.7">۰.۷ (بدون RT)</option>
+        </select>
+      </div>
+      <div class="field"><label>نوع عدسی</label>
+        <select id="asme-head-type">
+          <option value="torisph">تورسفریکال</option>
+          <option value="ellip">بیضوی 2:1</option>
+          <option value="hemi">نیم‌کره</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field"><label>دمای طراحی (°C)</label><input type="number" id="asme-temp" value="80"></div>
+      <div class="field"><label>تنش مجاز S (MPa) — خالی = خودکار</label><input type="number" id="asme-s" step="1"></div>
+    </div>
+    <button class="btn violet" onclick="calcASME()">🔬 محاسبه ASME</button>
+    <div id="asme-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۱۳: کارگاه ============ -->
+<div id="t13" class="panel">
+  <div class="card green">
+    <h2>⚙️ هوشمندی کارگاهی</h2>
+    <div class="info-box green" style="margin-bottom:14px">
+      محاسبه زمان جوش، Heat Input، PWHT، توالی جوش و چک‌لیست کیفیت
+    </div>
+    <div class="row">
+      <div class="field"><label>ضخامت پوسته (mm)</label><input type="number" id="wi-t" value="8" step="0.5"></div>
+      <div class="field"><label>قطر (mm)</label><input type="number" id="wi-d" value="1600"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>طول جوش (mm)</label><input type="number" id="wi-weld-len" value="5000" step="100"></div>
+      <div class="field"><label>نوع اتصال</label>
+        <select id="wi-joint">
+          <option value="butt">لب‌به‌لب (Butt)</option>
+          <option value="fillet">گوشه (Fillet)</option>
+          <option value="tjoint">T-Joint</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>جنس</label>
+      <select id="wi-mat">
+        <option value="ST37">ST37</option>
+        <option value="A516-70">A516 Gr70</option>
+        <option value="SS304">SS304</option>
+        <option value="SS316">SS316</option>
+      </select>
+    </div>
+    <button class="btn green" onclick="calcWorkshopIntelligence()">⚙️ تحلیل کارگاهی</button>
+    <div id="wi-res"></div>
+  </div>
+</div>
+
+<!-- ============ تب ۱۴: بصری ============ -->
+<div id="t14" class="panel">
+  <div class="card blue">
+    <h2>👁 نمایش بصری پیشرفته</h2>
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="3d" onclick="setVisualMode('3d')">نمای ۳بعدی</button>
+      <button class="mode-tab" data-mode="cross" onclick="setVisualMode('cross')">نمای برش</button>
+      <button class="mode-tab" data-mode="anim" onclick="setVisualMode('anim')">مراحل ساخت</button>
+    </div>
+    <div class="row3">
+      <div class="field"><label>Dtank (mm)</label><input type="number" id="vis-Dtank" value="1400" step="50"></div>
+      <div class="field"><label>Htank (mm)</label><input type="number" id="vis-Htank" value="2000" step="50"></div>
+      <div class="field"><label>Dcoil (mm)</label><input type="number" id="vis-Dcoil" value="1200" step="50"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>تعداد دور</label><input type="number" id="vis-turns" value="13" step="0.5"></div>
+      <div class="field"><label>موقعیت برش %</label><input type="range" id="vis-slider" min="10" max="90" value="50"></div>
+    </div>
+    <div class="row" id="rotateBtns">
+      <button class="btn small gray" onclick="rotate3D(-15)" style="margin-top:0">↺ چرخش -15°</button>
+      <button class="btn small gray" onclick="rotate3D(15)" style="margin-top:0">↻ چرخش +15°</button>
+    </div>
+    <div class="schematic" id="vis-schematic" style="min-height:450px"></div>
   </div>
 </div>
 
@@ -700,10 +1258,10 @@ tr:last-child td{border-bottom:none}
 <!-- ============ تب ۱۰: قیمت‌ها ============ -->
 <div id="t10" class="panel">
   <div class="card yellow">
-    <h2>📊 ویرایش قیمت‌ها</h2>
+    <h2>📊 ویرایش قیمت‌ها و تنظیمات کارگاه</h2>
     <div class="row">
-      <button class="btn blue" onclick="syncFromFirebase()">📥 دریافت</button>
-      <button class="btn orange" onclick="syncToFirebase()">📤 ارسال</button>
+      <button class="btn blue" onclick="syncFromFirebase()">📥 دریافت از Cloud</button>
+      <button class="btn orange" onclick="syncToFirebase()">📤 ارسال به Cloud</button>
     </div>
     <div id="price-status"></div>
     <div id="price-editor"></div>
@@ -727,7 +1285,8 @@ tr:last-child td{border-bottom:none}
 
 <p class="footnote">
   ASME Sec VIII Div 1 — UG-27 / UG-32<br>
-  محاسبات پیش‌طراحی است؛ نقشه مهندسی الزامی است.
+  محاسبات پیش‌طراحی است؛ نقشه مهندسی الزامی است.<br>
+  Caspian Mobadel Amard — Pressure Tank Calculator v7.0
 </p>
 </main>
 
